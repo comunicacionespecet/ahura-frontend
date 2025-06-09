@@ -5,8 +5,8 @@ function App() {
     <div className="flex flex-col min-h-screen">
       {/* Header con los logos PECET-UdeA */}
       <header className="flex justify-between items-center p-4 bg-white shadow-md">
-        <img src="public\Logos_Pecet.jpg" alt="Logo Izquierdo" className="h-12" />
-        <img src="public\facultad-medicina.png" alt="Logo Derecho" className="h-12" />
+        <img src="Logos_Pecet.jpg" alt="Logo Izquierdo" className="h-12" />
+        <img src="facultad_medicina.png" alt="Logo Derecho" className="h-12" />
       </header>
 
       {/* Sub-header con texto, botones e imagen */}
@@ -31,7 +31,7 @@ function App() {
           </div>
         </div>
         <img
-          src="public/Semi_header_pecet.png"
+          src="Semi_header_pecet.png"
           alt="Imagen descriptiva"
           className="w-full md:w-[50%] h-full rounded"
         />
@@ -68,8 +68,8 @@ function App() {
           <p>Email: comunicacionespecet@udea.edu.co</p>
         </div>
         <div className="flex items-center gap-4 mb-2">
-          <img src="public\Logos_Pecet Blanco.png" alt="Logo 1" className="h-16" />
-          <img src="public\udea_transparente.png" alt="Logo 2" className="h-16" />
+          <img src="Logos_Pecet_Blanco.png" alt="Logo 1" className="h-16" />
+          <img src="udea_transparente.png" alt="Logo 2" className="h-16" />
         </div>
       </footer>
     </div>
