@@ -74,7 +74,7 @@ function App() {
             className="h-12 md:h-16 object-contain"
           />
           <img
-            src="/udea_transparente.png"
+            src="/Udea_transparenteV2.png"
             alt="Logo UdeA"
             className="h-12 md:h-16 object-contain"
           />
