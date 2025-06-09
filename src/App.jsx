@@ -2,22 +2,20 @@ import React from "react";
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen max-w-full overflow-x-hidden">
       {/* Header con los logos PECET-UdeA */}
       <header className="flex justify-between items-center p-4 bg-white shadow-md">
-        <img src="Logos_Pecet.jpg" alt="Logo Izquierdo" className="h-12" />
-        <img src="facultad_medicina.png" alt="Logo Derecho" className="h-12" />
+        <img src="/Logos_Pecet.jpg" alt="Logo Izquierdo" className="h-12" />
+        <img src="/facultad_medicina.png" alt="Logo Derecho" className="h-12" />
       </header>
 
       {/* Sub-header con texto, botones e imagen */}
-      <section className="flex flex-col md:flex-row justify-between items-stretch bg-[#EEEEEE] gap-6 min-h-[250px] md:h-[250px]">
-        <div className="w-full md:w-[50%] flex flex-col justify-center p-6 md:h-full">
+      <section className="flex flex-col md:flex-row bg-[#EEEEEE] gap-6 min-h-[250px]">
+        <div className="w-full md:w-[70%] flex flex-col justify-center p-6">
           <h1 className="text-xl font-semibold mb-4">
             Bienvenido al sistema AHURA.
           </h1>
-          <p className="mb-4">
-            Gestión de activos del conocimiento.
-          </p>
+          <p className="mb-4">Gestión de activos del conocimiento.</p>
           <div className="flex flex-wrap gap-2">
             <button className="bg-[#137598] text-white px-4 py-2 rounded hover:bg-blue-700">
               Iniciar sesión
@@ -30,11 +28,13 @@ function App() {
             </button>
           </div>
         </div>
-        <img
-          src="Semi_header_pecet.png"
-          alt="Imagen descriptiva"
-          className="w-full md:w-[50%] h-full rounded"
-        />
+        <div className="w-full md:w-[30%]">
+          <img
+            src="/Semi_header_pecet.png"
+            alt="Imagen descriptiva"
+            className="w-full h-full object-cover rounded"
+          />
+        </div>
       </section>
 
       {/* Zona central de funciones primarias */}
@@ -57,8 +57,8 @@ function App() {
       </section>
 
       {/* Footer con logos juntos e información */}
-      <footer className="flex flex-row justify-between p-4 bg-[#026937] text-white">
-        <div className="text-lef text-left">
+      <footer className="flex flex-col md:flex-row justify-between items-center p-4 bg-[#026937] text-white gap-4">
+        <div className="text-left">
           <p>Universidad de Antioquia</p>
           <p>Teléfono: +57 604 219 65 06</p>
           <p>Horario de atención:</p>
@@ -67,9 +67,17 @@ function App() {
           <p>Sede de Investigación Universitaria-SIU, Medellín, Colombia.</p>
           <p>Email: comunicacionespecet@udea.edu.co</p>
         </div>
-        <div className="flex items-center gap-4 mb-2">
-          <img src="Logos_Pecet_Blanco.png" alt="Logo 1" className="h-16" />
-          <img src="udea_transparente.png" alt="Logo 2" className="h-16" />
+        <div className="flex flex-wrap justify-center items-center gap-4">
+          <img
+            src="/Logos_Pecet_Blanco.png"
+            alt="Logo PECET"
+            className="h-12 md:h-16 object-contain"
+          />
+          <img
+            src="/udea_transparente.png"
+            alt="Logo UdeA"
+            className="h-12 md:h-16 object-contain"
+          />
         </div>
       </footer>
     </div>
@@ -77,4 +85,3 @@ function App() {
 }
 
 export default App;
-
