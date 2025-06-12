@@ -2,7 +2,6 @@ import React from "react";
 
 const Footer = () => {
     return (
-        /* Footer con logos juntos e información */
         <footer className="flex flex-col md:flex-row justify-between items-center p-4 bg-[#026937] text-white gap-4">
             <div className="text-left">
                 <p>Universidad de Antioquia</p>

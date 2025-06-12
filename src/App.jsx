@@ -1,9 +1,9 @@
 import React from "react";
-import Header from "./components/Header";
-import SubHeader from "./components/SubHeader";
-import MainFeatures from "./components/MainFeatures";
-import AboutSection from "./components/AboutSection";
-import Footer from "./components/Footer";
+import Header from "./components/organisms/Header";
+import SubHeader from "./components/organisms/SubHeader";
+import MainFeatures from "./components/organisms/MainFeatures";
+import AboutSection from "./components/organisms/AboutSection";
+import Footer from "./components/organisms/Footer";
 
 function App() {
   return (
