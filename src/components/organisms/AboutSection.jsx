@@ -2,7 +2,6 @@ import React from "react";
 
 const AboutSection = () => {
     return (
-        /* Acerca de */
         <section className="p-6 bg-[#EDEDED] text-center">
             <h4 className="text-md font-semibold mb-2">Acerca del PECET</h4>
             <p className="text-sm text-gray-700">
