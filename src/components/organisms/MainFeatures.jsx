@@ -24,7 +24,7 @@ const MainFeatures = () => {
     propietarioAC: "PECET",
     visibilidad: "Público",
     estadoAC: "Finalizado",
-    imagen: "/public/Prueba.jpg",
+    imagen: "/Prueba.jpg",
   };
 
   const handleRegisterClick = () => {
