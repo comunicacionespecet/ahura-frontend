@@ -20,11 +20,11 @@ const MainFeatures = () => {
     ubicacion: "Laboratorio PECET, Medellín",
     accesible: "Se puede acceder",
     clasificacion: "Alta",
-    autor: "Juan Pérez",
+    autor: "Juan Pérez Velez",
     propietarioAC: "PECET",
     visibilidad: "Público",
     estadoAC: "Finalizado",
-    imagen: "/public/Prueba.jpg",
+    imagen: "/Prueba.jpg",
   };
 
   const handleRegisterClick = () => {
