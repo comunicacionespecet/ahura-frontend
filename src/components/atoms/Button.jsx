@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Button = ({ text, icon = null, type = 'primary', onClick = () => {}, className = '' }) => {
     const baseStyle = `flex flex-col items-center justify-center rounded p-4 transition-transform duration-200 hover:scale-105 text-center`;
@@ -19,6 +20,14 @@ const Button = ({ text, icon = null, type = 'primary', onClick = () => {}, class
             <span className="text-md font-semibold">{text}</span>
         </button>
     );
+};
+
+Button.propTypes = {
+    text: PropTypes.string.isRequired,
+    icon: PropTypes.element,
+    type: PropTypes.oneOf(['primary', 'secondary', 'success', 'light']),
+    onClick: PropTypes.func,
+    className: PropTypes.string,
 };
 
 export default Button;

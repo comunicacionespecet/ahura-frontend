@@ -1,5 +1,5 @@
-// src/components/organisms/ViewAC.jsx
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const ViewAC = ({ ac }) => {
     if (!ac) return null;
@@ -63,6 +63,28 @@ const ViewAC = ({ ac }) => {
             </p>
         </div>
     );
+};
+
+ViewAC.propTypes = {
+    ac: PropTypes.shape({
+        id: PropTypes.string,
+        titulo: PropTypes.string,
+        descripcion: PropTypes.string,
+        fecha: PropTypes.string,
+        tipoActivo: PropTypes.string,
+        tipoConocimiento: PropTypes.string,
+        formato: PropTypes.string,
+        palabrasClave: PropTypes.string,
+        origen: PropTypes.string,
+        ubicacion: PropTypes.string,
+        accesible: PropTypes.string,
+        clasificacion: PropTypes.string,
+        autor: PropTypes.string,
+        propietarioAC: PropTypes.string,
+        visibilidad: PropTypes.string,
+        estadoAC: PropTypes.string,
+        imagen: PropTypes.string,
+    }),
 };
 
 export default ViewAC;
