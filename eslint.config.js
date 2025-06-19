@@ -53,4 +53,12 @@ export default defineConfig([
             'jsonc/auto': 'error',
         },
     },
+    {
+        files: ['**/*.test.{js,jsx}'],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+            },
+        },
+    },
 ]);
