@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import RegisterAC from './RegisterAC';
 
-// Mock URL.createObjectURL para pruebas con imagen
 beforeAll(() => {
     global.URL.createObjectURL = jest.fn(() => 'mock-url');
 });
@@ -45,7 +44,7 @@ describe('RegisterAC', () => {
             target: { value: 'Finalizado' },
         });
 
-        const logSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+        const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
         fireEvent.click(screen.getByText(/Registrar/i));
 
@@ -62,7 +61,6 @@ describe('RegisterAC', () => {
                     estadoAC: 'Finalizado',
                 })
             );
-
         });
 
         logSpy.mockRestore();
@@ -72,7 +70,7 @@ describe('RegisterAC', () => {
         render(<RegisterAC />);
 
         const file = new File(['contenido'], 'imagen.jpg', { type: 'image/jpeg' });
-       const input = screen.getByLabelText(/imagen del activo/i);
+        const input = screen.getByLabelText(/imagen del activo/i);
 
         fireEvent.change(input, { target: { files: [file] } });
 

@@ -1,65 +1,83 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ViewAC = ({ ac }) => {
-    if (!ac) return null;
+const ViewAC = ({}) => {
+    const ejemploAC = {
+        id: 'AC123',
+        titulo: 'Método de recolección de zancudos',
+        descripcion: 'Método utilizado en zonas rurales para capturar zancudos transmisores.',
+        fecha: '2024-05-12',
+        tipoActivo: 'Físico',
+        tipoConocimiento: 'Métodos desarrollados o mejorados',
+        formato: 'PDF',
+        palabrasClave: 'zancudos, recolección, método',
+        origen: 'Investigación',
+        ubicacion: 'Laboratorio PECET, Medellín',
+        accesible: 'Se puede acceder',
+        clasificacion: 'Alta',
+        autor: 'Juan Pérez Velez',
+        propietarioAC: 'PECET',
+        visibilidad: 'Público',
+        estadoAC: 'Finalizado',
+        imagen: '/Prueba.jpg',
+    };
 
     return (
         <div className="bg-white p-6 rounded shadow max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">{ac.titulo}</h2>
+            <h2 className="text-2xl font-bold mb-4">{ejemploAC.titulo}</h2>
 
-            {ac.imagen && (
+            {ejemploAC.imagen && (
                 <img
-                    src={ac.imagen}
+                    src={ejemploAC.imagen}
                     alt="Imagen del AC"
                     className="mb-4 w-full max-h-64 object-cover rounded"
                 />
             )}
 
             <p>
-                <strong>Descripción:</strong> {ac.descripcion}
+                <strong>Descripción:</strong> {ejemploAC.descripcion}
             </p>
             <p>
-                <strong>ID:</strong> {ac.id}
+                <strong>ID:</strong> {ejemploAC.id}
             </p>
             <p>
-                <strong>Autor:</strong> {ac.autor}
+                <strong>Autor:</strong> {ejemploAC.autor}
             </p>
             <p>
-                <strong>Fecha:</strong> {ac.fecha}
+                <strong>Fecha:</strong> {ejemploAC.fecha}
             </p>
             <p>
-                <strong>Tipo de Activo:</strong> {ac.tipoActivo}
+                <strong>Tipo de Activo:</strong> {ejemploAC.tipoActivo}
             </p>
             <p>
-                <strong>Tipo de Conocimiento:</strong> {ac.tipoConocimiento}
+                <strong>Tipo de Conocimiento:</strong> {ejemploAC.tipoConocimiento}
             </p>
             <p>
-                <strong>Formato:</strong> {ac.formato}
+                <strong>Formato:</strong> {ejemploAC.formato}
             </p>
             <p>
-                <strong>Palabras Clave:</strong> {ac.palabrasClave}
+                <strong>Palabras Clave:</strong> {ejemploAC.palabrasClave}
             </p>
             <p>
-                <strong>Origen:</strong> {ac.origen}
+                <strong>Origen:</strong> {ejemploAC.origen}
             </p>
             <p>
-                <strong>Ubicación:</strong> {ac.ubicacion}
+                <strong>Ubicación:</strong> {ejemploAC.ubicacion}
             </p>
             <p>
-                <strong>Accesible:</strong> {ac.accesible}
+                <strong>Accesible:</strong> {ejemploAC.accesible}
             </p>
             <p>
-                <strong>Clasificación:</strong> {ac.clasificacion}
+                <strong>Clasificación:</strong> {ejemploAC.clasificacion}
             </p>
             <p>
-                <strong>Propietario:</strong> {ac.propietarioAC}
+                <strong>Propietario:</strong> {ejemploAC.propietarioAC}
             </p>
             <p>
-                <strong>Visibilidad:</strong> {ac.visibilidad}
+                <strong>Visibilidad:</strong> {ejemploAC.visibilidad}
             </p>
             <p>
-                <strong>Estado:</strong> {ac.estadoAC}
+                <strong>Estado:</strong> {ejemploAC.estadoAC}
             </p>
         </div>
     );
