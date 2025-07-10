@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
+import { useACs } from '../../hooks/useACs';
 
 const SearchAC = () => {
     const navigate = useNavigate();
@@ -11,28 +12,9 @@ const SearchAC = () => {
     const [year, setYear] = useState('');
     const [advanced, setAdvanced] = useState('');
 
-    //Resultados quemados, deben ser los de la API
-    const results = [
-        {
-            id: 'AC001',
-            titulo: 'Manual de recolección',
-            tipo: 'Manual',
-            año: '2023',
-            autor: 'Ana López',
-            visibilidad: 'Público',
-        },
-        {
-            id: 'AC002',
-            titulo: 'Software de análisis',
-            tipo: 'Software',
-            año: '2022',
-            autor: 'Carlos Pérez',
-            visibilidad: 'Privado',
-        },
-    ];
+    const { acs, loading } = useACs();
 
     const handleSearch = () => {
-        // Implementar lógica real de búsqueda
         console.log({ query, tipoAC, year, advanced });
     };
 
@@ -97,22 +79,32 @@ const SearchAC = () => {
             </div>
 
             <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                <h4 className="font-semibold mb-4">Resultados</h4>
-                {results.map((item) => (
-                    <div key={item.id} className="border-b py-3">
-                        <p className="font-medium">{item.titulo}</p>
-                        <p className="text-sm text-gray-600">
-                            Tipo: {item.tipo} | Año: {item.año} | Autor: {item.autor} |{' '}
-                            {item.visibilidad}
-                        </p>
-                        <button
-                            className="text-blue-600 text-sm underline mt-1"
-                            onClick={() => handleView(item.id)}
-                        >
-                            Ver más
-                        </button>
-                    </div>
-                ))}
+                <h4 className="font-bold mb-4 text-[#70205B]">Resultados</h4>
+                {loading ? (
+                    <div>Cargando...</div>
+                ) : (
+                    acs.map((item) => (
+                        <div key={item.id} className="border-b py-3">
+                            <p className="font-medium text-[#026937]">{item.titulo}</p>
+                            <p className="text-sm">
+                                <span className="text-[#7E7373] font-bold">Tipo: </span>
+                                <span className="text-black font-bold">{item.tipo}</span>
+                                <span className="text-[#7E7373] font-bold"> | Año: </span>
+                                <span className="text-black font-bold">{item.año}</span>
+                                <span className="text-[#7E7373] font-bold"> | Autor: </span>
+                                <span className="text-black font-bold">{item.autor}</span>
+                                <span className="text-[#7E7373] font-bold"> | </span>
+                                <span className="text-black font-bold">{item.visibilidad}</span>
+                            </p>
+                            <button
+                                className="text-[#137598] text-sm underline mt-1"
+                                onClick={() => handleView(item.id)}
+                            >
+                                Ver más
+                            </button>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );
