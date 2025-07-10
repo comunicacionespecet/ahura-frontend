@@ -7,7 +7,7 @@ import MainFeatures from './components/organisms/MainFeatures';
 import AboutSection from './components/organisms/AboutSection';
 import Footer from './components/organisms/Footer';
 import RegisterAC from './components/organisms/RegisterAC';
-import ViewAC from './components/organisms/ViewAC';
+import ViewACWrapper from './components/organisms/ViewACWrapper';
 import SearchAC from './components/organisms/SearchAC';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<MainFeatures />} />
                     <Route path="/registrar" element={<RegisterAC />} />
-                    <Route path="/ver" element={<ViewAC />} />
+                    <Route path="/ver/:id" element={<ViewACWrapper />} />
                     <Route path="/buscar" element={<SearchAC />} />
                 </Routes>
                 <AboutSection />
