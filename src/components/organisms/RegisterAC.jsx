@@ -4,6 +4,7 @@ import Input from '../atoms/Input';
 import TextArea from '../atoms/TextArea';
 import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
+import { createAC } from '../../services/acServices';
 
 const tiposActivo = ['Explícito', 'Físico', 'Tácito'];
 const tiposConocimiento = [
@@ -78,6 +79,18 @@ const RegisterAC = () => {
         visibilidad: '',
         propietarioAC: '',
         estadoAC: '',
+        fileUri: '',
+        relatedIds: '',
+        pecetKnowledge: '',
+        centralicedRepositories: '',
+        copyright: '',
+        patents: '',
+        tradeSecrests: '',
+        industrialDesigns: '',
+        brands: '',
+        industrialIntellectualProperty: '',
+        ownerId: '',
+        criticality: '',
     });
 
     const handleImageChange = (e) => {
@@ -91,9 +104,48 @@ const RegisterAC = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        console.log('Form data:', formData);
         e.preventDefault();
-        console.log('Datos enviados:', { ...formData, imagen });
+        const acData = {
+            id: formData.id,
+            title: formData.titulo,
+            publishDate: formData.fecha,
+            knowledgeType: formData.tipoConocimiento,
+            description: formData.descripcion,
+            image: previewUrl || '',
+            activeKnowledgeType: formData.tipoActivo,
+            format: formData.formato,
+            fileUri: formData.fileUri || 'Prueba.jpg',
+            relatedIds: formData.relatedIds ? formData.relatedIds.split(',').map(id => id.trim()) : [],
+            keywords: formData.palabrasClave ? formData.palabrasClave.split(',').map(k => k.trim()) : [],
+            availability: {
+                accessibility: formData.accesible === 'Se puede acceder',
+                location: formData.ubicacion,
+            },
+            classificationLevel: {
+                level: formData.clasificacion,
+            },
+            howIsItStored: {
+                pecetKnowledge: formData.pecetKnowledge || 'Prueba',
+                centralicedRepositories: formData.centralicedRepositories || 'Prueba',
+            },
+            LegalRegulations: {
+                copyright: formData.copyright || 'Prueba',
+                patents: formData.patents || 'Prueba',
+                tradeSecrests: formData.tradeSecrests || 'Prueba',
+                industrialDesigns: formData.industrialDesigns || 'Prueba',
+                brands: formData.brands || 'Prueba',
+                industrialIntellectualProperty: formData.industrialIntellectualProperty || 'Prueba',
+            },
+            ownerId: formData.ownerId || 'Prueba',
+            responsibleOwner: formData.propietarioAC,
+            confidentiality: formData.visibilidad === 'Privado',
+            criticality: formData.criticality || 'Prueba',
+            status: formData.estadoAC,
+        };
+
+        await createAC(acData);
     };
 
     return (
