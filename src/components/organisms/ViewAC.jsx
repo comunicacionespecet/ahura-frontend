@@ -13,7 +13,7 @@ const getFileType = (fileUrl) => {
 const ViewAC = ({ ac }) => {
     if (!ac) return <div>No se encontró el activo.</div>;
 
-    const fileUrl = ac.archivoUrl; // Debe venir en el objeto ac (puedes cambiar el nombre según tu modelo)
+    const fileUrl = ac.archivoUrl;
     const fileType = getFileType(fileUrl);
 
     return (
@@ -52,49 +52,49 @@ const ViewAC = ({ ac }) => {
             )}
 
             <p>
-                <strong>Descripción:</strong> {ac.descripcion}
+                <strong>Descripción:</strong> {ac.description}
             </p>
             <p>
                 <strong>ID:</strong> {ac.id}
             </p>
             <p>
-                <strong>Autor:</strong> {ac.autor}
+                <strong>Autor:</strong> {ac.responsibleOwner}
             </p>
             <p>
-                <strong>Fecha:</strong> {ac.fecha}
+                <strong>Fecha:</strong> {new Date(ac.publishDate).toLocaleDateString('es-CO')}
             </p>
             <p>
-                <strong>Tipo de Activo:</strong> {ac.tipoActivo}
+                <strong>Tipo de Activo:</strong> {ac.format}
             </p>
             <p>
-                <strong>Tipo de Conocimiento:</strong> {ac.tipoConocimiento}
+                <strong>Tipo de Conocimiento:</strong> {ac.activeKnowledgeType}
             </p>
             <p>
-                <strong>Formato:</strong> {ac.formato}
+                <strong>Formato:</strong> {ac.format}
             </p>
             <p>
-                <strong>Palabras Clave:</strong> {ac.palabrasClave}
+                <strong>Palabras Clave:</strong> {ac.keywords}
             </p>
             <p>
-                <strong>Origen:</strong> {ac.origen}
+                <strong>Origen:</strong> {ac.howIsItStored.pecetKnowledge}
             </p>
             <p>
-                <strong>Ubicación:</strong> {ac.ubicacion}
+                <strong>Ubicación:</strong> {ac.howIsItStored.centralicedRepositories}
             </p>
             <p>
-                <strong>Accesible:</strong> {ac.accesible}
+                <strong>Accesible:</strong> {ac.availability?.accessibility ? 'Sí' : 'No'}
             </p>
             <p>
-                <strong>Clasificación:</strong> {ac.clasificacion}
+                <strong>Clasificación:</strong> {ac.classificationLevel.level}
             </p>
             <p>
-                <strong>Propietario:</strong> {ac.propietarioAC}
+                <strong>Propietario:</strong> {ac.responsibleOwner}
             </p>
             <p>
-                <strong>Visibilidad:</strong> {ac.visibilidad}
+                <strong>Visibilidad:</strong> {ac.confidentiality ? 'Confidencial' : 'Público'}
             </p>
             <p>
-                <strong>Estado:</strong> {ac.estadoAC}
+                <strong>Estado:</strong> {ac.status}
             </p>
         </div>
     );

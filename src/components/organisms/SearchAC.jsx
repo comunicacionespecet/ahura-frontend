@@ -85,16 +85,22 @@ const SearchAC = () => {
                 ) : (
                     acs.map((item) => (
                         <div key={item.id} className="border-b py-3">
-                            <p className="font-medium text-[#026937]">{item.titulo}</p>
+                            <p className="font-medium text-[#026937]">{item.title}</p>
                             <p className="text-sm">
                                 <span className="text-[#7E7373] font-bold">Tipo: </span>
-                                <span className="text-black font-bold">{item.tipo}</span>
+                                <span className="text-black font-bold">{item.knowledgeType}</span>
                                 <span className="text-[#7E7373] font-bold"> | Año: </span>
-                                <span className="text-black font-bold">{item.año}</span>
+                                <span className="text-black font-bold">
+                                    {new Date(item.publishDate).getFullYear()}
+                                </span>
                                 <span className="text-[#7E7373] font-bold"> | Autor: </span>
-                                <span className="text-black font-bold">{item.autor}</span>
+                                <span className="text-black font-bold">
+                                    {item.responsibleOwner}
+                                </span>
                                 <span className="text-[#7E7373] font-bold"> | </span>
-                                <span className="text-black font-bold">{item.visibilidad}</span>
+                                <span>
+                                    {item.availability.accessibility ? 'Público' : 'Privado'}
+                                </span>
                             </p>
                             <button
                                 className="text-[#137598] text-sm underline mt-1"
