@@ -1,9 +1,11 @@
 import React from 'react';
 import Button from '../atoms/Button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const SubHeader = () => {
     const navigate = useNavigate();
+    const { isAdmin, toggleAuth } = useAuth();
 
     return (
         <section className="flex flex-col md:flex-row bg-[#EEEEEE] gap-6 min-h-[250px]">
@@ -11,7 +13,11 @@ const SubHeader = () => {
                 <h1 className="text-xl font-semibold mb-4">Bienvenido al sistema AHURA.</h1>
                 <p className="mb-4">Gestión de activos del conocimiento.</p>
                 <div className="flex flex-wrap gap-2">
-                    <Button text={'Iniciar sesión'} type="primary"></Button>
+                    <Button
+                        onClick={toggleAuth}
+                        text={isAdmin ? 'Cerrar sesión (admin)' : 'Iniciar sesión'}
+                        type="primary"
+                    />
                     <Button
                         onClick={() => navigate('/')}
                         text={'Página principal'}
