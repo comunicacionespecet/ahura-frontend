@@ -117,8 +117,12 @@ const RegisterAC = () => {
             activeKnowledgeType: formData.tipoActivo,
             format: formData.formato,
             fileUri: formData.fileUri || 'Prueba.jpg',
-            relatedIds: formData.relatedIds ? formData.relatedIds.split(',').map(id => id.trim()) : [],
-            keywords: formData.palabrasClave ? formData.palabrasClave.split(',').map(k => k.trim()) : [],
+            relatedIds: formData.relatedIds
+                ? formData.relatedIds.split(',').map((id) => id.trim())
+                : [],
+            keywords: formData.palabrasClave
+                ? formData.palabrasClave.split(',').map((k) => k.trim())
+                : [],
             availability: {
                 accessibility: formData.accesible === 'Se puede acceder',
                 location: formData.ubicacion,
@@ -190,7 +194,7 @@ const RegisterAC = () => {
                     />
                 </FormField>
 
-                <FormField label="ID *" htmlFor="id">
+                <FormField label="Facetado *" htmlFor="id">
                     <Input name="id" value={formData.id} onChange={handleChange} required />
                 </FormField>
 
