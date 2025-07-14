@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import FormField from '../molecules/FormField';
 import Input from '../atoms/Input';
 import TextArea from '../atoms/TextArea';
 import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
-import { createAC } from '../../services/acServices';
+import { useAuth } from '../../context/AuthContext';
+import { useCreateAC, useUpdateAC, useACById, useDeleteAC } from '../../hooks/useACs';
 
 const tiposActivo = ['Explícito', 'Físico', 'Tácito'];
 const tiposConocimiento = [
@@ -59,9 +61,15 @@ const visibilidad = ['Público', 'Privado'];
 const estadoAC = ['Finalizado', 'En proceso', 'Suspendido'];
 
 const RegisterAC = () => {
+    const { id } = useParams();
+    const { isAdmin } = useAuth();
+    const { create } = useCreateAC();
+    const { update } = useUpdateAC();
+    const { ac } = useACById(id);
+    const { remove } = useDeleteAC();
+
     const [imagen, setImagen] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
-
     const [formData, setFormData] = useState({
         id: '',
         titulo: '',
@@ -93,6 +101,45 @@ const RegisterAC = () => {
         criticality: '',
     });
 
+    useEffect(() => {
+        if (ac && isAdmin) {
+            setFormData({
+                id: ac.id || '',
+                titulo: ac.title || '',
+                descripcion: ac.description || '',
+                fecha: ac.publishDate ? ac.publishDate.split('T')[0] : '',
+                tipoConocimiento: ac.knowledgeType || '',
+                tipoActivo: ac.activeKnowledgeType || '',
+                formato: ac.format || '',
+                palabrasClave: ac.keywords?.join(', ') || '',
+                origen: ac.origin || '',
+                ubicacion: ac.availability?.location || '',
+                accesible: ac.availability?.accessibility
+                    ? 'Se puede acceder'
+                    : 'No se puede acceder',
+                clasificacion: ac.classificationLevel?.level || '',
+                autor: ac.responsibleOwner || '',
+                visibilidad: ac.confidentiality ? 'Privado' : 'Público',
+                propietarioAC: ac.responsibleOwner || '',
+                estadoAC: ac.status || '',
+                fileUri: ac.fileUri || '',
+                relatedIds: ac.relatedIds?.join(', ') || '',
+                pecetKnowledge: ac.howIsItStored?.pecetKnowledge || '',
+                centralicedRepositories: ac.howIsItStored?.centralicedRepositories || '',
+                copyright: ac.LegalRegulations?.copyright || '',
+                patents: ac.LegalRegulations?.patents || '',
+                tradeSecrests: ac.LegalRegulations?.tradeSecrests || '',
+                industrialDesigns: ac.LegalRegulations?.industrialDesigns || '',
+                brands: ac.LegalRegulations?.brands || '',
+                industrialIntellectualProperty:
+                    ac.LegalRegulations?.industrialIntellectualProperty || '',
+                ownerId: ac.ownerId || '',
+                criticality: ac.criticality || '',
+            });
+            setPreviewUrl(ac.image || null);
+        }
+    }, [ac, isAdmin]);
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setImagen(file);
@@ -105,7 +152,6 @@ const RegisterAC = () => {
     };
 
     const handleSubmit = async (e) => {
-        console.log('Form data:', formData);
         e.preventDefault();
         const acData = {
             id: formData.id,
@@ -149,19 +195,42 @@ const RegisterAC = () => {
             status: formData.estadoAC,
         };
 
-        await createAC(acData);
+        try {
+            if (id && isAdmin) {
+                await update(id, acData);
+                alert('Activo actualizado correctamente');
+            } else {
+                await create(acData);
+                alert('Activo creado correctamente');
+            }
+        } catch (error) {
+            alert('Hubo un error al guardar el activo');
+            console.error(error);
+        }
+    };
+
+    const handleDelete = async () => {
+        const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este activo?');
+        if (!confirmDelete) return;
+
+        try {
+            await remove(id);
+            alert('Activo eliminado correctamente');
+            // Redirige, por ejemplo, al listado o inicio
+            window.location.href = '/'; // o usa navigate('/') si usas react-router v6+
+        } catch (error) {
+            console.error('Error al eliminar el activo:', error);
+            alert('Ocurrió un error al intentar eliminar el activo');
+        }
     };
 
     return (
         <div className="bg-white p-6 rounded shadow">
             <h2 className="text-xl font-semibold text-gray-800 mb-4 text-left">
-                Registro de activo
+                {id && isAdmin ? 'Editar activo de conocimiento' : 'Registro de activo'}
             </h2>
 
-            <form
-                onSubmit={handleSubmit}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded shadow"
-            >
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField label="Imagen del activo" htmlFor="imagen">
                     {previewUrl ? (
                         <div className="flex flex-col items-start">
@@ -374,8 +443,20 @@ const RegisterAC = () => {
                     </select>
                 </FormField>
 
-                <div className="md:col-span-2 flex justify-center">
-                    <Button text="Registrar" type="primary" />
+                <div className="md:col-span-2 flex justify-center gap-4">
+                    {id && isAdmin ? (
+                        <>
+                            <Button text="Guardar cambios" type="primary" htmlType="submit" />
+                            <Button
+                                text="Eliminar"
+                                type="secondary"
+                                htmlType="button"
+                                onClick={handleDelete}
+                            />
+                        </>
+                    ) : (
+                        <Button text="Registrar" type="primary" />
+                    )}
                 </div>
             </form>
         </div>

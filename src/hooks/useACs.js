@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllACs, getACById, createAC } from '../services/acServices';
+import { getAllACs, getACById, createAC, updateAC, deleteAC } from '../services/acServices';
 
 // Hook para obtener todos los ACs
 export function useACs() {
@@ -23,10 +23,13 @@ export function useACs() {
 
 export function useACById(id) {
     const [ac, setAc] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        if (!id) return;
+
+        setLoading(true);
         getACById(id)
             .then((data) => {
                 setAc(data);
@@ -59,4 +62,44 @@ export function useCreateAC() {
     };
 
     return { create, loading, error };
+}
+
+export function useUpdateAC() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const update = async (id, acData) => {
+        setLoading(true);
+        try {
+            const updated = await updateAC(id, acData);
+            setLoading(false);
+            return updated;
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { update, loading, error };
+}
+
+export function useDeleteAC() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const remove = async (id) => {
+        setLoading(true);
+        try {
+            const response = await deleteAC(id);
+            setLoading(false);
+            return response;
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { remove, loading, error };
 }

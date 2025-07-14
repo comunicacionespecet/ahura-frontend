@@ -18,6 +18,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<MainFeatures />} />
                     <Route path="/registrar" element={<RegisterAC />} />
+                    <Route path="/registrar/:id" element={<RegisterAC />} />
                     <Route path="/ver/:id" element={<ViewACWrapper />} />
                     <Route path="/buscar" element={<SearchAC />} />
                 </Routes>
