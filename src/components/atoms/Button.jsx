@@ -1,7 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Button = ({ text, icon = null, type = 'primary', onClick = () => {}, className = '' }) => {
+const Button = ({
+    text,
+    icon = null,
+    type = 'primary',
+    onClick = () => {},
+    className = '',
+    htmlType = 'button',
+}) => {
     const baseStyle = `flex flex-col items-center justify-center rounded p-4 transition-transform duration-200 hover:scale-105 text-center`;
 
     const typeStyles = {
@@ -13,6 +20,7 @@ const Button = ({ text, icon = null, type = 'primary', onClick = () => {}, class
 
     return (
         <button
+            type={htmlType}
             onClick={onClick}
             className={`${baseStyle} ${typeStyles[type] || typeStyles.primary} ${className}`}
         >
@@ -28,6 +36,7 @@ Button.propTypes = {
     type: PropTypes.oneOf(['primary', 'secondary', 'success', 'light']),
     onClick: PropTypes.func,
     className: PropTypes.string,
+    htmlType: PropTypes.oneOf(['button', 'submit', 'reset']),
 };
 
 export default Button;

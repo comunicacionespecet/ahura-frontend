@@ -4,9 +4,11 @@ import Input from '../atoms/Input';
 import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
 import { useACs } from '../../hooks/useACs';
+import { useAuth } from '../../context/AuthContext';
 
 const SearchAC = () => {
     const navigate = useNavigate();
+    const { isAdmin } = useAuth();
     const [query, setQuery] = useState('');
     const [tipoAC, setTipoAC] = useState('');
     const [year, setYear] = useState('');
@@ -19,7 +21,11 @@ const SearchAC = () => {
     };
 
     const handleView = (id) => {
-        navigate(`/ver/${id}`);
+        if (isAdmin) {
+            navigate(`/registrar/${id}`);
+        } else {
+            navigate(`/ver/${id}`);
+        }
     };
 
     return (
@@ -97,7 +103,7 @@ const SearchAC = () => {
                                 <span className="text-black font-bold">
                                     {item.responsibleOwner}
                                 </span>
-                                <span className="text-[#7E7373] font-bold"> | </span>
+                                <span className="text-[#7E7373] font-bold"> | Privacidad: </span>
                                 <span>
                                     {item.availability.accessibility ? 'Público' : 'Privado'}
                                 </span>

@@ -19,8 +19,8 @@ const MainFeatures = () => {
                         type="primary"
                     />
                     <Button
-                        onClick={() => navigate('/registrar')}
-                        text="Editar un activo de conocimiento"
+                        onClick={() => navigate('/buscar')}
+                        text="Gestionar activos de conocimiento"
                         type="light"
                     />
                     <Button
