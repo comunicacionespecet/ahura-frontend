@@ -7,6 +7,7 @@ import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
 import { useAuth } from '../../context/AuthContext';
 import { useCreateAC, useUpdateAC, useACById, useDeleteAC } from '../../hooks/useACs';
+import { useUpload } from '../../hooks/useUpload';
 
 const tiposActivo = ['Explícito', 'Físico', 'Tácito'];
 const tiposConocimiento = [
@@ -67,6 +68,7 @@ const RegisterAC = () => {
     const { update } = useUpdateAC();
     const { ac } = useACById(id);
     const { remove } = useDeleteAC();
+    const { uploadFile } = useUpload();
 
     const [imagen, setImagen] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -153,13 +155,21 @@ const RegisterAC = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        let uploadImageName = '';
+
+        if (imagen) {
+            uploadImageName = await uploadFile(imagen);
+            console.log('Imagen subida:', uploadImageName);
+        }
+
         const acData = {
             id: formData.id,
             title: formData.titulo,
             publishDate: formData.fecha,
             knowledgeType: formData.tipoConocimiento,
             description: formData.descripcion,
-            image: previewUrl || '',
+            image: uploadImageName || '',
             activeKnowledgeType: formData.tipoActivo,
             format: formData.formato,
             fileUri: formData.fileUri || 'Prueba.jpg',
@@ -455,7 +465,7 @@ const RegisterAC = () => {
                             />
                         </>
                     ) : (
-                        <Button text="Registrar" type="primary" />
+                        <Button text="Registrar" type="primary" htmlType="submit" />
                     )}
                 </div>
             </form>

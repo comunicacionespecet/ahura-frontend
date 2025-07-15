@@ -17,13 +17,19 @@ const SubHeader = () => {
                         onClick={toggleAuth}
                         text={isAdmin ? 'Cerrar sesión (admin)' : 'Iniciar sesión'}
                         type="primary"
-                    />
+                        htmlType="button"
+                    ></Button>
                     <Button
                         onClick={() => navigate('/')}
                         text={'Página principal'}
                         type="secondary"
+                        htmlType="button"
                     ></Button>
-                    <Button text={'Conocer más sobre el pecet'} type="success"></Button>
+                    <Button
+                        text={'Conocer más sobre el pecet'}
+                        type="success"
+                        htmlType="button"
+                    ></Button>
                 </div>
             </div>
             <div className="w-full md:w-[70%]">
