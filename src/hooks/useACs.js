@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAllACs, getACById, createAC, updateAC, deleteAC } from '../services/acServices';
+import { getSignedImageUrl } from '../services/uploadServices';
 
-// Hook para obtener todos los ACs
 export function useACs() {
     const [acs, setAcs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,8 +30,20 @@ export function useACById(id) {
         if (!id) return;
 
         setLoading(true);
+
         getACById(id)
-            .then((data) => {
+            .then(async (data) => {
+                // Si el AC tiene una imagen, obtenemos la URL firmada
+                if (data.image) {
+                    try {
+                        const signedUrl = await getSignedImageUrl(data.image);
+                        data.signedImageUrl = signedUrl;
+                        console.log('URL firmada obtenida:', data);
+                    } catch (err) {
+                        console.error('Error al obtener la URL firmada:', err);
+                        data.signedImageUrl = null;
+                    }
+                }
                 setAc(data);
                 setLoading(false);
             })

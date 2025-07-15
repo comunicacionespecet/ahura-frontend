@@ -17,18 +17,21 @@ const MainFeatures = () => {
                         onClick={() => navigate('/registrar')}
                         text="Registrar activos de conocimiento"
                         type="primary"
-                    />
+                        htmlType="button"
+                    ></Button>
                     <Button
                         onClick={() => navigate('/buscar')}
                         text="Gestionar activos de conocimiento"
                         type="light"
-                    />
+                        htmlType="button"
+                    ></Button>
                     <Button
                         onClick={() => navigate('/buscar')}
                         text="Buscar activos de conocimiento"
                         type="secondary"
-                    />
-                    <Button text="Generar estadísticas" type="success" />
+                        htmlType="button"
+                    ></Button>
+                    <Button text="Generar estadísticas" type="success" htmlType="button"></Button>
                 </div>
             ) : (
                 <div className="flex justify-center">
@@ -36,7 +39,8 @@ const MainFeatures = () => {
                         onClick={() => navigate('/buscar')}
                         text="Buscar activos de conocimiento"
                         type="secondary"
-                    />
+                        htmlType="button"
+                    ></Button>
                 </div>
             )}
         </main>
