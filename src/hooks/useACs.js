@@ -44,6 +44,18 @@ export function useACById(id) {
                         data.signedImageUrl = null;
                     }
                 }
+
+                if (data.fileUri) {
+                    try {
+                        const signedImaUrl = await getSignedImageUrl(data.fileUri);
+                        data.signedFileUrl = signedImaUrl;
+                        console.log('URL firmada obtenida:', data);
+                    } catch (err) {
+                        console.error('Error al obtener la URL firmada:', err);
+                        data.signedFileUrl = null;
+                    }
+                }
+
                 setAc(data);
                 setLoading(false);
             })
