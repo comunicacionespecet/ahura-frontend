@@ -5,6 +5,7 @@ import Input from '../atoms/Input';
 import TextArea from '../atoms/TextArea';
 import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
+import FileUpload from '../molecules/FileUpload';
 import { useAuth } from '../../context/AuthContext';
 import { useCreateAC, useUpdateAC, useACById, useDeleteAC } from '../../hooks/useACs';
 import { useUpload } from '../../hooks/useUpload';
@@ -71,6 +72,7 @@ const RegisterAC = () => {
     const { uploadFile } = useUpload();
 
     const [imagen, setImagen] = useState(null);
+    const [archivo, setArchivo] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [formData, setFormData] = useState({
         id: '',
@@ -148,6 +150,12 @@ const RegisterAC = () => {
         setPreviewUrl(file ? URL.createObjectURL(file) : null);
     };
 
+    const handleArchivoChange = (e) => {
+        const file = e.target.files[0];
+        setArchivo(file);
+    }
+
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -163,6 +171,12 @@ const RegisterAC = () => {
             console.log('Imagen subida:', uploadImageName);
         }
 
+        let uploadFileName = '';
+        if (archivo) {
+            uploadFileName = await uploadFile(archivo);
+            console.log('Archivo subido:', uploadFileName);
+        }
+
         const acData = {
             id: formData.id,
             title: formData.titulo,
@@ -172,7 +186,7 @@ const RegisterAC = () => {
             image: uploadImageName || '',
             activeKnowledgeType: formData.tipoActivo,
             format: formData.formato,
-            fileUri: formData.fileUri || 'Prueba.jpg',
+            fileUri: uploadFileName || formData.fileUri,
             relatedIds: formData.relatedIds
                 ? formData.relatedIds.split(',').map((id) => id.trim())
                 : [],
@@ -328,6 +342,23 @@ const RegisterAC = () => {
                         ))}
                     </select>
                 </FormField>
+
+                <FormField label="Archivo del activo" htmlFor="archivo">
+                    {archivo ? (
+                        <div className="flex flex-col items-start">
+                            <span className="mb-2 text-gray-700">Archivo cargado: <strong>{archivo.name}</strong></span>
+                            <Button
+                                type="Primary"
+                                text="Cambiar archivo"
+                                onClick={() => setArchivo(null)}
+                                className="text-sm text-blue-600 underline hover:text-blue-800"
+                            />
+                        </div>
+                    ) : (
+                        <FileUpload onChange={handleArchivoChange} />
+                    )}
+                </FormField>
+
 
                 <FormField label="Formato *" htmlFor="formato">
                     <select
