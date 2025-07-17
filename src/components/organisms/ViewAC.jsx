@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 const getFileType = (fileUrl) => {
     if (!fileUrl) return '';
     const ext = fileUrl.split('.').pop().toLowerCase();
-    if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'ppt', 'pptx'].includes(ext)) {
+    if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'ppt', 'pptx', 'mp4'].includes(ext)) {
+
         return ext;
     }
     return '';
@@ -18,6 +19,8 @@ const ViewAC = ({ ac }) => {
     const cleanUrl = signedFileUrl?.split('?')[0];
     const fileType = getFileType(cleanUrl);
     const fileUrl = signedFileUrl;
+    const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(ac.signedFileUrl)}&embedded=true`; //Debemo eleiminar esto configurando en el s3 el contentTYpe: inline
+
 
     return (
         <div className="bg-white p-6 rounded shadow max-w-4xl w-full mx-auto">
@@ -31,16 +34,28 @@ const ViewAC = ({ ac }) => {
                 />
             )}
 
-            {/* Previsualización de archivo */}
             {fileUrl && fileType === 'pdf' && (
                 <iframe
-                    src={fileUrl}
+                    src={viewerUrl}
                     title="Vista previa PDF"
                     width="100%"
                     height="600px"
                     className="mb-4 border"
                 />
             )}
+
+            {fileUrl && fileType === 'mp4' && (
+                <video
+                    controls
+                    width="100%"
+                    height="auto"
+                    className="mb-4 rounded border"
+                >
+                    <source src={fileUrl} type="video/mp4" />
+                    Tu navegador no soporta la etiqueta de video.
+                </video>
+            )}
+
 
             {fileUrl && ['jpg', 'jpeg', 'png'].includes(fileType) && (
                 <img src={fileUrl} alt="Vista previa" className="max-w-full h-auto mb-4" />
