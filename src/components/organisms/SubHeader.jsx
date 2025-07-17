@@ -25,11 +25,19 @@ const SubHeader = () => {
                         type="secondary"
                         htmlType="button"
                     ></Button>
-                    <Button
-                        text={'Conocer más sobre el pecet'}
-                        type="success"
-                        htmlType="button"
-                    ></Button>
+                    <a
+                        href="https://pecet-colombia.org/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <Button 
+                            text="Conocer más sobre el PECET"
+                            type="success"
+                            htmlType="button"
+                            Conocer más sobre el PECET
+                        ></Button>
+                    </a>
+
                 </div>
             </div>
             <div className="w-full md:w-[70%]">

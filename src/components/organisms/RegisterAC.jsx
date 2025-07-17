@@ -168,13 +168,11 @@ const RegisterAC = () => {
 
         if (imagen) {
             uploadImageName = await uploadFile(imagen);
-            console.log('Imagen subida:', uploadImageName);
         }
 
         let uploadFileName = '';
         if (archivo) {
             uploadFileName = await uploadFile(archivo);
-            console.log('Archivo subido:', uploadFileName);
         }
 
         const acData = {
