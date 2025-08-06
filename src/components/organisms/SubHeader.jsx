@@ -8,44 +8,37 @@ const SubHeader = () => {
     const { isAdmin, toggleAuth } = useAuth();
 
     return (
-        <section className="flex flex-col md:flex-row bg-[#EEEEEE] gap-6 min-h-[250px]">
-            <div className="w-full md:w-[30%] flex flex-col justify-center p-6">
-                <h1 className="text-xl font-semibold mb-4">Bienvenido al sistema AHURA.</h1>
-                <p className="mb-4">Gestión de activos del conocimiento.</p>
-                <div className="flex flex-wrap gap-2">
+        <section className="relative w-full h-[300px] md:h-[400px] overflow-hidden rounded">
+            <img
+                src="/Semi_header_pecet.png"
+                alt="Imagen descriptiva"
+                className="absolute inset-0 w-full h-full object-cover z-0"
+            />
+
+            <div className="relative z-20 h-full flex flex-col justify-center items-center text-center px-6 text-white">
+                <h1 className="text-3xl md:text-5xl font-bold mb-2">Bienvenido al sistema AHURA</h1>
+                <p className="text-lg mb-4">Gestión de activos del conocimiento.</p>
+                <div className="flex flex-wrap gap-3">
                     <Button
                         onClick={toggleAuth}
                         text={isAdmin ? 'Cerrar sesión (admin)' : 'Iniciar sesión'}
                         type="primary"
                         htmlType="button"
-                    ></Button>
+                    />
                     <Button
                         onClick={() => navigate('/')}
-                        text={'Página principal'}
+                        text="Página principal"
                         type="secondary"
                         htmlType="button"
-                    ></Button>
-                    <a
-                        href="https://pecet-colombia.org/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <Button 
+                    />
+                    <a href="https://pecet-colombia.org/" target="_blank" rel="noopener noreferrer">
+                        <Button
                             text="Conocer más sobre el PECET"
                             type="success"
                             htmlType="button"
-                            Conocer más sobre el PECET
-                        ></Button>
+                        />
                     </a>
-
                 </div>
-            </div>
-            <div className="w-full md:w-[70%]">
-                <img
-                    src="/Semi_header_pecet.png"
-                    alt="Imagen descriptiva"
-                    className="w-full h-full object-cover rounded"
-                />
             </div>
         </section>
     );

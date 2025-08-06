@@ -6,7 +6,11 @@ const FileUpload = ({ onChange }) => {
     return (
         <label className="w-60 h-32 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer rounded-lg">
             <FileIcon className="w-10 h-10 mb-2" />
-            <span className="text-sm text-center">Subir archivo<br />(PDF, Word, Excel...)</span>
+            <span className="text-sm text-center">
+                Subir archivo
+                <br />
+                (PDF, Word, Excel...)
+            </span>
             <input
                 id="archivo"
                 type="file"

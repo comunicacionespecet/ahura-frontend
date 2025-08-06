@@ -10,7 +10,7 @@ const Input = ({ id, name, value, onChange, type = 'text', placeholder }) => {
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="block w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
         />
     );
 };

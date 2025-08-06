@@ -9,6 +9,7 @@ import FileUpload from '../molecules/FileUpload';
 import { useAuth } from '../../context/AuthContext';
 import { useCreateAC, useUpdateAC, useACById, useDeleteAC } from '../../hooks/useACs';
 import { useUpload } from '../../hooks/useUpload';
+import { showSuccess, showError, showConfirm } from '../../utils/alerts';
 
 const tiposActivo = ['Explícito', 'Físico', 'Tácito'];
 const tiposConocimiento = [
@@ -62,14 +63,14 @@ const niveles = ['Alta', 'Media', 'Baja'];
 const visibilidad = ['Público', 'Privado'];
 const estadoAC = ['Finalizado', 'En proceso', 'Suspendido'];
 
-const RegisterAC = () => {
+const ManageAC = () => {
     const { id } = useParams();
     const { isAdmin } = useAuth();
     const { create } = useCreateAC();
     const { update } = useUpdateAC();
     const { ac } = useACById(id);
     const { remove } = useDeleteAC();
-    const { uploadFile } = useUpload();
+    const { upload } = useUpload();
 
     const [imagen, setImagen] = useState(null);
     const [archivo, setArchivo] = useState(null);
@@ -153,8 +154,7 @@ const RegisterAC = () => {
     const handleArchivoChange = (e) => {
         const file = e.target.files[0];
         setArchivo(file);
-    }
-
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -167,12 +167,12 @@ const RegisterAC = () => {
         let uploadImageName = '';
 
         if (imagen) {
-            uploadImageName = await uploadFile(imagen);
+            uploadImageName = await upload(imagen);
         }
 
         let uploadFileName = '';
         if (archivo) {
-            uploadFileName = await uploadFile(archivo);
+            uploadFileName = await upload(archivo);
         }
 
         const acData = {
@@ -220,26 +220,28 @@ const RegisterAC = () => {
         try {
             if (id && isAdmin) {
                 await update(id, acData);
-                alert('Activo actualizado correctamente');
+                showSuccess('Activo actualizado correctamente');
             } else {
                 await create(acData);
-                alert('Activo creado correctamente');
+                showSuccess('Activo creado correctamente');
             }
         } catch (error) {
-            alert('Hubo un error al guardar el activo');
+            showError('Hubo un error al guardar el activo');
             console.error(error);
         }
     };
 
     const handleDelete = async () => {
-        const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este activo?');
+        const confirmDelete = await showConfirm(
+            '¿Estás seguro?',
+            'Esta acción no se puede deshacer'
+        );
         if (!confirmDelete) return;
 
         try {
             await remove(id);
-            alert('Activo eliminado correctamente');
-            // Redirige, por ejemplo, al listado o inicio
-            window.location.href = '/'; // o usa navigate('/') si usas react-router v6+
+            showSuccess('Activo eliminado correctamente');
+            //window.location.href = '/';
         } catch (error) {
             console.error('Error al eliminar el activo:', error);
             alert('Ocurrió un error al intentar eliminar el activo');
@@ -247,8 +249,8 @@ const RegisterAC = () => {
     };
 
     return (
-        <div className="bg-white p-6 rounded shadow">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-left">
+        <div className="bg-white px-6 py-20 rounded shadow">
+            <h2 className="text-4xl font-bold text-[#70205B] mb-4 text-center py-8">
                 {id && isAdmin ? 'Editar activo de conocimiento' : 'Registro de activo'}
             </h2>
 
@@ -273,6 +275,24 @@ const RegisterAC = () => {
                         </div>
                     ) : (
                         <ImageUpload id="imagen" onChange={handleImageChange} />
+                    )}
+                </FormField>
+
+                <FormField label="Archivo del activo" htmlFor="archivo">
+                    {archivo ? (
+                        <div className="flex flex-col items-start">
+                            <span className="mb-2 text-gray-700">
+                                Archivo cargado: <strong>{archivo.name}</strong>
+                            </span>
+                            <Button
+                                type="Primary"
+                                text="Cambiar archivo"
+                                onClick={() => setArchivo(null)}
+                                className="text-sm text-blue-600 underline hover:text-blue-800"
+                            />
+                        </div>
+                    ) : (
+                        <FileUpload onChange={handleArchivoChange} />
                     )}
                 </FormField>
 
@@ -312,7 +332,7 @@ const RegisterAC = () => {
                         name="tipoActivo"
                         value={formData.tipoActivo}
                         onChange={handleChange}
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {tiposActivo.map((tipo) => (
@@ -330,7 +350,7 @@ const RegisterAC = () => {
                         value={formData.tipoConocimiento}
                         onChange={handleChange}
                         required
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {tiposConocimiento.map((item) => (
@@ -341,23 +361,6 @@ const RegisterAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Archivo del activo" htmlFor="archivo">
-                    {archivo ? (
-                        <div className="flex flex-col items-start">
-                            <span className="mb-2 text-gray-700">Archivo cargado: <strong>{archivo.name}</strong></span>
-                            <Button
-                                type="Primary"
-                                text="Cambiar archivo"
-                                onClick={() => setArchivo(null)}
-                                className="text-sm text-blue-600 underline hover:text-blue-800"
-                            />
-                        </div>
-                    ) : (
-                        <FileUpload onChange={handleArchivoChange} />
-                    )}
-                </FormField>
-
-
                 <FormField label="Formato *" htmlFor="formato">
                     <select
                         id="formato"
@@ -365,7 +368,7 @@ const RegisterAC = () => {
                         value={formData.formato}
                         onChange={handleChange}
                         required
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {formatos.map((item) => (
@@ -390,7 +393,7 @@ const RegisterAC = () => {
                         name="origen"
                         value={formData.origen}
                         onChange={handleChange}
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {origenes.map((item) => (
@@ -419,7 +422,7 @@ const RegisterAC = () => {
                         name="accesible"
                         value={formData.accesible}
                         onChange={handleChange}
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {accesibilidad.map((item) => (
@@ -436,7 +439,7 @@ const RegisterAC = () => {
                         name="visibilidad"
                         value={formData.visibilidad}
                         onChange={handleChange}
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {visibilidad.map((item) => (
@@ -453,7 +456,7 @@ const RegisterAC = () => {
                         name="clasificacion"
                         value={formData.clasificacion}
                         onChange={handleChange}
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {niveles.map((item) => (
@@ -471,7 +474,7 @@ const RegisterAC = () => {
                         value={formData.estadoAC}
                         onChange={handleChange}
                         required
-                        className="border p-2 rounded w-full"
+                        className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
                         {estadoAC.map((item) => (
@@ -482,7 +485,7 @@ const RegisterAC = () => {
                     </select>
                 </FormField>
 
-                <div className="md:col-span-2 flex justify-center gap-4">
+                <div className="md:col-span-2 flex justify-center py-10 gap-4">
                     {id && isAdmin ? (
                         <>
                             <Button text="Guardar cambios" type="primary" htmlType="submit" />
@@ -494,7 +497,12 @@ const RegisterAC = () => {
                             />
                         </>
                     ) : (
-                        <Button text="Registrar" type="primary" htmlType="submit" />
+                        <Button
+                            className="text-2xl"
+                            text="Registrar"
+                            type="primary"
+                            htmlType="submit"
+                        />
                     )}
                 </div>
             </form>
@@ -502,4 +510,4 @@ const RegisterAC = () => {
     );
 };
 
-export default RegisterAC;
+export default ManageAC;
