@@ -10,7 +10,7 @@ const TextArea = ({ id, name, value, onChange, placeholder, rows = 4 }) => {
             onChange={onChange}
             placeholder={placeholder}
             rows={rows}
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="block w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
     );
 };

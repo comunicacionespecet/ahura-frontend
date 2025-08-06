@@ -9,7 +9,7 @@ const MainFeatures = () => {
 
     return (
         <main className="flex-1 p-6 bg-[#FBFBFB]">
-            <h3 className="text-lg text-center font-bold mb-4">¿Qué puedes hacer aquí?</h3>
+            <h3 className="text-4xl text-center font-bold mb-4">¿Qué puedes hacer aquí?</h3>
 
             {isAdmin ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { uploadImage } from '../services/uploadServices';
+import { uploadFile } from '../services/uploadServices';
 
 export function useUpload() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const uploadFile = async (file) => {
+    const upload = async (file) => {
         setLoading(true);
         try {
-            const result = await uploadImage(file);
+            const result = await uploadFile(file);
             setLoading(false);
             return result;
         } catch (err) {
@@ -18,5 +18,5 @@ export function useUpload() {
         }
     };
 
-    return { uploadFile, loading, error };
+    return { upload, loading, error };
 }

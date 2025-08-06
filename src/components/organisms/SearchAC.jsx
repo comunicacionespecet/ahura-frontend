@@ -31,7 +31,7 @@ const SearchAC = () => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#FBFBFB] p-4 rounded">
             <div className="bg-white p-6 rounded-lg shadow-md">
-                <h4 className="font-semibold mb-4">Buscar activo</h4>
+                <h4 className="text-4xl font-bold mb-4">Buscar activo</h4>
 
                 <FormField label="Buscar por título" htmlFor="query">
                     <Input
@@ -47,7 +47,7 @@ const SearchAC = () => {
                         id="tipoAC"
                         value={tipoAC}
                         onChange={(e) => setTipoAC(e.target.value)}
-                        className="w-full p-2 border rounded"
+                        className="w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
                     >
                         <option value="">Seleccione...</option>
                         <option value="Manual">Manual</option>
@@ -61,7 +61,7 @@ const SearchAC = () => {
                         id="year"
                         value={year}
                         onChange={(e) => setYear(e.target.value)}
-                        className="w-full p-2 border rounded"
+                        className="w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
                     >
                         <option value="">Seleccione...</option>
                         <option value="2024">2024</option>
@@ -85,13 +85,13 @@ const SearchAC = () => {
             </div>
 
             <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                <h4 className="font-bold mb-4 text-[#70205B]">Resultados</h4>
+                <h4 className="text-4xl font-bold mb-4 text-[#70205B]">Resultados</h4>
                 {loading ? (
                     <div>Cargando...</div>
                 ) : (
                     acs.map((item) => (
                         <div key={item.id} className="border-b py-3">
-                            <p className="font-medium text-[#026937]">{item.title}</p>
+                            <p className="font-bold text-[#026937]">{item.title}</p>
                             <p className="text-sm">
                                 <span className="text-[#7E7373] font-bold">Tipo: </span>
                                 <span className="text-black font-bold">{item.knowledgeType}</span>
