@@ -1,19 +1,25 @@
-import React from "react";
-import { Image as ImageIcon } from "lucide-react"; // ícono de imagen
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Image as ImageIcon } from 'lucide-react';
 
 const ImageUpload = ({ onChange }) => {
-  return (
-    <label className="w-40 h-40 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer rounded-lg">
-      <ImageIcon className="w-10 h-10 mb-2" />
-      <span className="text-sm">Subir imagen</span>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={onChange}
-        className="hidden"
-      />
-    </label>
-  );
+    return (
+        <label className="w-40 h-40 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer rounded-lg">
+            <ImageIcon className="w-10 h-10 mb-2" />
+            <span className="text-sm">Subir imagen</span>
+            <input
+                id="imagen"
+                type="file"
+                accept="image/*"
+                onChange={onChange}
+                className="hidden"
+            />
+        </label>
+    );
+};
+
+ImageUpload.propTypes = {
+    onChange: PropTypes.func.isRequired,
 };
 
 export default ImageUpload;

@@ -1,12 +1,21 @@
-import React from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-const FormField = ({ label, children }) => {
-  return (
-    <div className="flex flex-col gap-1 mb-4">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
-      {children}
-    </div>
-  );
+const FormField = ({ label, htmlFor, children }) => {
+    return (
+        <div className="flex flex-col gap-1 mb-4">
+            <label htmlFor={htmlFor} className="text-xl font-medium text-black">
+                {label}
+            </label>
+            {children}
+        </div>
+    );
+};
+
+FormField.propTypes = {
+    label: PropTypes.string.isRequired,
+    htmlFor: PropTypes.string,
+    children: PropTypes.node.isRequired,
 };
 
 export default FormField;

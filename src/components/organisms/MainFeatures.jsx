@@ -1,79 +1,50 @@
-import React, { useState } from "react";
-import RegisterAC from "./RegisterAC";
-import ViewAC from "../organisms/ViewAC";
-import Button from "../atoms/Button";
+import React from 'react';
+import Button from '../atoms/Button';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const MainFeatures = () => {
-  const [showForm, setShowForm] = useState(false);
-  const [showExample, setShowExample] = useState(false);
+    const { isAdmin } = useAuth();
+    const navigate = useNavigate();
 
-  const ejemploAC = {
-    id: "AC123",
-    titulo: "Método de recolección de zancudos",
-    descripcion: "Método utilizado en zonas rurales para capturar zancudos transmisores.",
-    fecha: "2024-05-12",
-    tipoActivo: "Físico",
-    tipoConocimiento: "Métodos desarrollados o mejorados",
-    formato: "PDF",
-    palabrasClave: "zancudos, recolección, método",
-    origen: "Investigación",
-    ubicacion: "Laboratorio PECET, Medellín",
-    accesible: "Se puede acceder",
-    clasificacion: "Alta",
-    autor: "Juan Pérez",
-    propietarioAC: "PECET",
-    visibilidad: "Público",
-    estadoAC: "Finalizado",
-    imagen: "/public/Prueba.jpg",
-  };
+    return (
+        <main className="flex-1 p-6 bg-[#FBFBFB]">
+            <h3 className="text-4xl text-center font-bold mb-4">¿Qué puedes hacer aquí?</h3>
 
-  const handleRegisterClick = () => {
-    setShowForm(true);
-    setShowExample(false);
-  };
-
-  const handleSearchClick = () => {
-    setShowExample(true);
-    setShowForm(false);
-  };
-
-  return (
-    <main className="flex-1 p-6 bg-white">
-      <h3 className="text-lg text-center font-bold mb-4">
-        ¿Qué puedes hacer aquí?
-      </h3>
-
-      {!showForm && !showExample ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button
-            onClick={handleRegisterClick}
-            text="Registrar activos de conocimiento"
-            type="primary"
-          />
-          <Button
-            onClick={handleRegisterClick}
-            text="Editar un activo de conocimiento"
-            type="light"
-          />
-          <Button
-            onClick={handleSearchClick}
-            text="Buscar activos de conocimiento"
-            type="secondary"
-          />
-          <Button
-            text="Generar estadísticas"
-            type="success"
-          />
-        </div>
-      ) : showForm ? (
-        <RegisterAC />
-      ) : (
-        <ViewAC ac={ejemploAC} />
-      )}
-    </main>
-  );
+            {isAdmin ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Button
+                        onClick={() => navigate('/registrar')}
+                        text="Registrar activos de conocimiento"
+                        type="primary"
+                        htmlType="button"
+                    ></Button>
+                    <Button
+                        onClick={() => navigate('/buscar')}
+                        text="Gestionar activos de conocimiento"
+                        type="light"
+                        htmlType="button"
+                    ></Button>
+                    <Button
+                        onClick={() => navigate('/buscar')}
+                        text="Buscar activos de conocimiento"
+                        type="secondary"
+                        htmlType="button"
+                    ></Button>
+                    <Button text="Generar estadísticas" type="success" htmlType="button"></Button>
+                </div>
+            ) : (
+                <div className="flex justify-center">
+                    <Button
+                        onClick={() => navigate('/buscar')}
+                        text="Buscar activos de conocimiento"
+                        type="secondary"
+                        htmlType="button"
+                    ></Button>
+                </div>
+            )}
+        </main>
+    );
 };
 
 export default MainFeatures;
-
-
