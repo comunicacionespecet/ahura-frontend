@@ -1,9 +1,9 @@
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
 
-export const showSuccess = (message) => toast.success(message);
-export const showError = (message) => toast.error(message);
-export const showInfo = (message) => toast(message);
+export const showSuccess = (message) => toast.success(message, { duration: 8000 });
+export const showError = (message) => toast.error(message, { duration: 8000 });
+export const showInfo = (message) => toast(message, { duration: 8000 });
 
 export const showConfirm = async (title, text = '') => {
     const result = await Swal.fire({
