@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.PROD ? 'http://ec2-54-156-15-66.compute-1.amazonaws.com:3000' : '';
+const BASE_URL = import.meta.env.PROD ? 'http://ec2-3-216-249-17.compute-1.amazonaws.com:3000' : '';
 
 export const uploadFile = async (file) => {
     const formData = new FormData();

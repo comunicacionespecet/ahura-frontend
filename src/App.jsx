@@ -10,6 +10,7 @@ import RegisterAC from './components/organisms/ManageAC';
 import ViewACWrapper from './components/organisms/ViewACWrapper';
 import SearchAC from './components/organisms/SearchAC';
 import ListAdmin from './components/organisms/ListAdmin';
+import Login from './components/organisms/Login';
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                     <Route path="/ver/:id" element={<ViewACWrapper />} />
                     <Route path="/buscar" element={<SearchAC />} />
                     <Route path="/listas" element={<ListAdmin />} />
+                    <Route path="/login" element={<Login />} />
                 </Routes>
                 <AboutSection />
                 <Footer />
