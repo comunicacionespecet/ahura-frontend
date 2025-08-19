@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const SubHeader = () => {
     const navigate = useNavigate();
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated, logout, user } = useAuth();
 
     return (
         <section className="relative w-screen overflow-hidden rounded-none">
@@ -27,7 +27,7 @@ const SubHeader = () => {
                                 navigate('/login');
                             }
                         }}
-                        text={isAuthenticated ? 'Cerrar sesión' : 'Iniciar sesión'}
+                        text={isAuthenticated ? user?.name : 'Iniciar sesión'}
                         type="primary"
                         htmlType="button"
                     />
