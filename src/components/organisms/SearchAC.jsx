@@ -5,6 +5,7 @@ import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
 import { useACs } from '../../hooks/useACs';
 import { useAuth } from '../../context/AuthContext';
+import LoadingScreen from '../../utils/LoadingScreen';
 
 const SearchAC = () => {
     const navigate = useNavigate();
@@ -87,7 +88,7 @@ const SearchAC = () => {
             <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
                 <h4 className="text-4xl font-bold mb-4 text-[#70205B]">Resultados</h4>
                 {loading ? (
-                    <div>Cargando...</div>
+                    <LoadingScreen />
                 ) : (
                     acs.map((item) => (
                         <div key={item.id} className="border-b py-3">

@@ -32,6 +32,12 @@ const MainFeatures = () => {
                         htmlType="button"
                     ></Button>
                     <Button text="Generar estadísticas" type="success" htmlType="button"></Button>
+                    <Button
+                        onClick={() => navigate('/listas')}
+                        text="Gestor de listas"
+                        type="primary"
+                        htmlType="button"
+                    ></Button>
                 </div>
             ) : (
                 <div className="flex justify-center">
