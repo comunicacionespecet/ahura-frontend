@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
     const { login, loading } = useAuth();
-    const [form, setForm] = useState({ username: '', password: '' });
+    const [form, setForm] = useState({ email: '', password: '' });
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -19,13 +19,14 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(form.username, form.password);
+            await login(form.email, form.password);
             showSuccess('¡Bienvenido!');
             navigate('/');
         } catch (err) {
             showError('Credenciales incorrectas');
         }
     };
+
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[#F5F5F5]">
@@ -36,8 +37,9 @@ const Login = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <FormField label="Usuario *" htmlFor="username">
                         <Input
-                            name="username"
-                            value={form.username}
+                            type="email"
+                            name="email"
+                            value={form.email}
                             onChange={handleChange}
                             required
                         />
