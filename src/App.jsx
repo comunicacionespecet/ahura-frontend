@@ -11,6 +11,7 @@ import ViewACWrapper from './components/organisms/ViewACWrapper';
 import SearchAC from './components/organisms/SearchAC';
 import ListAdmin from './components/organisms/ListAdmin';
 import Login from './components/organisms/Login';
+import AdminUsers from './components/organisms/AdminUsers';
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/buscar" element={<SearchAC />} />
                     <Route path="/listas" element={<ListAdmin />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/usuarios" element={<AdminUsers />} />
                 </Routes>
                 <AboutSection />
                 <Footer />

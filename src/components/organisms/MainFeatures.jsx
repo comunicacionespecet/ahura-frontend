@@ -38,6 +38,12 @@ const MainFeatures = () => {
                         type="primary"
                         htmlType="button"
                     ></Button>
+                    <Button
+                        onClick={() => navigate('/usuarios')}
+                        text="Gestor de usuarios"
+                        type="secondary"
+                        htmlType="button"
+                    ></Button>
                 </div>
             ) : (
                 <div className="flex justify-center">

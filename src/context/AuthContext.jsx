@@ -1,62 +1,88 @@
-import React, { createContext, useContext, useState } from 'react';
+const BASE_URL = import.meta.env.VITE_API_URL || '';
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
 
-  const login = async (email, password) => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        'http://ec2-3-216-249-17.compute-1.amazonaws.com:3000/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Auth': '1234',
-          },
-          body: JSON.stringify({ email, password }),
+    const [token, setToken] = useState(() => localStorage.getItem('token') || null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                const now = Date.now() / 1000;
+                if (decoded.exp < now) {
+                    console.warn('Token expirado, cerrando sesión...'); //Cambiarlo por mensaje para el usuario
+                    logout();
+                }
+            } catch (e) {
+                console.error('Token inválido', e);
+                logout();
+            }
         }
-      );
+    }, [token]);
 
-      if (!response.ok) throw new Error('Credenciales inválidas');
+    const login = async (email, password) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Auth: '1234',
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-      const data = await response.json();
+            if (!response.ok) throw new Error('Credenciales inválidas');
 
-      setToken(data.access_token);
-      setUser(data.user || { email });
-      localStorage.setItem('token', data.access_token);
-    } catch (err) {
-      console.error('Error en login:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+            const data = await response.json();
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
-  };
+            setToken(data.access_token);
+            setUser(data.user || { email });
+            console.log('Usuario autenticado:', data.user);
+            console.log('Token recibido:', data.access_token);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        loading,
-        login,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+        } catch (err) {
+            console.error('Error en login:', err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const logout = () => {
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    };
+
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                token,
+                loading,
+                login,
+                logout,
+                isAuthenticated: !!user,
+                isAdmin: user?.role === 'administrador',
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => useContext(AuthContext);
