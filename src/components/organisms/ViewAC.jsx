@@ -21,7 +21,6 @@ const ViewAC = ({ ac }) => {
     const cleanUrl = signedFileUrl?.split('?')[0];
     const fileType = getFileType(cleanUrl);
 
-    // URLs para visores
     const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(signedFileUrl)}&embedded=true`;
     const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(signedFileUrl)}`;
 

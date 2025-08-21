@@ -16,6 +16,9 @@ const Button = ({
         secondary: 'bg-[#70205B] text-white hover:bg-[#561946]',
         success: 'bg-[#8DC63F] text-white hover:bg-[#76a92f]',
         light: 'bg-[#EDEDED] text-black hover:bg-gray-200',
+        dark: 'bg-gray-400 text-white hover:bg-gray-500',
+        admin: 'bg-[#3EBDAC] text-white hover:bg-[#3EBDAC]',
+        user: 'bg-[#35944B] text-white hover:bg-[#35944B]',
     };
 
     return (
@@ -25,7 +28,7 @@ const Button = ({
             className={`${baseStyle} ${typeStyles[type] || typeStyles.primary} ${className}`}
         >
             {icon && <div className="mb-2 text-2xl">{icon}</div>}
-            <span className="text-md font-semibold">{text}</span>
+            <span className="text-md text-xl font-semibold">{text}</span>
         </button>
     );
 };

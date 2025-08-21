@@ -6,6 +6,7 @@ import TextArea from '../atoms/TextArea';
 import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
 import FileUpload from '../molecules/FileUpload';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCreateAC, useUpdateAC, useACById, useDeleteAC } from '../../hooks/useACs';
 import { useUpload } from '../../hooks/useUpload';
@@ -71,7 +72,7 @@ const ManageAC = () => {
     const { ac } = useACById(id);
     const { remove } = useDeleteAC();
     const { upload } = useUpload();
-
+    const navigate = useNavigate();
     const [imagen, setImagen] = useState(null);
     const [archivo, setArchivo] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -202,10 +203,10 @@ const ManageAC = () => {
                 pecetKnowledge: formData.pecetKnowledge || 'Prueba',
                 centralicedRepositories: formData.centralicedRepositories || 'Prueba',
             },
-            LegalRegulations: {
+            legalRegulations: {
                 copyright: formData.copyright || 'Prueba',
                 patents: formData.patents || 'Prueba',
-                tradeSecrests: formData.tradeSecrests || 'Prueba',
+                tradeSecrets: formData.tradeSecrests || 'Prueba',
                 industrialDesigns: formData.industrialDesigns || 'Prueba',
                 brands: formData.brands || 'Prueba',
                 industrialIntellectualProperty: formData.industrialIntellectualProperty || 'Prueba',
@@ -241,7 +242,7 @@ const ManageAC = () => {
         try {
             await remove(id);
             showSuccess('Activo eliminado correctamente');
-            //window.location.href = '/';
+            navigate('/buscar');
         } catch (error) {
             console.error('Error al eliminar el activo:', error);
             alert('Ocurrió un error al intentar eliminar el activo');
@@ -488,12 +489,21 @@ const ManageAC = () => {
                 <div className="md:col-span-2 flex justify-center py-10 gap-4">
                     {id && isAdmin ? (
                         <>
-                            <Button text="Guardar cambios" type="primary" htmlType="submit" />
+                            <Button 
+                                text="Guardar cambios" 
+                                type="primary" 
+                                htmlType="submit" />
                             <Button
                                 text="Eliminar"
                                 type="secondary"
                                 htmlType="button"
                                 onClick={handleDelete}
+                            />
+                            <Button
+                                text="Vista previa"
+                                type="admin"
+                                htmlType="button"
+                                onClick={() => navigate(`/ver/${id}`)}
                             />
                         </>
                     ) : (
