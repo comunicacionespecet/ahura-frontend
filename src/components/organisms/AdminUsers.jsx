@@ -29,34 +29,38 @@ const AdminUsers = () => {
   if (error) return <div className="text-red-600">{error}</div>;
 
   return (
-    <div className="overflow-x-auto">
-      <h2 className="text-4xl font-bold text-[#70205B] mb-4 text-center py-8">Administrar usuarios</h2>
-      <table className="min-w-full border border-[#8DC63F] rounded-lg overflow-hidden bg-white shadow">
-        <thead>
-          <tr className="bg-[#F3F8F0]">
-            <th className="p-3 border-b border-[#8DC63F] text-[#026937] font-bold text-center align-middle">ID</th>
-            <th className="p-3 border-b border-[#8DC63F] text-[#026937] font-bold text-center align-middle">Nombre</th>
-            <th className="p-3 border-b border-[#8DC63F] text-[#026937] font-bold text-center align-middle">Correo</th>
-            <th className="p-3 border-b border-[#8DC63F] text-[#026937] font-bold text-center align-middle">Rol</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.id} className="hover:bg-[#F9F6FB] transition">
-              <td className="p-3 border-b border-[#8DC63F] text-center align-middle">{user.id}</td>
-              <td className="p-3 border-b border-[#8DC63F] text-center align-middle">{user.name}</td>
-              <td className="p-3 border-b border-[#8DC63F] text-center align-middle">{user.email}</td>
-              <td className="p-3 border-b border-[#8DC63F] text-center align-middle">
-                <UserRoleSelect
-                  value={user.role}
-                  onChange={role => handleRoleChange(user.id, role)}
-                />
-              </td>
+    <div className="flex py-18 justify-center">
+      <div className="overflow-x-auto w-full max-w-4xl">
+        <h2 className="text-3xl font-bold text-[#70205B] mb-6 text-center">Administrar usuarios</h2>
+        <table className="w-full border border-[#8DC63F] rounded-lg overflow-hidden bg-white shadow">
+          <thead>
+            <tr className="bg-[#F3F8F0]">
+              <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">ID</th>
+              <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">Nombre</th>
+              <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">Correo</th>
+              <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">Rol</th>
+
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user.id} className="hover:bg-[#F9F6FB] transition">
+                <td className="p-2 border-b border-[#8DC63F] text-center">{user.id}</td>
+                <td className="p-2 border-b border-[#8DC63F] text-center">{user.name}</td>
+                <td className="p-2 border-b border-[#8DC63F] text-center">{user.email}</td>
+                <td className="p-2 border-b border-[#8DC63F] text-center">
+                  <UserRoleSelect
+                    value={user.role}
+                    onChange={role => handleRoleChange(user.id, role)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
+
   );
 };
 

@@ -43,7 +43,7 @@ export const getSignedImageUrl = async (fileName) => {
     const token = localStorage.getItem("token");
 
     const response = await fetch(
-        `${BASE_URL}/upload?key=${encodeURIComponent(fileName)}`,
+        `${BASE_URL}/upload/preview?key=${encodeURIComponent(fileName)}`,
         {
             headers: {
                 "Auth": "1234",

@@ -12,6 +12,7 @@ import SearchAC from './components/organisms/SearchAC';
 import ListAdmin from './components/organisms/ListAdmin';
 import Login from './components/organisms/Login';
 import AdminUsers from './components/organisms/AdminUsers';
+import PrivateRoute from './components/organisms/PrivateRoute';
 
 function App() {
     return (
@@ -31,13 +32,43 @@ function App() {
                 <SubHeader />
                 <Routes>
                     <Route path="/" element={<MainFeatures />} />
-                    <Route path="/registrar" element={<RegisterAC />} />
-                    <Route path="/registrar/:id" element={<RegisterAC />} />
+
+                    <Route
+                        path="/registrar"
+                        element={
+                            <PrivateRoute>
+                                <RegisterAC />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/registrar/:id"
+                        element={
+                            <PrivateRoute>
+                                <RegisterAC />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/listas"
+                        element={
+                            <PrivateRoute>
+                                <ListAdmin />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/usuarios"
+                        element={
+                            <PrivateRoute>
+                                <AdminUsers />
+                            </PrivateRoute>
+                        }
+                    />
+
                     <Route path="/ver/:id" element={<ViewACWrapper />} />
                     <Route path="/buscar" element={<SearchAC />} />
-                    <Route path="/listas" element={<ListAdmin />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/usuarios" element={<AdminUsers />} />
                 </Routes>
                 <AboutSection />
                 <Footer />

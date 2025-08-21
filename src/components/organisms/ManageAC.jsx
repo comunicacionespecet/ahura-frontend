@@ -203,10 +203,10 @@ const ManageAC = () => {
                 pecetKnowledge: formData.pecetKnowledge || 'Prueba',
                 centralicedRepositories: formData.centralicedRepositories || 'Prueba',
             },
-            LegalRegulations: {
+            legalRegulations: {
                 copyright: formData.copyright || 'Prueba',
                 patents: formData.patents || 'Prueba',
-                tradeSecrests: formData.tradeSecrests || 'Prueba',
+                tradeSecrets: formData.tradeSecrests || 'Prueba',
                 industrialDesigns: formData.industrialDesigns || 'Prueba',
                 brands: formData.brands || 'Prueba',
                 industrialIntellectualProperty: formData.industrialIntellectualProperty || 'Prueba',
@@ -489,12 +489,21 @@ const ManageAC = () => {
                 <div className="md:col-span-2 flex justify-center py-10 gap-4">
                     {id && isAdmin ? (
                         <>
-                            <Button text="Guardar cambios" type="primary" htmlType="submit" />
+                            <Button 
+                                text="Guardar cambios" 
+                                type="primary" 
+                                htmlType="submit" />
                             <Button
                                 text="Eliminar"
                                 type="secondary"
                                 htmlType="button"
                                 onClick={handleDelete}
+                            />
+                            <Button
+                                text="Vista previa"
+                                type="admin"
+                                htmlType="button"
+                                onClick={() => navigate(`/ver/${id}`)}
                             />
                         </>
                     ) : (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, X } from "lucide-react";
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
 
 const tabs = [
@@ -64,14 +64,29 @@ const tabs = [
 
 const AdminTabs = () => {
     const [activeTab, setActiveTab] = useState(0);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentItem, setCurrentItem] = useState("");
+    const [editedTitle, setEditedTitle] = useState("");
+    const [editedDescription, setEditedDescription] = useState("");
 
     const getDescription = (item) => `Descripción de ${item}`;
 
     const handleEdit = async (item) => {
-        const confirmDelete = await showConfirm(
-            '¿Estás seguro?',
-            'Esta acción no se puede deshacer'
-        );
+        setCurrentItem(item);
+        setEditedTitle(item);
+        setEditedDescription(getDescription(item));
+        setIsEditing(true);
+    };
+
+    const handleSave = () => {
+        const newTabs = [...tabs];
+        const index = newTabs[activeTab].data.indexOf(currentItem);
+        if (index !== -1) {
+            newTabs[activeTab].data[index] = editedTitle;
+        }
+        setTabs(newTabs);
+        console.log("Guardado:", { titulo: editedTitle, descripcion: editedDescription });
+        setIsEditing(false);
     };
 
     const handleDelete = async (item) => {
@@ -87,11 +102,10 @@ const AdminTabs = () => {
                 {tabs.map((tab, tabIndex) => (
                     <button
                         key={tab.label}
-                        className={`px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none ${
-                            activeTab === tabIndex
-                                ? 'border-[#70205B] text-[#70205B]'
-                                : 'border-transparent text-gray-500'
-                        }`}
+                        className={`px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none ${activeTab === tabIndex
+                            ? 'border-[#70205B] text-[#70205B]'
+                            : 'border-transparent text-gray-700'
+                            }`}
                         onClick={() => setActiveTab(tabIndex)}
                     >
                         {tab.label}
@@ -133,6 +147,50 @@ const AdminTabs = () => {
                     </tbody>
                 </table>
             </div>
+
+            {isEditing && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-2xl shadow-xl w-96 relative">
+                        <button
+                            className="absolute top-3 right-3 text-gray-500 hover:text-black"
+                            onClick={() => setIsEditing(false)}
+                        >
+                            <X size={20} />
+                        </button>
+                        <h2 className="text-lg font-semibold mb-4">Editar elemento</h2>
+
+                        <label className="block text-sm font-medium">Título</label>
+                        <input
+                            type="text"
+                            value={editedTitle}
+                            onChange={(e) => setEditedTitle(e.target.value)}
+                            className="w-full p-2 border rounded mb-4"
+                        />
+
+                        <label className="block text-sm font-medium">Descripción</label>
+                        <textarea
+                            value={editedDescription}
+                            onChange={(e) => setEditedDescription(e.target.value)}
+                            className="w-full p-2 border rounded mb-4"
+                        />
+
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setIsEditing(false)}
+                                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                className="px-4 py-2 rounded bg-[#70205B] text-white hover:bg-[#50153f]"
+                            >
+                                Guardar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
