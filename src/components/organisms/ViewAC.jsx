@@ -6,9 +6,20 @@ const getFileType = (fileUrl) => {
     if (!fileUrl) return '';
     const ext = fileUrl.split('.').pop().toLowerCase();
     if (
-        ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'ppt', 'pptx', 'mp4'].includes(
-            ext
-        )
+        [
+            'pdf',
+            'doc',
+            'docx',
+            'xls',
+            'xlsx',
+            'jpg',
+            'jpeg',
+            'png',
+            'ppt',
+            'pptx',
+            'mp4',
+            'mp3',
+        ].includes(ext)
     ) {
         return ext;
     }
@@ -124,6 +135,13 @@ const ViewAC = ({ ac, user }) => {
                     <source src={signedFileUrl} type="video/mp4" />
                     Tu navegador no soporta la etiqueta de video.
                 </video>
+            )}
+
+            {signedFileUrl && fileType === 'mp3' && (
+                <audio controls className="mb-4 w-full rounded border">
+                    <source src={signedFileUrl} type="audio/mpeg" />
+                    Tu navegador no soporta la etiqueta de audio.
+                </audio>
             )}
 
             {/* Imagen */}
