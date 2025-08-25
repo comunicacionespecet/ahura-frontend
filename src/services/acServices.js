@@ -1,31 +1,31 @@
 const BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export const getAllACs = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     const response = await fetch(`${BASE_URL}/assets`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-            "Content-Type": "application/json",
-            "Auth": "1234",
-            "Authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Auth: '1234',
+            Authorization: `Bearer ${token}`,
         },
     });
 
     if (!response.ok) {
-        throw new Error("Error al obtener los ACs");
+        throw new Error('Error al obtener los ACs');
     }
     return await response.json();
 };
 
 export const getACById = async (id) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
     const response = await fetch(`${BASE_URL}/assets/${id}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-            "Content-Type": "application/json",
-            "Auth": "1234",
-            "Authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Auth: '1234',
+            Authorization: `Bearer ${token}`,
         },
     });
 
@@ -37,13 +37,13 @@ export const getACById = async (id) => {
 };
 
 export const createAC = async (acData) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     const response = await fetch(`${BASE_URL}/assets`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            "Auth": "1234",
-            "Authorization": `Bearer ${token}`,
+            Auth: '1234',
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(acData),
     });
@@ -54,13 +54,13 @@ export const createAC = async (acData) => {
 };
 
 export const updateAC = async (id, acData) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     const response = await fetch(`${BASE_URL}/assets/${id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            "Auth": "1234",
-            "Authorization": `Bearer ${token}`,
+            Auth: '1234',
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(acData),
     });
@@ -71,14 +71,14 @@ export const updateAC = async (id, acData) => {
 };
 
 export const deleteAC = async (id) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
     const response = await fetch(`${BASE_URL}/assets/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-            "Content-Type": "application/json",
-            "Auth": "1234",
-            "Authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Auth: '1234',
+            Authorization: `Bearer ${token}`,
         },
     });
 

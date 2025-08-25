@@ -18,6 +18,13 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(form.email)) {
+            showError('Por favor ingresa un correo electrónico válido.');
+            return;
+        }
+
         try {
             await login(form.email, form.password);
             showSuccess('¡Bienvenido!');
@@ -28,7 +35,7 @@ const Login = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-[#F5F5F5]">
+        <div className="flex items-center justify-center py-20 bg-[#F5F5F5]">
             <div className="bg-white rounded shadow-lg p-8 w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-6 text-[#70205B] text-center">
                     Iniciar sesión
