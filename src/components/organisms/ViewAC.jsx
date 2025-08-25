@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import CommentsSection from '../organisms/CommentSection';
 
 const getFileType = (fileUrl) => {
     if (!fileUrl) return '';
@@ -14,20 +15,25 @@ const getFileType = (fileUrl) => {
     return '';
 };
 
-const ViewAC = ({ ac }) => {
+const ViewAC = ({ ac, user }) => {
     if (!ac) return <div>No se encontró el activo.</div>;
 
     const signedFileUrl = ac.signedFileUrl;
     const cleanUrl = signedFileUrl?.split('?')[0];
     const fileType = getFileType(cleanUrl);
 
-    const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(signedFileUrl)}&embedded=true`;
-    const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(signedFileUrl)}`;
+    const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(
+        signedFileUrl
+    )}&embedded=true`;
+    const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+        signedFileUrl
+    )}`;
 
     return (
-        <div className="bg-white p-6 rounded shadow max-w-8xl w-full mx-auto">
+        <div className="bg-white p-6 rounded shadow max-w-8xl w-full mx-auto space-y-6">
             <h2 className="text-2xl font-bold mb-4">{ac.titulo}</h2>
 
+            {/* Info del activo */}
             <div className="flex flex-col md:flex-row gap-6 mb-6">
                 {ac.signedImageUrl && (
                     <div className="md:w-1/2 flex justify-center">
@@ -66,7 +72,7 @@ const ViewAC = ({ ac }) => {
                         <strong>Palabras Clave:</strong> {ac.keywords}
                     </p>
                     <p>
-                        <strong>Origen:</strong> {ac.howIsItStored.pecetKnowledge}
+                        <strong>Origen:</strong> {ac.origin}
                     </p>
                     <p>
                         <strong>Ubicación:</strong> {ac.howIsItStored.centralicedRepositories}
@@ -112,16 +118,21 @@ const ViewAC = ({ ac }) => {
                 />
             )}
 
+            {/* Video */}
             {signedFileUrl && fileType === 'mp4' && (
-                <video controls width="100%" height="auto" className="mb-4 rounded border">
+                <video controls width="100%" className="mb-4 rounded border">
                     <source src={signedFileUrl} type="video/mp4" />
                     Tu navegador no soporta la etiqueta de video.
                 </video>
             )}
 
+            {/* Imagen */}
             {signedFileUrl && ['jpg', 'jpeg', 'png'].includes(fileType) && (
                 <img src={signedFileUrl} alt="Vista previa" className="max-w-full h-auto mb-4" />
             )}
+
+            {/* Comentarios */}
+            <CommentsSection assetId={ac.id} authorId={user?.id} />
         </div>
     );
 };

@@ -9,7 +9,9 @@ const Button = ({
     className = '',
     htmlType = 'button',
 }) => {
-    const baseStyle = `flex flex-col items-center justify-center rounded p-4 transition-transform duration-200 hover:scale-105 text-center`;
+    const baseStyle = `flex flex-col items-center justify-center rounded 
+     px-3 py-2 md:px-4 md:py-3 
+     transition-transform duration-200 hover:scale-105 text-center`;
 
     const typeStyles = {
         primary: 'bg-[#137598] text-white hover:bg-[#0f5e77]',
@@ -27,8 +29,8 @@ const Button = ({
             onClick={onClick}
             className={`${baseStyle} ${typeStyles[type] || typeStyles.primary} ${className}`}
         >
-            {icon && <div className="mb-2 text-2xl">{icon}</div>}
-            <span className="text-md text-xl font-semibold">{text}</span>
+            {icon && <div className="mb-1 md:mb-2 text-lg md:text-2xl">{icon}</div>}
+            <span className="text-sm md:text-base font-semibold">{text}</span>
         </button>
     );
 };

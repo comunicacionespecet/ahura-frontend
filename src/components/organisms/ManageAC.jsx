@@ -11,64 +11,17 @@ import { useAuth } from '../../context/AuthContext';
 import { useCreateAC, useUpdateAC, useACById, useDeleteAC } from '../../hooks/useACs';
 import { useUpload } from '../../hooks/useUpload';
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
+import { useCatalogs } from '../../hooks/useCatalogs';
 
-const tiposActivo = ['Explícito', 'Físico', 'Tácito'];
-const tiposConocimiento = [
-    'Proyectos',
-    'Publicaciones',
-    'Bases de datos',
-    'Protocolos',
-    'Tablas',
-    'Fotos',
-    'Videos',
-    'Métodos desarrollados o mejorados',
-    'Manuales',
-    'Prototipos',
-    'Herramientas tecnológicas',
-    'Muestras biológicas',
-    'Software',
-    'Productos',
-    'Patentes',
-    'Marcas registradas',
-    'Actas de inicio de proyectos',
-    'Eventos organizados',
-    'Memorias Eventos',
-    'Trabajos presentados en eventos',
-    'Premios y distinciones',
-    'Archivos de prensa',
-    'Trabajos de grado',
-    'Informes',
-    'Saberes',
-    'Experiencias',
-];
-const formatos = [
-    'PDF',
-    'DOI',
-    'EXCEL',
-    'VIDEOS',
-    'Word',
-    'JPG',
-    'JPEG',
-    'PNG',
-    'GIF',
-    'TIFF',
-    'BMP',
-    'MP3',
-    'MP4',
-    'FÍSICOS',
-    'URL',
-];
-const origenes = ['Investigación', 'Experiencia', 'Desarrollo', 'Otros'];
 const accesibilidad = ['Se puede acceder', 'No se puede acceder'];
-const niveles = ['Alta', 'Media', 'Baja'];
 const visibilidad = ['Público', 'Privado'];
-const estadoAC = ['Finalizado', 'En proceso', 'Suspendido'];
 
 const ManageAC = () => {
     const { id } = useParams();
     const { isAdmin } = useAuth();
     const { create } = useCreateAC();
     const { update } = useUpdateAC();
+    const { catalogs, loading, error } = useCatalogs();
     const { ac } = useACById(id);
     const { remove } = useDeleteAC();
     const { upload } = useUpload();
@@ -99,12 +52,15 @@ const ManageAC = () => {
         centralicedRepositories: '',
         copyright: '',
         patents: '',
-        tradeSecrests: '',
+        tradeSecrets: '',
         industrialDesigns: '',
         brands: '',
         industrialIntellectualProperty: '',
         ownerId: '',
         criticality: '',
+        viewCount: 0,
+        downloadCount: 0,
+        commentCount: 0,
     });
 
     useEffect(() => {
@@ -132,15 +88,18 @@ const ManageAC = () => {
                 relatedIds: ac.relatedIds?.join(', ') || '',
                 pecetKnowledge: ac.howIsItStored?.pecetKnowledge || '',
                 centralicedRepositories: ac.howIsItStored?.centralicedRepositories || '',
-                copyright: ac.LegalRegulations?.copyright || '',
-                patents: ac.LegalRegulations?.patents || '',
-                tradeSecrests: ac.LegalRegulations?.tradeSecrests || '',
-                industrialDesigns: ac.LegalRegulations?.industrialDesigns || '',
-                brands: ac.LegalRegulations?.brands || '',
+                copyright: ac.legalRegulations?.copyright || '',
+                patents: ac.legalRegulations?.patents || '',
+                tradeSecrets: ac.legalRegulations?.tradeSecrets || '',
+                industrialDesigns: ac.legalRegulations?.industrialDesigns || '',
+                brands: ac.legalRegulations?.brands || '',
                 industrialIntellectualProperty:
-                    ac.LegalRegulations?.industrialIntellectualProperty || '',
+                    ac.legalRegulations?.industrialIntellectualProperty || '',
                 ownerId: ac.ownerId || '',
                 criticality: ac.criticality || '',
+                viewCount: ac.viewCount || 0,
+                downloadCount: ac.downloadCount || 0,
+                commentCount: ac.commentCount || 0,
             });
             setPreviewUrl(ac.image || null);
         }
@@ -179,7 +138,7 @@ const ManageAC = () => {
         const acData = {
             id: formData.id,
             title: formData.titulo,
-            publishDate: formData.fecha,
+            publishDate: formData.fecha ? new Date(formData.fecha).toISOString() : null,
             knowledgeType: formData.tipoConocimiento,
             description: formData.descripcion,
             image: uploadImageName || '',
@@ -194,28 +153,32 @@ const ManageAC = () => {
                 : [],
             availability: {
                 accessibility: formData.accesible === 'Se puede acceder',
-                location: formData.ubicacion,
+                location: formData.ubicacion || '',
             },
             classificationLevel: {
-                level: formData.clasificacion,
+                level: formData.clasificacion || '',
             },
             howIsItStored: {
-                pecetKnowledge: formData.pecetKnowledge || 'Prueba',
-                centralicedRepositories: formData.centralicedRepositories || 'Prueba',
+                pecetKnowledge: formData.pecetKnowledge || '',
+                centralicedRepositories: formData.centralicedRepositories || '',
             },
             legalRegulations: {
-                copyright: formData.copyright || 'Prueba',
-                patents: formData.patents || 'Prueba',
-                tradeSecrets: formData.tradeSecrests || 'Prueba',
-                industrialDesigns: formData.industrialDesigns || 'Prueba',
-                brands: formData.brands || 'Prueba',
-                industrialIntellectualProperty: formData.industrialIntellectualProperty || 'Prueba',
+                copyright: formData.copyright || '',
+                patents: formData.patents || '',
+                tradeSecrets: formData.tradeSecrets || '', // ✅ corregido
+                industrialDesigns: formData.industrialDesigns || '',
+                brands: formData.brands || '',
+                industrialIntellectualProperty: formData.industrialIntellectualProperty || '',
             },
             ownerId: formData.ownerId || 'Prueba',
-            responsibleOwner: formData.propietarioAC,
+            responsibleOwner: formData.autor || formData.propietarioAC || '', // ✅ sincronizado
             confidentiality: formData.visibilidad === 'Privado',
-            criticality: formData.criticality || 'Prueba',
-            status: formData.estadoAC,
+            criticality: formData.criticality || '',
+            status: formData.estadoAC || '',
+            origin: formData.origen || '',
+            viewCount: ac?.viewCount || 0,
+            downloadCount: ac?.downloadCount || 0,
+            commentCount: ac?.commentCount || 0,
         };
 
         try {
@@ -327,24 +290,25 @@ const ManageAC = () => {
                     />
                 </FormField>
 
-                <FormField label="Tipo de activo" htmlFor="tipoActivo">
+                <FormField label="Tipo de conocimiento*" htmlFor="tipoActivo">
                     <select
                         id="tipoActivo"
                         name="tipoActivo"
                         value={formData.tipoActivo}
                         onChange={handleChange}
+                        required
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
-                        {tiposActivo.map((tipo) => (
-                            <option key={tipo} value={tipo}>
-                                {tipo}
+                        {catalogs?.activeKnowledgeTypeEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
                             </option>
                         ))}
                     </select>
                 </FormField>
 
-                <FormField label="Tipo de conocimiento *" htmlFor="tipoConocimiento">
+                <FormField label="Tipo de activo*" htmlFor="tipoConocimiento">
                     <select
                         id="tipoConocimiento"
                         name="tipoConocimiento"
@@ -354,9 +318,9 @@ const ManageAC = () => {
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
-                        {tiposConocimiento.map((item) => (
-                            <option key={item} value={item}>
-                                {item}
+                        {catalogs?.knowledgeTypeEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
                             </option>
                         ))}
                     </select>
@@ -372,9 +336,9 @@ const ManageAC = () => {
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
-                        {formatos.map((item) => (
-                            <option key={item} value={item}>
-                                {item}
+                        {catalogs?.formatEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
                             </option>
                         ))}
                     </select>
@@ -397,9 +361,9 @@ const ManageAC = () => {
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
-                        {origenes.map((item) => (
-                            <option key={item} value={item}>
-                                {item}
+                        {catalogs?.originEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
                             </option>
                         ))}
                     </select>
@@ -434,6 +398,23 @@ const ManageAC = () => {
                     </select>
                 </FormField>
 
+                <FormField label="Criticidad" htmlFor="criticality">
+                    <select
+                        id="criticality"
+                        name="criticality"
+                        value={formData.criticality}
+                        onChange={handleChange}
+                        className="border border-[#8DC63F] p-2 rounded w-full"
+                    >
+                        <option value="">Seleccione...</option>
+                        {catalogs?.criticalityEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
+                            </option>
+                        ))}
+                    </select>
+                </FormField>
+
                 <FormField label="Visibilidad" htmlFor="visibilidad">
                     <select
                         id="visibilidad"
@@ -460,9 +441,9 @@ const ManageAC = () => {
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
-                        {niveles.map((item) => (
-                            <option key={item} value={item}>
-                                {item}
+                        {catalogs?.classificationLevelLevelEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
                             </option>
                         ))}
                     </select>
@@ -478,9 +459,9 @@ const ManageAC = () => {
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
-                        {estadoAC.map((item) => (
-                            <option key={item} value={item}>
-                                {item}
+                        {catalogs?.assetStatusEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
                             </option>
                         ))}
                     </select>
@@ -489,10 +470,7 @@ const ManageAC = () => {
                 <div className="md:col-span-2 flex justify-center py-10 gap-4">
                     {id && isAdmin ? (
                         <>
-                            <Button 
-                                text="Guardar cambios" 
-                                type="primary" 
-                                htmlType="submit" />
+                            <Button text="Guardar cambios" type="primary" htmlType="submit" />
                             <Button
                                 text="Eliminar"
                                 type="secondary"

@@ -13,7 +13,6 @@ const MainFeatures = () => {
 
             {isAdmin ? (
                 <div className="flex flex-col items-center gap-6">
-
                     <div className="flex flex-wrap justify-center gap-6">
                         <Button
                             onClick={() => navigate('/registrar')}
@@ -59,14 +58,12 @@ const MainFeatures = () => {
                     <Button
                         onClick={() => navigate('/buscar')}
                         text="Buscar activos de conocimiento"
-                        type="user"
+                        type="dark"
                         htmlType="button"
                         className="w-full md:w-[300px]"
                     />
                 </div>
             )}
-
-
         </main>
     );
 };

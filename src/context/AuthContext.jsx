@@ -1,10 +1,8 @@
 const BASE_URL = import.meta.env.VITE_API_URL || '';
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { showError } from "../utils/alerts";
-
-
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { showError } from '../utils/alerts';
 
 const AuthContext = createContext(null);
 
@@ -23,7 +21,7 @@ export const AuthProvider = ({ children }) => {
                 const decoded = jwtDecode(token);
                 const now = Date.now() / 1000;
                 if (decoded.exp < now) {
-                    showError("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+                    showError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
                     logout();
                 }
             } catch (e) {

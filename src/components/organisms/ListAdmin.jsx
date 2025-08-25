@@ -1,153 +1,194 @@
 import React, { useState } from 'react';
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X, Plus } from 'lucide-react';
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
-
-const tabs = [
-    { label: 'Tipos Activo', data: ['Explícito', 'Físico', 'Tácito'] },
-    {
-        label: 'Tipos Conocimiento',
-        data: [
-            'Proyectos',
-            'Publicaciones',
-            'Bases de datos',
-            'Protocolos',
-            'Tablas',
-            'Fotos',
-            'Videos',
-            'Métodos desarrollados o mejorados',
-            'Manuales',
-            'Prototipos',
-            'Herramientas tecnológicas',
-            'Muestras biológicas',
-            'Software',
-            'Productos',
-            'Patentes',
-            'Marcas registradas',
-            'Actas de inicio de proyectos',
-            'Eventos organizados',
-            'Memorias Eventos',
-            'Trabajos presentados en eventos',
-            'Premios y distinciones',
-            'Archivos de prensa',
-            'Trabajos de grado',
-            'Informes',
-            'Saberes',
-            'Experiencias',
-        ],
-    },
-    {
-        label: 'Formatos',
-        data: [
-            'PDF',
-            'DOI',
-            'EXCEL',
-            'VIDEOS',
-            'Word',
-            'JPG',
-            'JPEG',
-            'PNG',
-            'GIF',
-            'TIFF',
-            'BMP',
-            'MP3',
-            'MP4',
-            'FÍSICOS',
-            'URL',
-        ],
-    },
-    { label: 'Orígenes', data: ['Investigación', 'Experiencia', 'Desarrollo', 'Otros'] },
-    { label: 'Accesibilidad', data: ['Se puede acceder', 'No se puede acceder'] },
-    { label: 'Niveles', data: ['Alta', 'Media', 'Baja'] },
-    { label: 'Visibilidad', data: ['Público', 'Privado'] },
-    { label: 'Estado AC', data: ['Finalizado', 'En proceso', 'Suspendido'] },
-];
+import { useCatalogs } from '../../hooks/useCatalogs';
 
 const AdminTabs = () => {
+    const {
+        catalogs,
+        loading,
+        error,
+        setCatalogs,
+        handlePostCatalogItem,
+        handleUpdateCatalog,
+        handleDeleteCatalogItem,
+    } = useCatalogs();
+
     const [activeTab, setActiveTab] = useState(0);
     const [isEditing, setIsEditing] = useState(false);
-    const [currentItem, setCurrentItem] = useState("");
-    const [editedTitle, setEditedTitle] = useState("");
-    const [editedDescription, setEditedDescription] = useState("");
+    const [isAdding, setIsAdding] = useState(false);
+    const [currentItem, setCurrentItem] = useState(null);
+    const [editedTitle, setEditedTitle] = useState('');
+    const [editedDescription, setEditedDescription] = useState('');
 
-    const getDescription = (item) => `Descripción de ${item}`;
+    if (loading) return <p className="p-6">Cargando...</p>;
+    if (error) return <p className="p-6 text-red-600">Error: {error.message}</p>;
+    if (!catalogs) return <p className="p-6">No hay catálogos disponibles</p>;
 
-    const handleEdit = async (item) => {
-        setCurrentItem(item);
-        setEditedTitle(item);
-        setEditedDescription(getDescription(item));
+    const tabs = Object.keys(catalogs);
+
+    const tabLabels = {
+        activeKnowledgeTypeEnum: 'Tipos de conocimiento',
+        formatEnum: 'Formatos',
+        knowledgeTypeEnum: 'Clasificación del conocimiento',
+        originEnum: 'Origen',
+        classificationLevelLevelEnum: 'Nivel de clasificación',
+        criticalityEnum: 'Criticidad',
+        assetStatusEnum: 'Estado del activo',
+        commentStatusEnum: 'Estado del comentario',
+        loggerActionEnum: 'Acciones del sistema',
+    };
+
+    const handleEdit = (item, tabName) => {
+        setCurrentItem({ ...item, tabName });
+        setEditedTitle(item.key ?? item.title);
+        setEditedDescription(item.descripcion ?? item.description ?? '');
         setIsEditing(true);
     };
 
-    const handleSave = () => {
-        const newTabs = [...tabs];
-        const index = newTabs[activeTab].data.indexOf(currentItem);
-        if (index !== -1) {
-            newTabs[activeTab].data[index] = editedTitle;
+    const handleSave = async () => {
+        if (!currentItem) return;
+        try {
+            const updatedBody = { ...catalogs };
+            const enumList = updatedBody[currentItem.tabName] || [];
+            const idx = enumList.findIndex(
+                (i) => (i.key ?? i.title) === (currentItem.key ?? currentItem.title)
+            );
+            if (idx !== -1) {
+                enumList[idx] = {
+                    ...enumList[idx],
+                    key: editedTitle,
+                    title: editedTitle,
+                    descripcion: editedDescription,
+                    description: editedDescription,
+                };
+                updatedBody[currentItem.tabName] = enumList;
+            }
+            await handleUpdateCatalog(updatedBody.slug ?? 'default', updatedBody);
+
+            setCatalogs(updatedBody);
+            setCurrentItem(null);
+            setIsEditing(false);
+            showSuccess('Elemento actualizado correctamente');
+        } catch (err) {
+            console.error(err);
+            showError('Error actualizando elemento');
         }
-        setTabs(newTabs);
-        console.log("Guardado:", { titulo: editedTitle, descripcion: editedDescription });
-        setIsEditing(false);
     };
 
-    const handleDelete = async (item) => {
+    const handleDelete = async (item, tabName) => {
         const confirmDelete = await showConfirm(
             '¿Estás seguro?',
             'Esta acción no se puede deshacer'
         );
+        if (!confirmDelete) return;
+        try {
+            const slug = catalogs.slug ?? 'default';
+            await handleDeleteCatalogItem(slug, tabName, item.key ?? item.title);
+            showSuccess('Elemento eliminado correctamente');
+        } catch (err) {
+            console.error(err);
+            showError('Error eliminando elemento');
+        }
+    };
+
+    const handleAdd = async () => {
+        try {
+            const slug = catalogs.slug ?? 'default';
+            await handlePostCatalogItem(slug, tabs[activeTab], {
+                key: editedTitle,
+                descripcion: editedDescription,
+            });
+
+            const updatedBody = { ...catalogs };
+            updatedBody[tabs[activeTab]] = [
+                ...updatedBody[tabs[activeTab]],
+                { key: editedTitle, descripcion: editedDescription },
+            ];
+
+            setCatalogs(updatedBody);
+            setEditedTitle('');
+            setEditedDescription('');
+            setIsAdding(false);
+
+            showSuccess('Elemento agregado correctamente');
+        } catch (err) {
+            console.error(err);
+            showError('Error agregando elemento');
+        }
     };
 
     return (
         <div className="p-6 bg-[#FBFBFB]">
-            <div className="flex border-b mb-4">
-                {tabs.map((tab, tabIndex) => (
-                    <button
-                        key={tab.label}
-                        className={`px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none ${activeTab === tabIndex
-                            ? 'border-[#70205B] text-[#70205B]'
-                            : 'border-transparent text-gray-700'
+            <div className="flex border-b mb-4 overflow-x-auto">
+                <div className="flex flex-nowrap overflow-x-auto overflow-y-hidden">
+                    {tabs.map((tabName, i) => (
+                        <button
+                            key={tabName}
+                            className={`flex-shrink-0 whitespace-nowrap px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none ${
+                                activeTab === i
+                                    ? 'border-[#70205B] text-[#70205B]'
+                                    : 'border-transparent text-gray-700'
                             }`}
-                        onClick={() => setActiveTab(tabIndex)}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-            <div className="p-4 bg-white rounded shadow overflow-x-auto">
-                <table className="min-w-full text-left">
-                    <thead>
-                        <tr>
-                            <th className="px-4 py-2">Título</th>
-                            <th className="px-4 py-2">Descripción</th>
-                            <th className="px-4 py-2 text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tabs[activeTab].data.map((item) => (
-                            <tr key={item} className="border-t">
-                                <td className="px-4 py-2">{item}</td>
-                                <td className="px-4 py-2">{getDescription(item)}</td>
-                                <td className="px-4 py-2 flex justify-center gap-2">
-                                    <button
-                                        onClick={() => handleEdit(item)}
-                                        className="text-blue-600 hover:text-blue-800"
-                                        title="Editar"
-                                    >
-                                        <Pencil size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(item)}
-                                        className="text-red-600 hover:text-red-800"
-                                        title="Borrar"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                            onClick={() => setActiveTab(i)}
+                        >
+                            {tabLabels[tabName] ?? tabName}
+                        </button>
+                    ))}
+                </div>
             </div>
 
+            {activeTab !== null && (
+                <div className="p-4 bg-white rounded shadow overflow-x-auto">
+                    <div className="flex justify-end mb-2">
+                        <button
+                            onClick={() => {
+                                setIsAdding(true);
+                                setEditedTitle('');
+                                setEditedDescription('');
+                            }}
+                            className="flex items-center gap-1 px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+                        >
+                            <Plus size={16} /> Agregar
+                        </button>
+                    </div>
+                    <table className="min-w-full text-left">
+                        <thead>
+                            <tr>
+                                <th className="px-4 py-2">Título</th>
+                                <th className="px-4 py-2">Descripción</th>
+                                <th className="px-4 py-2 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {catalogs[tabs[activeTab]].map((item, idx) => (
+                                <tr key={`${item.key ?? item.title}-${idx}`} className="border-t">
+                                    <td className="px-4 py-2">{item.key}</td>
+                                    <td className="px-4 py-2">{item.descripcion}</td>
+                                    <td className="px-4 py-2 flex justify-center gap-2">
+                                        <button
+                                            onClick={() => handleEdit(item, tabs[activeTab])}
+                                            className="text-blue-600 hover:text-blue-800"
+                                            title="Editar"
+                                        >
+                                            <Pencil size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(item, tabs[activeTab])}
+                                            className="text-red-600 hover:text-red-800"
+                                            title="Borrar"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {/* Modal Edit */}
             {isEditing && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-2xl shadow-xl w-96 relative">
@@ -186,6 +227,51 @@ const AdminTabs = () => {
                                 className="px-4 py-2 rounded bg-[#70205B] text-white hover:bg-[#50153f]"
                             >
                                 Guardar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Add */}
+            {isAdding && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-2xl shadow-xl w-96 relative">
+                        <button
+                            className="absolute top-3 right-3 text-gray-500 hover:text-black"
+                            onClick={() => setIsAdding(false)}
+                        >
+                            <X size={20} />
+                        </button>
+                        <h2 className="text-lg font-semibold mb-4">Agregar elemento</h2>
+
+                        <label className="block text-sm font-medium">Título</label>
+                        <input
+                            type="text"
+                            value={editedTitle}
+                            onChange={(e) => setEditedTitle(e.target.value)}
+                            className="w-full p-2 border rounded mb-4"
+                        />
+
+                        <label className="block text-sm font-medium">Descripción</label>
+                        <textarea
+                            value={editedDescription}
+                            onChange={(e) => setEditedDescription(e.target.value)}
+                            className="w-full p-2 border rounded mb-4"
+                        />
+
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setIsAdding(false)}
+                                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleAdd}
+                                className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+                            >
+                                Agregar
                             </button>
                         </div>
                     </div>

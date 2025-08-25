@@ -18,6 +18,13 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(form.email)) {
+            showError('Por favor ingresa un correo electrónico válido.');
+            return;
+        }
+
         try {
             await login(form.email, form.password);
             showSuccess('¡Bienvenido!');
