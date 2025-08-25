@@ -153,7 +153,7 @@ const ManageAC = () => {
                 : [],
             availability: {
                 accessibility: formData.accesible === 'Se puede acceder',
-                location: formData.ubicacion || '',
+                location: formData.ubicacion || ' ', //quitar que sea obligatorio, sólo es obligatorio sí tipo es físico
             },
             classificationLevel: {
                 level: formData.clasificacion || '',
@@ -165,13 +165,13 @@ const ManageAC = () => {
             legalRegulations: {
                 copyright: formData.copyright || '',
                 patents: formData.patents || '',
-                tradeSecrets: formData.tradeSecrets || '', // ✅ corregido
+                tradeSecrets: formData.tradeSecrets || '',
                 industrialDesigns: formData.industrialDesigns || '',
                 brands: formData.brands || '',
                 industrialIntellectualProperty: formData.industrialIntellectualProperty || '',
             },
             ownerId: formData.ownerId || 'Prueba',
-            responsibleOwner: formData.autor || formData.propietarioAC || '', // ✅ sincronizado
+            responsibleOwner: formData.autor || formData.propietarioAC || '',
             confidentiality: formData.visibilidad === 'Privado',
             criticality: formData.criticality || '',
             status: formData.estadoAC || '',
@@ -211,6 +211,14 @@ const ManageAC = () => {
             alert('Ocurrió un error al intentar eliminar el activo');
         }
     };
+
+    const normalize = (str = "") =>
+        str
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+
 
     return (
         <div className="bg-white px-6 py-20 rounded shadow">
@@ -270,15 +278,21 @@ const ManageAC = () => {
                 </FormField>
 
                 <FormField label="Facetado *" htmlFor="id">
-                    <Input name="id" value={formData.id} onChange={handleChange} required />
+                    <Input
+                        name="id"
+                        value={formData.id}
+                        onChange={handleChange}
+                        required
+                    />
                 </FormField>
 
                 <FormField label="Título *" htmlFor="titulo">
-                    <Input name="titulo" value={formData.titulo} onChange={handleChange} required />
-                </FormField>
-
-                <FormField label="Autor *" htmlFor="autor">
-                    <Input name="autor" value={formData.autor} onChange={handleChange} required />
+                    <Input
+                        name="titulo"
+                        value={formData.titulo}
+                        onChange={handleChange}
+                        required
+                    />
                 </FormField>
 
                 <FormField label="Fecha de publicación" htmlFor="fecha">
@@ -287,6 +301,33 @@ const ManageAC = () => {
                         type="date"
                         value={formData.fecha}
                         onChange={handleChange}
+                    />
+                </FormField>
+
+                <FormField label="Autor *" htmlFor="autor">
+                    <Input
+                        name="autor"
+                        value={formData.autor}
+                        onChange={handleChange}
+                        required
+                    />
+                </FormField>
+
+                <FormField label="Activos de conocimiento relacionados*" htmlFor="relatedIds">
+                    <Input
+                        name="relatedIds"
+                        value={formData.relatedIds}
+                        onChange={handleChange}
+                        required
+                    />
+                </FormField>
+
+                <FormField label="Identificación del autor *" htmlFor="ownerId">
+                    <Input
+                        name="ownerId"
+                        value={formData.ownerId}
+                        onChange={handleChange}
+                        required
                     />
                 </FormField>
 
@@ -301,6 +342,24 @@ const ManageAC = () => {
                     >
                         <option value="">Seleccione...</option>
                         {catalogs?.activeKnowledgeTypeEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
+                            </option>
+                        ))}
+                    </select>
+                </FormField>
+
+                <FormField label="Estado del activo*" htmlFor="estadoAC">
+                    <select
+                        id="estadoAC"
+                        name="estadoAC"
+                        value={formData.estadoAC}
+                        onChange={handleChange}
+                        required
+                        className="border border-[#8DC63F] p-2 rounded w-full"
+                    >
+                        <option value="">Seleccione...</option>
+                        {catalogs?.assetStatusEnum?.map((item) => (
                             <option key={item.key} value={item.key}>
                                 {item.key}
                             </option>
@@ -325,6 +384,33 @@ const ManageAC = () => {
                         ))}
                     </select>
                 </FormField>
+
+                <FormField label="Accesibilidad" htmlFor="accesible">
+                    <select
+                        id="accesible"
+                        name="accesible"
+                        value={formData.accesible}
+                        onChange={handleChange}
+                        className="border border-[#8DC63F] p-2 rounded w-full"
+                    >
+                        <option value="">Seleccione...</option>
+                        {accesibilidad.map((item) => (
+                            <option key={item} value={item}>
+                                {item}
+                            </option>
+                        ))}
+                    </select>
+                </FormField>
+
+                {normalize(formData.tipoConocimiento).includes("fisico") && (
+                    <FormField label="Ubicación Física del activo" htmlFor="ubicacion">
+                        <Input
+                            name="ubicacion"
+                            value={formData.ubicacion}
+                            onChange={handleChange}
+                        />
+                    </FormField>
+                )}
 
                 <FormField label="Formato *" htmlFor="formato">
                     <select
@@ -369,10 +455,6 @@ const ManageAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Ubicación" htmlFor="ubicacion">
-                    <Input name="ubicacion" value={formData.ubicacion} onChange={handleChange} />
-                </FormField>
-
                 <FormField label="Propietario del Activo de conocimiento" htmlFor="propietarioAC">
                     <Input
                         name="propietarioAC"
@@ -381,21 +463,20 @@ const ManageAC = () => {
                     />
                 </FormField>
 
-                <FormField label="Accesibilidad" htmlFor="accesible">
-                    <select
-                        id="accesible"
-                        name="accesible"
-                        value={formData.accesible}
+                <FormField label="Repositorio virtual del PECET" htmlFor="pecetKnowledge">
+                    <Input
+                        name="pecetKnowledge"
+                        value={formData.pecetKnowledge}
                         onChange={handleChange}
-                        className="border border-[#8DC63F] p-2 rounded w-full"
-                    >
-                        <option value="">Seleccione...</option>
-                        {accesibilidad.map((item) => (
-                            <option key={item} value={item}>
-                                {item}
-                            </option>
-                        ))}
-                    </select>
+                    />
+                </FormField>
+
+                <FormField label="Repositorios Especializados" htmlFor="centralicedRepositories">
+                    <Input
+                        name="centralicedRepositories"
+                        value={formData.centralicedRepositories}
+                        onChange={handleChange}
+                    />
                 </FormField>
 
                 <FormField label="Criticidad" htmlFor="criticality">
@@ -449,22 +530,44 @@ const ManageAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Estado del Activo de conocimiento *" htmlFor="estadoAC">
-                    <select
-                        id="estadoAC"
-                        name="estadoAC"
-                        value={formData.estadoAC}
+                <FormField label="Copyright" htmlFor="copyright">
+                    <Input
+                        name="copyright"
+                        value={formData.copyright}
                         onChange={handleChange}
-                        required
-                        className="border border-[#8DC63F] p-2 rounded w-full"
-                    >
-                        <option value="">Seleccione...</option>
-                        {catalogs?.assetStatusEnum?.map((item) => (
-                            <option key={item.key} value={item.key}>
-                                {item.key}
-                            </option>
-                        ))}
-                    </select>
+                    />
+                </FormField>
+
+                <FormField label="Patentes del activo de conocimiento" htmlFor="patents">
+                    <Input
+                        name="patents"
+                        value={formData.patents}
+                        onChange={handleChange}
+                    />
+                </FormField>
+
+                <FormField label="Secretos comerciales" htmlFor="tradeSecrets">
+                    <Input
+                        name="tradeSecrets"
+                        value={formData.tradeSecrets}
+                        onChange={handleChange}
+                    />
+                </FormField>
+
+                <FormField label="Marca registrada" htmlFor="brands">
+                    <Input
+                        name="brands"
+                        value={formData.brands}
+                        onChange={handleChange}
+                    />
+                </FormField>
+
+                <FormField label="Propiedad intelectual" htmlFor="industrialIntellectualProperty">
+                    <Input
+                        name="industrialIntellectualProperty"
+                        value={formData.industrialIntellectualProperty}
+                        onChange={handleChange}
+                    />
                 </FormField>
 
                 <div className="md:col-span-2 flex justify-center py-10 gap-4">
