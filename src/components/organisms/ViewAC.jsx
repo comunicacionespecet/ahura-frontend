@@ -56,54 +56,30 @@ const ViewAC = ({ ac, user }) => {
                     </div>
                 )}
 
-                <div className="md:w-1/2">
-                    <p>
-                        <strong>Descripción:</strong> {ac.description}
-                    </p>
-                    <p>
-                        <strong>ID:</strong> {ac.id}
-                    </p>
-                    <p>
-                        <strong>Autor:</strong> {ac.responsibleOwner}
-                    </p>
-                    <p>
-                        <strong>Fecha:</strong>{' '}
-                        {new Date(ac.publishDate).toLocaleDateString('es-CO')}
-                    </p>
-                    <p>
-                        <strong>Tipo de Activo:</strong> {ac.format}
-                    </p>
-                    <p>
-                        <strong>Tipo de Conocimiento:</strong> {ac.activeKnowledgeType}
-                    </p>
-                    <p>
-                        <strong>Formato:</strong> {ac.format}
-                    </p>
-                    <p>
-                        <strong>Palabras Clave:</strong> {ac.keywords}
-                    </p>
-                    <p>
-                        <strong>Origen:</strong> {ac.origin}
-                    </p>
-                    <p>
-                        <strong>Ubicación:</strong> {ac.howIsItStored.centralicedRepositories}
-                    </p>
-                    <p>
-                        <strong>Accesible:</strong> {ac.availability?.accessibility ? 'Sí' : 'No'}
-                    </p>
-                    <p>
-                        <strong>Clasificación:</strong> {ac.classificationLevel.level}
-                    </p>
-                    <p>
-                        <strong>Propietario:</strong> {ac.responsibleOwner}
-                    </p>
-                    <p>
-                        <strong>Visibilidad:</strong>{' '}
-                        {ac.confidentiality ? 'Confidencial' : 'Público'}
-                    </p>
-                    <p>
-                        <strong>Estado:</strong> {ac.status}
-                    </p>
+                <div className="md:w-1/2 space-y-2">
+                    <p><strong>Facetado:</strong> {ac.id || "No Aplica"}</p>
+                    <p><strong>Título:</strong> {ac.title || "No Aplica"}</p>
+                    <p><strong>Descripción:</strong> {ac.description || "No Aplica"}</p>
+                    <p><strong>Autor / Responsable:</strong> {ac.responsibleOwner || "No Aplica"}</p>
+                    <p><strong>Fecha de Publicación:</strong> {ac.publishDate ? new Date(ac.publishDate).toLocaleDateString('es-CO') : "No Aplica"}</p>
+                    <p><strong>Tipo de Activo:</strong> {ac.assetType || "No Aplica"}</p>
+                    <p><strong>Tipo de Conocimiento:</strong> {ac.knowledgeType || "No Aplica"}</p>
+                    <p><strong>Formato:</strong> {ac.format || "No Aplica"}</p>
+                    <p><strong>Palabras Clave:</strong> {ac.keywords || "No Aplica"}</p>
+                    <p><strong>Origen:</strong> {ac.origin || "No Aplica"}</p>
+                    <p><strong>Ubicación (Repositorio):</strong> {ac.howIsItStored?.centralicedRepositories || "No Aplica"}</p>
+                    <p><strong>Accesible:</strong> {ac.availability?.accessibility ? "Sí" : "No Aplica"}</p>
+                    <p><strong>Nivel de Clasificación:</strong> {ac.classificationLevel?.level || "No Aplica"}</p>
+                    <p><strong>Nivel de Confidencialidad:</strong> {ac.confidentialityLevel?.level || "No Aplica"}</p>
+                    <p><strong>Estado:</strong> {ac.status || "No Aplica"}</p>
+
+                    {/* Propiedad intelectual */}
+                    <p><strong>Copyright:</strong> {ac.copyright || "No Aplica"}</p>
+                    <p><strong>Patentes:</strong> {ac.patents || "No Aplica"}</p>
+                    <p><strong>Secretos Comerciales:</strong> {ac.tradeSecrets || "No Aplica"}</p>
+                    <p><strong>Diseños Industriales:</strong> {ac.industrialDesigns || "No Aplica"}</p>
+                    <p><strong>Marcas:</strong> {ac.brands || "No Aplica"}</p>
+                    <p><strong>Propiedad Intelectual Industrial:</strong> {ac.industrialIntellectualProperty || "No Aplica"}</p>
                 </div>
             </div>
 
