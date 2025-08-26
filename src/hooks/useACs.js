@@ -33,7 +33,6 @@ export function useACById(id) {
 
         getACById(id)
             .then(async (data) => {
-                // Si el AC tiene una imagen, obtenemos la URL firmada
                 if (data.image) {
                     try {
                         const signedUrl = await getSignedImageUrl(data.image);

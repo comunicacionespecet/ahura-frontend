@@ -47,11 +47,16 @@ export const createAC = async (acData) => {
         },
         body: JSON.stringify(acData),
     });
+
+    const data = await response.json();
+
     if (!response.ok) {
-        throw new Error('Error al crear el AC');
+        throw new Error(data.message || 'Error al crear el AC');
     }
-    return await response.json();
+
+    return data;
 };
+
 
 export const updateAC = async (id, acData) => {
     const token = localStorage.getItem('token');

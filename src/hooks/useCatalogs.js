@@ -26,13 +26,9 @@ export function useCatalogs() {
         fetchCatalogs();
     }, []);
 
-    //
-    // Crear un nuevo ítem en un catálogo
-    //
     const handlePostCatalogItem = async (slug, listName, newItem) => {
         try {
             const result = await postCatalogItem(slug, listName, newItem);
-            // actualizar estado local
             setCatalogs((prev) => ({
                 ...prev,
                 [listName]: [...(prev[listName] || []), result],
@@ -44,9 +40,6 @@ export function useCatalogs() {
         }
     };
 
-    //
-    // Actualizar un catálogo
-    //
     const handleUpdateCatalog = async (id, updatedData) => {
         try {
             const result = await updateCatalog(id, updatedData);
@@ -57,13 +50,9 @@ export function useCatalogs() {
         }
     };
 
-    //
-    // Eliminar un ítem de un catálogo
-    //
     const handleDeleteCatalogItem = async (slug, listName, key) => {
         try {
             const result = await deleteCatalogItem(slug, listName, key);
-            // actualizar estado local
             setCatalogs((prev) => ({
                 ...prev,
                 [listName]: (prev[listName] || []).filter(

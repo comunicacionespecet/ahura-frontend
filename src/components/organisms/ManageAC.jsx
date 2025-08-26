@@ -66,42 +66,42 @@ const ManageAC = () => {
     useEffect(() => {
         if (ac && isAdmin) {
             setFormData({
-                id: ac.id || '',
-                titulo: ac.title || '',
-                descripcion: ac.description || '',
+                id: ac.id,
+                titulo: ac.title,
+                descripcion: ac.description,
                 fecha: ac.publishDate ? ac.publishDate.split('T')[0] : '',
-                tipoConocimiento: ac.knowledgeType || '',
-                tipoActivo: ac.activeKnowledgeType || '',
-                formato: ac.format || '',
-                palabrasClave: ac.keywords?.join(', ') || '',
-                origen: ac.origin || '',
-                ubicacion: ac.availability?.location || '',
+                tipoConocimiento: ac.knowledgeType,
+                tipoActivo: ac.activeKnowledgeType,
+                formato: ac.format,
+                palabrasClave: ac.keywords?.join(', '),
+                origen: ac.origin,
+                ubicacion: ac.availability?.location,
                 accesible: ac.availability?.accessibility
                     ? 'Se puede acceder'
                     : 'No se puede acceder',
-                clasificacion: ac.classificationLevel?.level || '',
+                clasificacion: ac.classificationLevel?.level,
                 autor: ac.responsibleOwner || '',
                 visibilidad: ac.confidentiality ? 'Privado' : 'Público',
-                propietarioAC: ac.responsibleOwner || '',
-                estadoAC: ac.status || '',
-                fileUri: ac.fileUri || '',
-                relatedIds: ac.relatedIds?.join(', ') || '',
-                pecetKnowledge: ac.howIsItStored?.pecetKnowledge || '',
-                centralicedRepositories: ac.howIsItStored?.centralicedRepositories || '',
-                copyright: ac.legalRegulations?.copyright || '',
-                patents: ac.legalRegulations?.patents || '',
-                tradeSecrets: ac.legalRegulations?.tradeSecrets || '',
-                industrialDesigns: ac.legalRegulations?.industrialDesigns || '',
-                brands: ac.legalRegulations?.brands || '',
+                propietarioAC: ac.responsibleOwner,
+                estadoAC: ac.status,
+                fileUri: ac.fileUri,
+                relatedIds: ac.relatedIds?.join(', '),
+                pecetKnowledge: ac.howIsItStored?.pecetKnowledge,
+                centralicedRepositories: ac.howIsItStored?.centralicedRepositories,
+                copyright: ac.legalRegulations?.copyright,
+                patents: ac.legalRegulations?.patents,
+                tradeSecrets: ac.legalRegulations?.tradeSecrets,
+                industrialDesigns: ac.legalRegulations?.industrialDesigns,
+                brands: ac.legalRegulations?.brands,
                 industrialIntellectualProperty:
-                    ac.legalRegulations?.industrialIntellectualProperty || '',
-                ownerId: ac.ownerId || '',
-                criticality: ac.criticality || '',
+                    ac.legalRegulations?.industrialIntellectualProperty,
+                ownerId: ac.ownerId,
+                criticality: ac.criticality,
                 viewCount: ac.viewCount || 0,
                 downloadCount: ac.downloadCount || 0,
                 commentCount: ac.commentCount || 0,
             });
-            setPreviewUrl(ac.image || null);
+            setPreviewUrl(ac.image);
         }
     }, [ac, isAdmin]);
 
@@ -141,7 +141,7 @@ const ManageAC = () => {
             publishDate: formData.fecha ? new Date(formData.fecha).toISOString() : null,
             knowledgeType: formData.tipoConocimiento,
             description: formData.descripcion,
-            image: uploadImageName || '',
+            image: uploadImageName || formData.image,
             activeKnowledgeType: formData.tipoActivo,
             format: formData.formato,
             fileUri: uploadFileName || formData.fileUri,
@@ -184,15 +184,22 @@ const ManageAC = () => {
         try {
             if (id && isAdmin) {
                 await update(id, acData);
-                showSuccess('Activo actualizado correctamente');
+                showSuccess("Activo actualizado correctamente");
+                navigate('/buscar');
             } else {
                 await create(acData);
-                showSuccess('Activo creado correctamente');
+                showSuccess("Activo creado correctamente");
+                navigate('/');
             }
         } catch (error) {
-            showError('Hubo un error al guardar el activo');
+            if (error.message.includes("E11000")) {
+                showError("El facetado ya existe en otro activo, por favor verificarlo");
+            } else {
+                showError("Hubo un error al guardar el activo");
+            }
             console.error(error);
         }
+
     };
 
     const handleDelete = async () => {
@@ -300,6 +307,7 @@ const ManageAC = () => {
                         name="fecha"
                         type="date"
                         value={formData.fecha}
+                        required
                         onChange={handleChange}
                     />
                 </FormField>
@@ -438,12 +446,13 @@ const ManageAC = () => {
                     />
                 </FormField>
 
-                <FormField label="Origen" htmlFor="origen">
+                <FormField label="Origen*" htmlFor="origen">
                     <select
                         id="origen"
                         name="origen"
                         value={formData.origen}
                         onChange={handleChange}
+                        required
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >
                         <option value="">Seleccione...</option>
@@ -479,10 +488,11 @@ const ManageAC = () => {
                     />
                 </FormField>
 
-                <FormField label="Criticidad" htmlFor="criticality">
+                <FormField label="Criticidad*" htmlFor="criticality">
                     <select
                         id="criticality"
                         name="criticality"
+                        required
                         value={formData.criticality}
                         onChange={handleChange}
                         className="border border-[#8DC63F] p-2 rounded w-full"
@@ -513,11 +523,12 @@ const ManageAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Nivel de clasificación" htmlFor="clasificacion">
+                <FormField label="Nivel de clasificación*" htmlFor="clasificacion">
                     <select
                         id="clasificacion"
                         name="clasificacion"
                         value={formData.clasificacion}
+                        required
                         onChange={handleChange}
                         className="border border-[#8DC63F] p-2 rounded w-full"
                     >

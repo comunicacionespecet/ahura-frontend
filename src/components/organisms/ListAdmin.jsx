@@ -188,7 +188,6 @@ const AdminTabs = () => {
                 </div>
             )}
 
-            {/* Modal Edit */}
             {isEditing && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-2xl shadow-xl w-96 relative">
@@ -233,7 +232,6 @@ const AdminTabs = () => {
                 </div>
             )}
 
-            {/* Modal Add */}
             {isAdding && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-2xl shadow-xl w-96 relative">

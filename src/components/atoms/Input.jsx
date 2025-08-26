@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Input = ({ id, name, value, onChange, type = 'text', placeholder }) => {
+const Input = ({ id, name, value, onChange, type = 'text', placeholder, required = false }) => {
     return (
         <input
             id={id || name}
@@ -10,6 +10,7 @@ const Input = ({ id, name, value, onChange, type = 'text', placeholder }) => {
             value={value}
             onChange={onChange}
             placeholder={placeholder}
+            required={required}
             className="block w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
         />
     );
@@ -21,7 +22,9 @@ Input.propTypes = {
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     type: PropTypes.string,
+    required: PropTypes.bool,
     placeholder: PropTypes.string,
+    
 };
 
 export default Input;
