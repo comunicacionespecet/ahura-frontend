@@ -4,7 +4,7 @@ import { File as FileIcon } from 'lucide-react';
 
 const FileUpload = ({ onChange }) => {
     return (
-        <label className="w-60 h-32 border-2 border-dashed border border-[#8DC63F] flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer rounded-lg">
+        <label className="w-full max-w-[160px] h-40 border-2 border-dashed border-[#8DC63F] flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer rounded-lg">
             <FileIcon className="w-10 h-10 mb-2" />
             <span className="text-sm text-center">
                 Subir archivo
@@ -27,3 +27,4 @@ FileUpload.propTypes = {
 };
 
 export default FileUpload;
+

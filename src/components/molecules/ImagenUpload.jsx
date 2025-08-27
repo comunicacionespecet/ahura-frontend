@@ -4,7 +4,7 @@ import { Image as ImageIcon } from 'lucide-react';
 
 const ImageUpload = ({ onChange }) => {
     return (
-        <label className="w-40 h-40 border-2 border-dashed border border-[#8DC63F] flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer rounded-lg">
+        <label className="w-full max-w-[160px] h-40 border-2 border-dashed border-[#8DC63F] flex flex-col items-center justify-center text-gray-500 hover:bg-gray-100 cursor-pointer rounded-lg">
             <ImageIcon className="w-10 h-10 mb-2" />
             <span className="text-sm">Subir imagen</span>
             <input
@@ -15,6 +15,7 @@ const ImageUpload = ({ onChange }) => {
                 className="hidden"
             />
         </label>
+
     );
 };
 
@@ -23,3 +24,4 @@ ImageUpload.propTypes = {
 };
 
 export default ImageUpload;
+

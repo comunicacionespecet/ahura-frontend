@@ -16,7 +16,7 @@ const SubHeader = () => {
             />
 
             <div className="relative z-10 flex flex-col justify-center items-center text-center px-6 text-white h-[300px] md:h-[400px] bg-black/40">
-                <h1 className="text-3xl md:text-5xl font-bold mb-2">Bienvenido al sistema AHURA</h1>
+                <h1 className="text-3xl md:text-5xl font-bold mb-2">Bienvenido al Sistema AHURA</h1>
                 <p className="text-lg mb-4">Gestión de activos del conocimiento.</p>
                 <div className="flex flex-wrap gap-3">
                     <Button
