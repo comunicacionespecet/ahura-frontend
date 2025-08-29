@@ -252,59 +252,65 @@ const ManageAC = () => {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
 
                     {activeTab === 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField label="Imagen del activo" htmlFor="imagen">
-                                {previewUrl ? (
-                                    <div className="flex flex-col items-start">
-                                        <img
-                                            src={previewUrl}
-                                            alt="Vista previa"
-                                            className="mb-2 w-32 h-32 object-cover rounded border"
-                                        />
-                                        <Button
-                                            type="Primary"
-                                            text="Cambiar imagen"
-                                            onClick={() => {
-                                                setPreviewUrl(null);
-                                                setImagen(null);
-                                            }}
-                                            className="text-sm text-blue-600 underline hover:text-blue-800"
-                                        />
-                                    </div>
-                                ) : (
-                                    <ImageUpload onChange={handleImageChange} />
-                                )}
-                            </FormField>
-
-                            <FormField label="Archivo del activo" htmlFor="archivo">
-                                {archivo ? (
-                                    <div className="flex flex-col items-start">
-                                        <div className="mb-2 w-32 h-32 flex items-center justify-center border rounded p-2 overflow-hidden">
-                                            <span className="text-gray-700 text-sm break-words text-center">
-                                                {archivo.name}
-                                            </span>
+                        <div className="grid grid-cols-12 gap-6 items-start md:col-span-2">
+                            <div className="col-span-12 md:col-span-3">
+                                <FormField label="Imagen del activo" htmlFor="imagen">
+                                    {previewUrl ? (
+                                        <div className="flex flex-col items-start">
+                                            <img
+                                                src={previewUrl}
+                                                alt="Vista previa"
+                                                className="mb-2 w-32 h-32 object-cover rounded border"
+                                            />
+                                            <Button
+                                                type="Primary"
+                                                text="Cambiar imagen"
+                                                onClick={() => {
+                                                    setPreviewUrl(null);
+                                                    setImagen(null);
+                                                }}
+                                                className="text-sm text-blue-600 underline hover:text-blue-800"
+                                            />
                                         </div>
-                                        <Button
-                                            type="Primary"
-                                            text="Cambiar archivo"
-                                            onClick={() => setArchivo(null)}
-                                            className="text-sm text-blue-600 underline hover:text-blue-800"
-                                        />
-                                    </div>
-                                ) : (
-                                    <FileUpload name="archivo" onChange={handleArchivoChange} />
-                                )}
-                            </FormField>
+                                    ) : (
+                                        <ImageUpload onChange={handleImageChange} />
+                                    )}
+                                </FormField>
+                            </div>
 
-                            <FormField label="Descripción *" htmlFor="descripcion">
-                                <TextArea
-                                    name="descripcion"
-                                    value={formData.descripcion}
-                                    onChange={handleChange}
-                                    required
-                                    rows={8}
-                                />
-                            </FormField>
+                            <div className="col-span-12 md:col-span-3">
+                                <FormField label="Archivo del activo" htmlFor="archivo">
+                                    {archivo ? (
+                                        <div className="flex flex-col items-start">
+                                            <div className="mb-2 w-32 h-32 flex items-center justify-center border rounded p-2 overflow-hidden">
+                                                <span className="text-gray-700 text-sm break-words text-center">
+                                                    {archivo.name}
+                                                </span>
+                                            </div>
+                                            <Button
+                                                type="Primary"
+                                                text="Cambiar archivo"
+                                                onClick={() => setArchivo(null)}
+                                                className="text-sm text-blue-600 underline hover:text-blue-800"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <FileUpload name="archivo" onChange={handleArchivoChange} />
+                                    )}
+                                </FormField>
+                            </div>
+
+                            <div className="col-span-12 md:col-span-6">
+                                <FormField label="Descripción *" htmlFor="descripcion">
+                                    <TextArea
+                                        name="descripcion"
+                                        value={formData.descripcion}
+                                        onChange={handleChange}
+                                        required
+                                        rows={8}
+                                    />
+                                </FormField>
+                            </div>
                         </div>
                     )}
 
@@ -320,7 +326,7 @@ const ManageAC = () => {
                                 />
                             </FormField>
 
-                            <FormField label="Título *" htmlFor="titulo">
+                            <FormField label="Título*" htmlFor="titulo">
                                 <Input
                                     name="titulo"
                                     value={formData.titulo}
@@ -339,7 +345,7 @@ const ManageAC = () => {
                                 />
                             </FormField>
 
-                            <FormField label="Autor *" htmlFor="autor">
+                            <FormField label="Autores*" htmlFor="autor">
                                 <Input
                                     name="autor"
                                     value={formData.autor}
@@ -361,14 +367,6 @@ const ManageAC = () => {
 
                     {activeTab === 2 && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField label="Identificación del autor *" htmlFor="ownerId">
-                                <Input
-                                    name="ownerId"
-                                    value={formData.ownerId}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </FormField>
 
                             <FormField label="Tipo de conocimiento*" htmlFor="tipoActivo">
                                 <select
