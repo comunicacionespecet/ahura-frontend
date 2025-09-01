@@ -33,6 +33,7 @@ const ManageAC = () => {
     const navigate = useNavigate();
 
     const [imagen, setImagen] = useState(null);
+    const [keywordError, setKeywordError] = useState("");
     const [archivo, setArchivo] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
@@ -119,6 +120,17 @@ const ManageAC = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleKeywordsChange = (e) => {
+        const value = e.target.value;
+        if (/\s{2,}/.test(value) || /\s+[A-Za-z]/.test(value.replace(/.*,\s*/, ""))) {
+            setKeywordError("Debes separar las palabras con comas (,)");
+        } else {
+            setKeywordError("");
+        }
+        setFormData({ ...formData, palabrasClave: value });
+    };
+
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setImagen(file);
@@ -199,7 +211,10 @@ const ManageAC = () => {
                 ? formData.relatedIds.split(',').map((i) => i.trim())
                 : [],
             keywords: formData.palabrasClave
-                ? formData.palabrasClave.split(',').map((k) => k.trim())
+                ? formData.palabrasClave
+                    .split(',')
+                    .map((k) => k.trim())
+                    .filter((k) => k.length > 0)
                 : [],
             availability: {
                 accessibility: formData.accesible === 'Se puede acceder',
@@ -481,29 +496,29 @@ const ManageAC = () => {
                             {normalize(formData.tipoConocimiento).includes(
                                 'fisico'
                             ) && (
-                                <FormField
-                                    label="Asequibilidad*"
-                                    htmlFor="accesible"
-                                >
-                                    <select
-                                        id="accesible"
-                                        name="accesible"
-                                        value={formData.accesible}
-                                        onChange={handleChange}
-                                        className="border border-[#8DC63F] p-2 rounded w-full"
+                                    <FormField
+                                        label="Asequibilidad*"
+                                        htmlFor="accesible"
                                     >
-                                        <option value="" disabled>
-                                            Ej: Se puede acceder o no se puede
-                                            acceder físicamente al activo
-                                        </option>
-                                        {accesibilidad.map((item) => (
-                                            <option key={item} value={item}>
-                                                {item}
+                                        <select
+                                            id="accesible"
+                                            name="accesible"
+                                            value={formData.accesible}
+                                            onChange={handleChange}
+                                            className="border border-[#8DC63F] p-2 rounded w-full"
+                                        >
+                                            <option value="" disabled>
+                                                Ej: Se puede acceder o no se puede
+                                                acceder físicamente al activo
                                             </option>
-                                        ))}
-                                    </select>
-                                </FormField>
-                            )}
+                                            {accesibilidad.map((item) => (
+                                                <option key={item} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </FormField>
+                                )}
 
                             <FormField
                                 label="Visibilidad*"
@@ -591,34 +606,35 @@ const ManageAC = () => {
                                 </select>
                             </FormField>
 
-                            <FormField
-                                label="Palabras clave"
-                                htmlFor="palabrasClave"
-                            >
+                            <FormField label="Palabras clave" htmlFor="palabrasClave">
                                 <Input
                                     name="palabrasClave"
                                     value={formData.palabrasClave}
-                                    onChange={handleChange}
-                                    placeholder="Ej: calidad, procedimientos, control interno"
+                                    onChange={handleKeywordsChange}
+                                    placeholder="Ej: calidad, procedimientos, control, enfermedad"
                                 />
+                                {keywordError && (
+                                    <p className="text-red-500 text-sm mt-1">{keywordError}</p>
+                                )}
                             </FormField>
+
 
                             {normalize(formData.tipoConocimiento).includes(
                                 'fisico'
                             ) && (
-                                <FormField
-                                    label="Ubicación Física del activo*"
-                                    htmlFor="ubicacion"
-                                >
-                                    <Input
-                                        name="ubicacion"
-                                        value={formData.ubicacion}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Ej: Archivo central, Piso 3, Estante B"
-                                    />
-                                </FormField>
-                            )}
+                                    <FormField
+                                        label="Ubicación Física del activo*"
+                                        htmlFor="ubicacion"
+                                    >
+                                        <Input
+                                            name="ubicacion"
+                                            value={formData.ubicacion}
+                                            onChange={handleChange}
+                                            required
+                                            placeholder="Ej: Archivo central, Piso 3, Estante B"
+                                        />
+                                    </FormField>
+                                )}
                         </div>
                     )}
 

@@ -92,3 +92,32 @@ export const deleteAC = async (id) => {
 
     return null;
 };
+
+export const getAssets = async (filters = {}, page = 1, limit = 10) => {
+    const token = localStorage.getItem('token');
+    const params = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value) {
+            params.append(key, value);
+        }
+    });
+
+    params.append('page', page);
+    params.append('limit', limit);
+
+    const response = await fetch(`${BASE_URL}/assets?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Auth: '1234',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Error al obtener los activos');
+    }
+
+    return await response.json();
+};
