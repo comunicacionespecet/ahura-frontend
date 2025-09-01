@@ -1,81 +1,143 @@
-import React from 'react';
-import { useUsers } from '../../hooks/useUsers';
-import { showSuccess, showError, showConfirm } from '../../utils/alerts';
+import React, { useState } from "react";
+import { Pencil, Trash2, X } from "lucide-react";
+import { showSuccess, showError, showConfirm } from "../../utils/alerts";
+import { useUsers } from "../../hooks/useUsers";
+import { useUpdateUser } from "../../hooks/useUsers";
+import { useDeleteUser } from "../../hooks/useUsers";
 
-const UserRoleSelect = ({ value, onChange }) => (
-    <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="border border-[#8DC63F] rounded px-2 py-1 focus:outline-none focus:ring focus:ring-[#35944B] bg-white text-[#026937]"
-    >
-        <option value="user">Usuario</option>
-        <option value="admin">Administrador</option>
-    </select>
-);
+const AdminUser = () => {
+  const { users, setUsers, loading, error } = useUsers();
 
-const AdminUsers = () => {
-    const { users, loading, error, changeRole } = useUsers();
+  const { update } = useUpdateUser();
+  const { remove } = useDeleteUser();
 
-    const handleRoleChange = async (userId, newRole) => {
-        try {
-            await changeRole(userId, newRole);
-            showSuccess('Rol actualizado correctamente');
-        } catch {
-            showError('Hubo un error al actualizar el usuario');
-        }
-    };
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [editedRole, setEditedRole] = useState("");
 
-    if (loading) return <div className="text-[#026937]">Cargando usuarios...</div>;
-    if (error) return <div className="text-red-600">{error}</div>;
+  if (loading) return <p className="p-6">Cargando...</p>;
+  if (error) return <p className="p-6 text-red-600">Error: {error.message}</p>;
 
-    return (
-        <div className="flex py-18 justify-center">
-            <div className="overflow-x-auto w-full max-w-4xl">
-                <h2 className="text-3xl font-bold text-[#70205B] mb-6 text-center">
-                    Administrar usuarios
-                </h2>
-                <table className="w-full border border-[#8DC63F] rounded-lg overflow-hidden bg-white shadow">
-                    <thead>
-                        <tr className="bg-[#F3F8F0]">
-                            <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">
-                                ID
-                            </th>
-                            <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">
-                                Nombre
-                            </th>
-                            <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">
-                                Correo
-                            </th>
-                            <th className="p-2 border-b border-[#8DC63F] text-white font-bold text-center bg-gray-400">
-                                Rol
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user) => (
-                            <tr key={user.id} className="hover:bg-[#F9F6FB] transition">
-                                <td className="p-2 border-b border-[#8DC63F] text-center">
-                                    {user.id}
-                                </td>
-                                <td className="p-2 border-b border-[#8DC63F] text-center">
-                                    {user.name}
-                                </td>
-                                <td className="p-2 border-b border-[#8DC63F] text-center">
-                                    {user.email}
-                                </td>
-                                <td className="p-2 border-b border-[#8DC63F] text-center">
-                                    <UserRoleSelect
-                                        value={user.role}
-                                        onChange={(role) => handleRoleChange(user.id, role)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  const handleEdit = (user) => {
+    setCurrentUser(user);
+    setEditedRole(user.role);
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    if (!currentUser) return;
+    try {
+      const updated = await update(currentUser.id, { role: editedRole });
+      setUsers(prev => prev.map(u => (u.id === updated.id ? updated : u)));
+      setIsEditing(false);
+      showSuccess("Rol actualizado correctamente");
+    } catch (err) {
+      console.error(err);
+      showError("Error actualizando rol");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = await showConfirm(
+      "¿Estás seguro?",
+      "Esta acción no se puede deshacer"
     );
+    if (!confirmDelete) return;
+
+    try {
+      await remove(id);
+      setUsers(prev => prev.filter(u => u.id !== id));
+      showSuccess("Usuario eliminado correctamente");
+    } catch (err) {
+      console.error(err);
+      showError("Error eliminando usuario");
+    }
+  };
+
+  return (
+    <div className="p-6 bg-[#FBFBFB]">
+      <div className="p-4 bg-white rounded shadow overflow-x-auto">
+        <table className="min-w-full text-left">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Nombre</th>
+              <th className="px-4 py-2">Correo</th>
+              <th className="px-4 py-2">Rol</th>
+              <th className="px-4 py-2 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user.id} className="border-t">
+                <td className="px-4 py-2">{user.name}</td>
+                <td className="px-4 py-2">{user.email}</td>
+                <td className="px-4 py-2">{user.role}</td>
+                <td className="px-4 py-2 flex justify-center gap-2">
+                  <button
+                    onClick={() => handleEdit(user)}
+                    className="text-blue-600 hover:text-blue-800"
+                    title="Editar rol"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(user.id)}
+                    className="text-red-600 hover:text-red-800"
+                    title="Borrar"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {isEditing && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-96 relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              onClick={() => setIsEditing(false)}
+            >
+              <X size={20} />
+            </button>
+            <h2 className="text-lg font-semibold mb-4">
+              Editar rol de {currentUser?.name}
+            </h2>
+
+            <label className="block text-sm font-medium">Rol</label>
+            <select
+              value={editedRole}
+              onChange={(e) => setEditedRole(e.target.value)}
+              className="w-full p-2 border rounded mb-4"
+            >
+              <option value="usuario">Usuario</option>
+              <option value="administrador">Administrador</option>
+              <option value="superadmin">Super Admin</option>
+            </select>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 rounded bg-[#70205B] text-white hover:bg-[#50153f]"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default AdminUsers;
+export default AdminUser;
+

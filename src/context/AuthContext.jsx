@@ -4,6 +4,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { showError } from '../utils/alerts';
 
+const ROLE_SUPER = import.meta.env.VITE_ROLE_SUPER;
+const ROLE_ADMIN = import.meta.env.VITE_ROLE_ADMIN;
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -78,7 +81,7 @@ export const AuthProvider = ({ children }) => {
                 login,
                 logout,
                 isAuthenticated: !!user,
-                isAdmin: user?.role === 'administrador',
+                isAdmin: [ROLE_SUPER, ROLE_ADMIN].includes(user?.role),
             }}
         >
             {children}

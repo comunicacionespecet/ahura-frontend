@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import FormField from '../molecules/FormField';
 import Input from '../atoms/Input';
 import TextArea from '../atoms/TextArea';
 import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
 import FileUpload from '../molecules/FileUpload';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCreateAC, useUpdateAC, useACById, useDeleteAC } from '../../hooks/useACs';
 import { useUpload } from '../../hooks/useUpload';
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
 import { useCatalogs } from '../../hooks/useCatalogs';
-import { div } from 'framer-motion/client';
 
 const accesibilidad = ['Se puede acceder', 'No se puede acceder'];
 const visibilidad = ['Público', 'Privado'];
@@ -22,47 +20,25 @@ const ManageAC = () => {
     const { isAdmin } = useAuth();
     const { create } = useCreateAC();
     const { update } = useUpdateAC();
-    const { catalogs, loading, error } = useCatalogs();
+    const { catalogs } = useCatalogs();
     const { ac } = useACById(id);
     const { remove } = useDeleteAC();
     const { upload } = useUpload();
     const navigate = useNavigate();
+
     const [imagen, setImagen] = useState(null);
     const [archivo, setArchivo] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
+    const [tabErrors, setTabErrors] = useState([false, false, false, false]);
     const [formData, setFormData] = useState({
-        id: '',
-        titulo: '',
-        descripcion: '',
-        fecha: '',
-        tipoActivo: '',
-        tipoConocimiento: '',
-        formato: '',
-        palabrasClave: '',
-        origen: '',
-        ubicacion: '',
-        accesible: '',
-        clasificacion: '',
-        autor: '',
-        visibilidad: '',
-        propietarioAC: '',
-        estadoAC: '',
-        fileUri: '',
-        relatedIds: '',
-        pecetKnowledge: '',
-        centralicedRepositories: '',
-        copyright: '',
-        patents: '',
-        tradeSecrets: '',
-        industrialDesigns: '',
-        brands: '',
-        industrialIntellectualProperty: '',
-        ownerId: '',
-        criticality: '',
-        viewCount: 0,
-        downloadCount: 0,
-        commentCount: 0,
+        id: '', titulo: '', descripcion: '', fecha: '', tipoActivo: '',
+        tipoConocimiento: '', formato: '', palabrasClave: '', origen: '',
+        ubicacion: '', accesible: '', clasificacion: '', autor: '', visibilidad: '',
+        propietarioAC: '', estadoAC: '', fileUri: '', relatedIds: '', pecetKnowledge: '',
+        centralicedRepositories: '', copyright: '', patents: '', tradeSecrets: '',
+        industrialDesigns: '', brands: '', industrialIntellectualProperty: '',
+        ownerId: '', criticality: '', viewCount: 0, downloadCount: 0, commentCount: 0
     });
 
     useEffect(() => {
@@ -78,9 +54,7 @@ const ManageAC = () => {
                 palabrasClave: ac.keywords?.join(', '),
                 origen: ac.origin,
                 ubicacion: ac.availability?.location,
-                accesible: ac.availability?.accessibility
-                    ? 'Se puede acceder'
-                    : 'No se puede acceder',
+                accesible: ac.availability?.accessibility ? 'Se puede acceder' : 'No se puede acceder',
                 clasificacion: ac.classificationLevel?.level,
                 autor: ac.responsibleOwner || '',
                 visibilidad: ac.confidentiality ? 'Privado' : 'Público',
@@ -95,8 +69,7 @@ const ManageAC = () => {
                 tradeSecrets: ac.legalRegulations?.tradeSecrets,
                 industrialDesigns: ac.legalRegulations?.industrialDesigns,
                 brands: ac.legalRegulations?.brands,
-                industrialIntellectualProperty:
-                    ac.legalRegulations?.industrialIntellectualProperty,
+                industrialIntellectualProperty: ac.legalRegulations?.industrialIntellectualProperty,
                 ownerId: ac.ownerId,
                 criticality: ac.criticality,
                 viewCount: ac.viewCount || 0,
@@ -106,6 +79,11 @@ const ManageAC = () => {
             setPreviewUrl(ac.image);
         }
     }, [ac, isAdmin]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -118,24 +96,39 @@ const ManageAC = () => {
         setArchivo(file);
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+    const normalize = (str = "") => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+    const validateTabs = () => {
+        const errors = [false, false, false, false];
+
+        if (!formData.descripcion) errors[0] = true;
+
+        if (!formData.id || !formData.titulo || !formData.autor || !formData.relatedIds) errors[1] = true;
+
+        if (!formData.tipoActivo || !formData.estadoAC || !formData.tipoConocimiento || !formData.formato || !formData.origen) {
+            errors[2] = true;
+        }
+
+        if (!formData.criticality || !formData.clasificacion) errors[3] = true;
+
+        setTabErrors(errors);
+        return errors;
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const errors = validateTabs();
+        const hasErrors = errors.some(e => e);
 
-        let uploadImageName = '';
-
-        if (imagen) {
-            uploadImageName = await upload(imagen);
+        if (hasErrors) {
+            const firstErrorTab = errors.findIndex(e => e);
+            setActiveTab(firstErrorTab);
+            return;
         }
 
-        let uploadFileName = '';
-        if (archivo) {
-            uploadFileName = await upload(archivo);
-        }
+        let uploadImageName = imagen ? await upload(imagen) : '';
+        let uploadFileName = archivo ? await upload(archivo) : '';
 
         const acData = {
             id: formData.id,
@@ -147,30 +140,21 @@ const ManageAC = () => {
             activeKnowledgeType: formData.tipoActivo,
             format: formData.formato,
             fileUri: uploadFileName || formData.fileUri,
-            relatedIds: formData.relatedIds
-                ? formData.relatedIds.split(',').map((id) => id.trim())
-                : [],
-            keywords: formData.palabrasClave
-                ? formData.palabrasClave.split(',').map((k) => k.trim())
-                : [],
+            relatedIds: formData.relatedIds ? formData.relatedIds.split(',').map(i => i.trim()) : [],
+            keywords: formData.palabrasClave ? formData.palabrasClave.split(',').map(k => k.trim()) : [],
             availability: {
                 accessibility: formData.accesible === 'Se puede acceder',
-                location: formData.ubicacion || ' ', //quitar que sea obligatorio, sólo es obligatorio sí tipo es físico
+                location: formData.ubicacion || ' '
             },
-            classificationLevel: {
-                level: formData.clasificacion || '',
-            },
-            howIsItStored: {
-                pecetKnowledge: formData.pecetKnowledge || '',
-                centralicedRepositories: formData.centralicedRepositories || '',
-            },
+            classificationLevel: { level: formData.clasificacion || '' },
+            howIsItStored: { pecetKnowledge: formData.pecetKnowledge || '', centralicedRepositories: formData.centralicedRepositories || '' },
             legalRegulations: {
                 copyright: formData.copyright || '',
                 patents: formData.patents || '',
                 tradeSecrets: formData.tradeSecrets || '',
                 industrialDesigns: formData.industrialDesigns || '',
                 brands: formData.brands || '',
-                industrialIntellectualProperty: formData.industrialIntellectualProperty || '',
+                industrialIntellectualProperty: formData.industrialIntellectualProperty || ''
             },
             ownerId: formData.ownerId || 'Prueba',
             responsibleOwner: formData.autor || formData.propietarioAC || '',
@@ -180,7 +164,7 @@ const ManageAC = () => {
             origin: formData.origen || '',
             viewCount: ac?.viewCount || 0,
             downloadCount: ac?.downloadCount || 0,
-            commentCount: ac?.commentCount || 0,
+            commentCount: ac?.commentCount || 0
         };
 
         try {
@@ -194,57 +178,40 @@ const ManageAC = () => {
                 navigate('/');
             }
         } catch (error) {
-            if (error.message.includes("E11000")) {
-                showError("El facetado ya existe en otro activo, por favor verificarlo");
-            } else {
-                showError("Hubo un error al guardar el activo");
-            }
+            if (error.message.includes("E11000")) showError("El facetado ya existe en otro activo");
+            else showError("Hubo un error al guardar el activo");
             console.error(error);
         }
-
     };
 
     const handleDelete = async () => {
-        const confirmDelete = await showConfirm(
-            '¿Estás seguro?',
-            'Esta acción no se puede deshacer'
-        );
+        const confirmDelete = await showConfirm('¿Estás seguro?', 'Esta acción no se puede deshacer');
         if (!confirmDelete) return;
-
-        try {
-            await remove(id);
-            showSuccess('Activo eliminado correctamente');
-            navigate('/buscar');
-        } catch (error) {
-            console.error('Error al eliminar el activo:', error);
-            alert('Ocurrió un error al intentar eliminar el activo');
-        }
+        try { await remove(id); showSuccess('Activo eliminado correctamente'); navigate('/buscar'); }
+        catch (error) { console.error(error); alert('Ocurrió un error al intentar eliminar el activo'); }
     };
 
-    const normalize = (str = "") =>
-        str
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .trim();
-
+    const tabs = ['Imagen y archivo', 'Información básica', 'Ubicación', 'Regulaciones legales'];
 
     return (
         <div className='bg-[#FBFBFB] min-h-screen p-10'>
-            <div className="bg-white px-6 py-20 rounded shadow w-[95%] max-w-screen mx-auto">
+            <div className="bg-white px-6 rounded shadow w-[95%] max-w-screen mx-auto">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#70205B] mb-4 text-center py-8">
                     {id && isAdmin ? 'Editar activo de conocimiento' : 'Registro de activo'}
                 </h2>
 
-                <div className='"flex justify-center mb-8 gap-2'>
-                    {['Imagen y archivo', 'Información básica', 'Ubicación', 'Regulaciones legales'].map((tab, idx) => (
+                <div className="flex justify-center mb-8 gap-2">
+                    {tabs.map((tab, idx) => (
                         <button
                             key={tab}
-                            className={`px-4 py-2 rounded-t ${activeTab === idx ? 'bg-[#8DC63F] text-white' : 'bg-gray-200 text-[#026937]'}`}
-                            onClick={() => setActiveTab(idx)}
                             type="button"
+                            onClick={() => setActiveTab(idx)}
+                            className={`px-4 py-2 rounded-t relative ${activeTab === idx ? 'bg-[#8DC63F] text-white' : 'bg-gray-200 text-[#026937]'}`}
                         >
                             {tab}
+                            {tabErrors[idx] && (
+                                <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
+                            )}
                         </button>
                     ))}
                 </div>
@@ -252,7 +219,8 @@ const ManageAC = () => {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
 
                     {activeTab === 0 && (
-                        <div className="grid grid-cols-12 gap-6 items-start md:col-span-2">
+                        <div className="grid grid-cols-12 gap-6 items-start">
+
                             <div className="col-span-12 md:col-span-3">
                                 <FormField label="Imagen del activo" htmlFor="imagen">
                                     {previewUrl ? (
@@ -275,6 +243,7 @@ const ManageAC = () => {
                                     ) : (
                                         <ImageUpload onChange={handleImageChange} />
                                     )}
+                                    <small className="text-gray-500">Ej: Diagrama_Proceso.jpg</small>
                                 </FormField>
                             </div>
 
@@ -297,6 +266,7 @@ const ManageAC = () => {
                                     ) : (
                                         <FileUpload name="archivo" onChange={handleArchivoChange} />
                                     )}
+                                    <small className="text-gray-500">Ej: Procedimientos_2025.pdf</small>
                                 </FormField>
                             </div>
 
@@ -308,21 +278,24 @@ const ManageAC = () => {
                                         onChange={handleChange}
                                         required
                                         rows={8}
+                                        placeholder="Ej: Procedimientos internos del departamento de ventas"
                                     />
                                 </FormField>
                             </div>
+
                         </div>
                     )}
 
+
                     {activeTab === 1 && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                             <FormField label="Facetado *" htmlFor="id">
                                 <Input
                                     name="id"
                                     value={formData.id}
                                     onChange={handleChange}
                                     required
+                                    placeholder="Ej: FAC-2025-01"
                                 />
                             </FormField>
 
@@ -332,6 +305,7 @@ const ManageAC = () => {
                                     value={formData.titulo}
                                     onChange={handleChange}
                                     required
+                                    placeholder="Ej: Manual de Gestión de Calidad"
                                 />
                             </FormField>
 
@@ -342,6 +316,7 @@ const ManageAC = () => {
                                     value={formData.fecha}
                                     required
                                     onChange={handleChange}
+                                    title="Ej: 2025-08-31"
                                 />
                             </FormField>
 
@@ -351,6 +326,7 @@ const ManageAC = () => {
                                     value={formData.autor}
                                     onChange={handleChange}
                                     required
+                                    placeholder="Ej: Diana Pérez, Jose Martínez, Mateo Bedoya"
                                 />
                             </FormField>
 
@@ -360,14 +336,15 @@ const ManageAC = () => {
                                     value={formData.relatedIds}
                                     onChange={handleChange}
                                     required
+                                    placeholder="Ej: FAC-2024-03, FAC-2023-11"
                                 />
                             </FormField>
+
                         </div>
                     )}
 
                     {activeTab === 2 && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                             <FormField label="Tipo de conocimiento*" htmlFor="tipoActivo">
                                 <select
                                     id="tipoActivo"
@@ -377,9 +354,9 @@ const ManageAC = () => {
                                     required
                                     className="border border-[#8DC63F] p-2 rounded w-full"
                                 >
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled>Ej: Técnico, Científico, Administrativo</option>
                                     {catalogs?.activeKnowledgeTypeEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
+                                        <option key={item.key} value={item.key} title={item.descripcion}>
                                             {item.key}
                                         </option>
                                     ))}
@@ -395,7 +372,7 @@ const ManageAC = () => {
                                     required
                                     className="border border-[#8DC63F] p-2 rounded w-full"
                                 >
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled>Ej: Activo, Inactivo</option>
                                     {catalogs?.assetStatusEnum?.map((item) => (
                                         <option key={item.key} value={item.key}>
                                             {item.key}
@@ -413,9 +390,14 @@ const ManageAC = () => {
                                     required
                                     className="border border-[#8DC63F] p-2 rounded w-full"
                                 >
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled>Ej: Documento, Video, Imagen</option>
+                                    {ac && isAdmin && (
+                                        <option value="OTRO" title="Ingrese otro tipo de conocimiento no listado">
+                                            {ac.knowledgeType}
+                                        </option>
+                                    )}
                                     {catalogs?.knowledgeTypeEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
+                                        <option key={item.key} value={item.key} title={item.descripcion}>
                                             {item.key}
                                         </option>
                                     ))}
@@ -430,7 +412,7 @@ const ManageAC = () => {
                                     onChange={handleChange}
                                     className="border border-[#8DC63F] p-2 rounded w-full"
                                 >
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled>Ej: Se puede acceder, No se puede acceder</option>
                                     {accesibilidad.map((item) => (
                                         <option key={item} value={item}>
                                             {item}
@@ -445,6 +427,7 @@ const ManageAC = () => {
                                         name="ubicacion"
                                         value={formData.ubicacion}
                                         onChange={handleChange}
+                                        placeholder="Ej: Archivo central, Piso 3, Estante B"
                                     />
                                 </FormField>
                             )}
@@ -458,7 +441,7 @@ const ManageAC = () => {
                                     required
                                     className="border border-[#8DC63F] p-2 rounded w-full"
                                 >
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled>Ej: PDF, Word, Excel</option>
                                     {catalogs?.formatEnum?.map((item) => (
                                         <option key={item.key} value={item.key}>
                                             {item.key}
@@ -472,6 +455,7 @@ const ManageAC = () => {
                                     name="palabrasClave"
                                     value={formData.palabrasClave}
                                     onChange={handleChange}
+                                    placeholder="Ej: calidad, procedimientos, control interno"
                                 />
                             </FormField>
 
@@ -484,7 +468,7 @@ const ManageAC = () => {
                                     required
                                     className="border border-[#8DC63F] p-2 rounded w-full"
                                 >
-                                    <option value="">Seleccione...</option>
+                                    <option value="" disabled>Ej: Interno, Externo</option>
                                     {catalogs?.originEnum?.map((item) => (
                                         <option key={item.key} value={item.key}>
                                             {item.key}
@@ -499,122 +483,54 @@ const ManageAC = () => {
                     {activeTab === 3 && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <FormField label="Propietario del Activo de conocimiento" htmlFor="propietarioAC">
-                                <Input
-                                    name="propietarioAC"
-                                    value={formData.propietarioAC}
-                                    onChange={handleChange}
-                                />
+                                <Input name="propietarioAC" value={formData.propietarioAC} onChange={handleChange} />
                             </FormField>
-
                             <FormField label="Repositorio virtual del PECET" htmlFor="pecetKnowledge">
-                                <Input
-                                    name="pecetKnowledge"
-                                    value={formData.pecetKnowledge}
-                                    onChange={handleChange}
-                                />
+                                <Input name="pecetKnowledge" value={formData.pecetKnowledge} onChange={handleChange} />
                             </FormField>
-
                             <FormField label="Repositorios Especializados" htmlFor="centralicedRepositories">
-                                <Input
-                                    name="centralicedRepositories"
-                                    value={formData.centralicedRepositories}
-                                    onChange={handleChange}
-                                />
+                                <Input name="centralicedRepositories" value={formData.centralicedRepositories} onChange={handleChange} />
                             </FormField>
-
                             <FormField label="Criticidad*" htmlFor="criticality">
-                                <select
-                                    id="criticality"
-                                    name="criticality"
-                                    required
-                                    value={formData.criticality}
-                                    onChange={handleChange}
-                                    className="border border-[#8DC63F] p-2 rounded w-full"
-                                >
+                                <select id="criticality" name="criticality" value={formData.criticality} onChange={handleChange} required className="border border-[#8DC63F] p-2 rounded w-full">
                                     <option value="">Seleccione...</option>
-                                    {catalogs?.criticalityEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.key}
-                                        </option>
-                                    ))}
+                                    {catalogs?.criticalityEnum?.map(item => <option key={item.key} value={item.key}>{item.key}</option>)}
                                 </select>
                             </FormField>
 
                             <FormField label="Visibilidad" htmlFor="visibilidad">
-                                <select
-                                    id="visibilidad"
-                                    name="visibilidad"
-                                    value={formData.visibilidad}
-                                    onChange={handleChange}
-                                    className="border border-[#8DC63F] p-2 rounded w-full"
-                                >
+                                <select id="visibilidad" name="visibilidad" value={formData.visibilidad} onChange={handleChange} className="border border-[#8DC63F] p-2 rounded w-full">
                                     <option value="">Seleccione...</option>
-                                    {visibilidad.map((item) => (
-                                        <option key={item} value={item}>
-                                            {item}
-                                        </option>
-                                    ))}
+                                    {visibilidad.map(item => <option key={item} value={item}>{item}</option>)}
                                 </select>
                             </FormField>
 
                             <FormField label="Nivel de clasificación*" htmlFor="clasificacion">
-                                <select
-                                    id="clasificacion"
-                                    name="clasificacion"
-                                    value={formData.clasificacion}
-                                    required
-                                    onChange={handleChange}
-                                    className="border border-[#8DC63F] p-2 rounded w-full"
-                                >
+                                <select id="clasificacion" name="clasificacion" value={formData.clasificacion} onChange={handleChange} required className="border border-[#8DC63F] p-2 rounded w-full">
                                     <option value="">Seleccione...</option>
-                                    {catalogs?.classificationLevelLevelEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.key}
-                                        </option>
-                                    ))}
+                                    {catalogs?.classificationLevelLevelEnum?.map(item => <option key={item.key} value={item.key}>{item.key}</option>)}
                                 </select>
                             </FormField>
 
                             <FormField label="Copyright" htmlFor="copyright">
-                                <Input
-                                    name="copyright"
-                                    value={formData.copyright}
-                                    onChange={handleChange}
-                                />
+                                <Input name="copyright" value={formData.copyright} onChange={handleChange} />
                             </FormField>
 
                             <FormField label="Patentes del activo de conocimiento" htmlFor="patents">
-                                <Input
-                                    name="patents"
-                                    value={formData.patents}
-                                    onChange={handleChange}
-                                />
+                                <Input name="patents" value={formData.patents} onChange={handleChange} />
                             </FormField>
 
                             <FormField label="Secretos comerciales" htmlFor="tradeSecrets">
-                                <Input
-                                    name="tradeSecrets"
-                                    value={formData.tradeSecrets}
-                                    onChange={handleChange}
-                                />
+                                <Input name="tradeSecrets" value={formData.tradeSecrets} onChange={handleChange} />
                             </FormField>
 
                             <FormField label="Marca registrada" htmlFor="brands">
-                                <Input
-                                    name="brands"
-                                    value={formData.brands}
-                                    onChange={handleChange}
-                                />
+                                <Input name="brands" value={formData.brands} onChange={handleChange} />
                             </FormField>
 
                             <FormField label="Propiedad intelectual" htmlFor="industrialIntellectualProperty">
-                                <Input
-                                    name="industrialIntellectualProperty"
-                                    value={formData.industrialIntellectualProperty}
-                                    onChange={handleChange}
-                                />
+                                <Input name="industrialIntellectualProperty" value={formData.industrialIntellectualProperty} onChange={handleChange} />
                             </FormField>
-
                         </div>
                     )}
 
@@ -622,26 +538,11 @@ const ManageAC = () => {
                         {id && isAdmin ? (
                             <>
                                 <Button text="Guardar cambios" type="primary" htmlType="submit" />
-                                <Button
-                                    text="Eliminar"
-                                    type="secondary"
-                                    htmlType="button"
-                                    onClick={handleDelete}
-                                />
-                                <Button
-                                    text="Vista previa"
-                                    type="admin"
-                                    htmlType="button"
-                                    onClick={() => navigate(`/ver/${id}`)}
-                                />
+                                <Button text="Eliminar" type="secondary" htmlType="button" onClick={handleDelete} />
+                                <Button text="Vista previa" type="admin" htmlType="button" onClick={() => navigate(`/ver/${id}`)} />
                             </>
                         ) : (
-                            <Button
-                                className="text-2xl"
-                                text="Registrar"
-                                type="primary"
-                                htmlType="submit"
-                            />
+                            <Button className="text-2xl" text="Registrar" type="primary" htmlType="submit" />
                         )}
                     </div>
                 </form>
