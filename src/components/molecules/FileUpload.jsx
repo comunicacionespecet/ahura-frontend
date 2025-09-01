@@ -27,4 +27,3 @@ FileUpload.propTypes = {
 };
 
 export default FileUpload;
-

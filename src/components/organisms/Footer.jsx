@@ -9,7 +9,9 @@ const Footer = () => {
                 <p>Horario de atención:</p>
                 <p>Lunes a viernes de 8:00 a.m. a 4:00 p.m.</p>
                 <p>Carrera 53 # 61 – 30 Laboratorio 632,</p>
-                <p>Sede de Investigación Universitaria-SIU, Medellín, Colombia.</p>
+                <p>
+                    Sede de Investigación Universitaria-SIU, Medellín, Colombia.
+                </p>
                 <p>Email: comunicacionespecet@udea.edu.co</p>
             </div>
             <div className="flex flex-wrap justify-center items-center gap-4">

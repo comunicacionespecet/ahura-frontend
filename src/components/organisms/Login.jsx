@@ -70,12 +70,22 @@ const Login = () => {
                 </form>
 
                 <p className="mt-6 text-center text-sm text-gray-600">
-                    ¿No tienes usuario?{" "}
+                    ¿No tienes usuario?{' '}
                     <span
                         className="text-[#70205B] font-semibold cursor-pointer hover:underline"
                         onClick={() => navigate('/registerUser')}
                     >
                         Regístrate
+                    </span>
+                </p>
+
+                <p className="mt-4 text-center text-sm text-gray-600">
+                    ¿Olvidaste tu contraseña?{" "}
+                    <span
+                        className="text-[#70205B] font-semibold cursor-pointer hover:underline"
+                        onClick={() => navigate('/recoveryUser')}
+                    >
+                        Recupérala aquí
                     </span>
                 </p>
             </div>
@@ -84,4 +94,3 @@ const Login = () => {
 };
 
 export default Login;
-

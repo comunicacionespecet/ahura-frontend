@@ -9,7 +9,9 @@ const MainFeatures = () => {
 
     return (
         <main className="flex-1 py-24 px-8 bg-[#FBFBFB]">
-            <h3 className="text-4xl text-center font-bold mb-4">¿Qué puedes hacer aquí?</h3>
+            <h3 className="text-4xl text-center font-bold mb-4">
+                ¿Qué puedes hacer aquí?
+            </h3>
 
             {isAdmin ? (
                 <div className="flex flex-col items-center gap-6">

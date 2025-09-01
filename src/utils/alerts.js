@@ -1,7 +1,8 @@
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
 
-export const showSuccess = (message) => toast.success(message, { duration: 8000 });
+export const showSuccess = (message) =>
+    toast.success(message, { duration: 8000 });
 export const showError = (message) => toast.error(message, { duration: 8000 });
 export const showInfo = (message) => toast(message, { duration: 8000 });
 

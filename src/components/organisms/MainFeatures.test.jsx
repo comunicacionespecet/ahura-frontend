@@ -15,8 +15,12 @@ describe('MainFeatures con navegación', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText(/Registrar activos de conocimiento/i)).toBeInTheDocument();
-        expect(screen.getByText(/Buscar activos de conocimiento/i)).toBeInTheDocument();
+        expect(
+            screen.getByText(/Registrar activos de conocimiento/i)
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/Buscar activos de conocimiento/i)
+        ).toBeInTheDocument();
     });
 
     test('redirige y muestra el formulario al hacer clic en "Registrar activos de conocimiento"', () => {

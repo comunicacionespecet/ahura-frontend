@@ -29,7 +29,9 @@ const Button = ({
             onClick={onClick}
             className={`${baseStyle} ${typeStyles[type] || typeStyles.primary} ${className}`}
         >
-            {icon && <div className="mb-1 md:mb-2 text-lg md:text-2xl">{icon}</div>}
+            {icon && (
+                <div className="mb-1 md:mb-2 text-lg md:text-2xl">{icon}</div>
+            )}
             <span className="text-sm md:text-base font-semibold">{text}</span>
         </button>
     );

@@ -12,7 +12,9 @@ test('renderiza el input con el placeholder y valor correctos', () => {
         />
     );
 
-    expect(screen.getByPlaceholderText(/ingresa tu correo/i)).toBeInTheDocument();
+    expect(
+        screen.getByPlaceholderText(/ingresa tu correo/i)
+    ).toBeInTheDocument();
     expect(screen.getByDisplayValue(/test@example.com/i)).toBeInTheDocument();
 });
 

@@ -16,8 +16,12 @@ const SubHeader = () => {
             />
 
             <div className="relative z-10 flex flex-col justify-center items-center text-center px-6 text-white h-[300px] md:h-[400px] bg-black/40">
-                <h1 className="text-3xl md:text-5xl font-bold mb-2">Bienvenido al Sistema AHURA</h1>
-                <p className="text-lg mb-4">Gestión de activos del conocimiento.</p>
+                <h1 className="text-3xl md:text-5xl font-bold mb-2">
+                    Bienvenido al Sistema AHURA
+                </h1>
+                <p className="text-lg mb-4">
+                    Gestión de activos del conocimiento.
+                </p>
                 <div className="flex flex-wrap gap-3">
                     <Button
                         onClick={() => {
@@ -37,7 +41,11 @@ const SubHeader = () => {
                         type="secondary"
                         htmlType="button"
                     />
-                    <a href="https://pecet-colombia.org/" target="_blank" rel="noopener noreferrer">
+                    <a
+                        href="https://pecet-colombia.org/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         <Button
                             text="Conocer más sobre el PECET"
                             type="success"

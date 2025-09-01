@@ -1,7 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const TextArea = ({ id, name, value, onChange, placeholder, rows = 4, required = false }) => {
+const TextArea = ({
+    id,
+    name,
+    value,
+    onChange,
+    placeholder,
+    rows = 4,
+    required = false,
+}) => {
     return (
         <textarea
             id={id || name}

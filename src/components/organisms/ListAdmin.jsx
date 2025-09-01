@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Pencil, Trash2, X, Plus } from 'lucide-react';
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
-import { 
-    useCatalogs, 
-    usePostCatalogItem, 
-    useUpdateCatalog, 
-    useDeleteCatalogItem 
+import {
+    useCatalogs,
+    usePostCatalogItem,
+    useUpdateCatalog,
+    useDeleteCatalogItem,
 } from '../../hooks/useCatalogs';
 
 const AdminTabs = () => {
@@ -22,7 +22,8 @@ const AdminTabs = () => {
     const [editedDescription, setEditedDescription] = useState('');
 
     if (loading) return <p className="p-6">Cargando...</p>;
-    if (error) return <p className="p-6 text-red-600">Error: {error.message}</p>;
+    if (error)
+        return <p className="p-6 text-red-600">Error: {error.message}</p>;
     if (!catalogs) return <p className="p-6">No hay catálogos disponibles</p>;
 
     const tabs = Object.keys(catalogs);
@@ -34,11 +35,8 @@ const AdminTabs = () => {
         classificationLevelLevelEnum: 'Nivel de clasificación',
         criticalityEnum: 'Criticidad',
         assetStatusEnum: 'Estado del activo',
-        commentStatusEnum: 'Estado del comentario',
-        loggerActionEnum: 'Acciones del sistema',
     };
 
-    // Abrir modal edición
     const handleEdit = (item, tabName) => {
         setCurrentItem({ ...item, tabName });
         setEditedTitle(item.key ?? item.title);
@@ -46,14 +44,15 @@ const AdminTabs = () => {
         setIsEditing(true);
     };
 
-    // Guardar cambios
     const handleSave = async () => {
         if (!currentItem) return;
         try {
             const updatedBody = { ...catalogs };
             const enumList = updatedBody[currentItem.tabName] || [];
             const idx = enumList.findIndex(
-                (i) => (i.key ?? i.title) === (currentItem.key ?? currentItem.title)
+                (i) =>
+                    (i.key ?? i.title) ===
+                    (currentItem.key ?? currentItem.title)
             );
             if (idx !== -1) {
                 enumList[idx] = {
@@ -87,7 +86,12 @@ const AdminTabs = () => {
 
         try {
             const slug = catalogs.slug ?? 'default';
-            await deleteItem(slug, tabName, item.key ?? item.title, setCatalogs);
+            await deleteItem(
+                slug,
+                tabName,
+                item.key ?? item.title,
+                setCatalogs
+            );
             showSuccess('Elemento eliminado correctamente');
         } catch (err) {
             console.error(err);
@@ -99,7 +103,12 @@ const AdminTabs = () => {
     const handleAdd = async () => {
         try {
             const slug = catalogs.slug ?? 'default';
-            await postItem(slug, tabs[activeTab], { key: editedTitle, descripcion: editedDescription }, setCatalogs);
+            await postItem(
+                slug,
+                tabs[activeTab],
+                { key: editedTitle, descripcion: editedDescription },
+                setCatalogs
+            );
             setEditedTitle('');
             setEditedDescription('');
             setIsAdding(false);
@@ -118,9 +127,10 @@ const AdminTabs = () => {
                         <button
                             key={tabName}
                             className={`flex-shrink-0 whitespace-nowrap px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none transition-all duration-200
-                                ${activeTab === i
-                                    ? 'border-[#70205B] text-[#70205B] font-semibold bg-[#F3EAF1] rounded-t-lg shadow-sm'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ${
+                                    activeTab === i
+                                        ? 'border-[#70205B] text-[#70205B] font-semibold bg-[#F3EAF1] rounded-t-lg shadow-sm'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                             onClick={() => setActiveTab(i)}
                         >
@@ -149,24 +159,43 @@ const AdminTabs = () => {
                             <tr>
                                 <th className="px-4 py-2">Título</th>
                                 <th className="px-4 py-2">Descripción</th>
-                                <th className="px-4 py-2 text-center">Acciones</th>
+                                <th className="px-4 py-2 text-center">
+                                    Acciones
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             {catalogs[tabs[activeTab]].map((item, idx) => (
-                                <tr key={`${item.key ?? item.title}-${idx}`} className="border-t">
-                                    <td className="px-4 py-2">{item.key ?? item.title}</td>
-                                    <td className="px-4 py-2">{item.descripcion ?? item.description}</td>
+                                <tr
+                                    key={`${item.key ?? item.title}-${idx}`}
+                                    className="border-t"
+                                >
+                                    <td className="px-4 py-2">
+                                        {item.key ?? item.title}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {item.descripcion ?? item.description}
+                                    </td>
                                     <td className="px-4 py-2 flex justify-center gap-2">
                                         <button
-                                            onClick={() => handleEdit(item, tabs[activeTab])}
+                                            onClick={() =>
+                                                handleEdit(
+                                                    item,
+                                                    tabs[activeTab]
+                                                )
+                                            }
                                             className="text-blue-600 hover:text-blue-800"
                                             title="Editar"
                                         >
                                             <Pencil size={18} />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(item, tabs[activeTab])}
+                                            onClick={() =>
+                                                handleDelete(
+                                                    item,
+                                                    tabs[activeTab]
+                                                )
+                                            }
                                             className="text-red-600 hover:text-red-800"
                                             title="Borrar"
                                         >
@@ -189,9 +218,13 @@ const AdminTabs = () => {
                         >
                             <X size={20} />
                         </button>
-                        <h2 className="text-lg font-semibold mb-4">Editar elemento</h2>
+                        <h2 className="text-lg font-semibold mb-4">
+                            Editar elemento
+                        </h2>
 
-                        <label className="block text-sm font-medium">Título</label>
+                        <label className="block text-sm font-medium">
+                            Título
+                        </label>
                         <input
                             type="text"
                             value={editedTitle}
@@ -199,10 +232,14 @@ const AdminTabs = () => {
                             className="w-full p-2 border rounded mb-4"
                         />
 
-                        <label className="block text-sm font-medium">Descripción</label>
+                        <label className="block text-sm font-medium">
+                            Descripción
+                        </label>
                         <textarea
                             value={editedDescription}
-                            onChange={(e) => setEditedDescription(e.target.value)}
+                            onChange={(e) =>
+                                setEditedDescription(e.target.value)
+                            }
                             className="w-full p-2 border rounded mb-4"
                         />
 
@@ -233,9 +270,13 @@ const AdminTabs = () => {
                         >
                             <X size={20} />
                         </button>
-                        <h2 className="text-lg font-semibold mb-4">Agregar elemento</h2>
+                        <h2 className="text-lg font-semibold mb-4">
+                            Agregar elemento
+                        </h2>
 
-                        <label className="block text-sm font-medium">Título</label>
+                        <label className="block text-sm font-medium">
+                            Título
+                        </label>
                         <input
                             type="text"
                             value={editedTitle}
@@ -243,10 +284,14 @@ const AdminTabs = () => {
                             className="w-full p-2 border rounded mb-4"
                         />
 
-                        <label className="block text-sm font-medium">Descripción</label>
+                        <label className="block text-sm font-medium">
+                            Descripción
+                        </label>
                         <textarea
                             value={editedDescription}
-                            onChange={(e) => setEditedDescription(e.target.value)}
+                            onChange={(e) =>
+                                setEditedDescription(e.target.value)
+                            }
                             className="w-full p-2 border rounded mb-4"
                         />
 

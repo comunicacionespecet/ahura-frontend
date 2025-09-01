@@ -15,7 +15,6 @@ const ImageUpload = ({ onChange }) => {
                 className="hidden"
             />
         </label>
-
     );
 };
 
@@ -24,4 +23,3 @@ ImageUpload.propTypes = {
 };
 
 export default ImageUpload;
-

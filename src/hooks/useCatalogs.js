@@ -6,7 +6,6 @@ import {
     postCatalogItem,
 } from '../services/catalogServices';
 
-// Hook principal para obtener los catálogos
 export function useCatalogs() {
     const [catalogs, setCatalogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,7 +15,14 @@ export function useCatalogs() {
         const fetchCatalogs = async () => {
             try {
                 const data = await getCatalogs();
-                const { _id, slug, updatedAt, ...safeCatalogs } = data[0];
+                const {
+                    _id,
+                    slug,
+                    updatedAt,
+                    commentStatusEnum,
+                    loggerActionEnum,
+                    ...safeCatalogs
+                } = data[0];
                 setCatalogs(safeCatalogs);
             } catch (err) {
                 setError(err);
@@ -30,7 +36,6 @@ export function useCatalogs() {
     return { catalogs, setCatalogs, loading, error };
 }
 
-// Hook para agregar un nuevo elemento al catálogo
 export function usePostCatalogItem() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -57,7 +62,6 @@ export function usePostCatalogItem() {
     return { postItem, loading, error };
 }
 
-// Hook para actualizar un catálogo
 export function useUpdateCatalog() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -78,7 +82,6 @@ export function useUpdateCatalog() {
     return { updateItem, loading, error };
 }
 
-// Hook para eliminar un elemento del catálogo
 export function useDeleteCatalogItem() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
