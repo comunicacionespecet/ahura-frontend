@@ -13,6 +13,7 @@ import ListAdmin from './components/organisms/ListAdmin';
 import Login from './components/organisms/Login';
 import AdminUsers from './components/organisms/AdminUsers';
 import PrivateRoute from './components/organisms/PrivateRoute';
+import UserRegister from './components/organisms/UserRegister';
 
 function AppContent() {
     const location = useLocation();
@@ -61,6 +62,7 @@ function AppContent() {
                 <Route path="/ver/:id" element={<ViewACWrapper />} />
                 <Route path="/buscar" element={<SearchAC />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/registerUser" element={<UserRegister />} />
             </Routes>
 
             {showAbout && <AboutSection />}

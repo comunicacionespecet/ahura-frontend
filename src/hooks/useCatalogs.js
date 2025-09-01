@@ -6,6 +6,7 @@ import {
     postCatalogItem,
 } from '../services/catalogServices';
 
+// Hook principal para obtener los catálogos
 export function useCatalogs() {
     const [catalogs, setCatalogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,53 +27,82 @@ export function useCatalogs() {
         fetchCatalogs();
     }, []);
 
-    const handlePostCatalogItem = async (slug, listName, newItem) => {
+    return { catalogs, setCatalogs, loading, error };
+}
+
+// Hook para agregar un nuevo elemento al catálogo
+export function usePostCatalogItem() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const postItem = async (slug, listName, newItem, setCatalogs) => {
+        setLoading(true);
         try {
             const result = await postCatalogItem(slug, listName, newItem);
-            setCatalogs((prev) => ({
-                ...prev,
-                [listName]: [...(prev[listName] || []), result],
-            }));
+            if (setCatalogs) {
+                setCatalogs((prev) => ({
+                    ...prev,
+                    [listName]: [...(prev[listName] || []), result],
+                }));
+            }
+            setLoading(false);
             return result;
         } catch (err) {
             setError(err);
+            setLoading(false);
             throw err;
         }
     };
 
-    const handleUpdateCatalog = async (id, updatedData) => {
+    return { postItem, loading, error };
+}
+
+// Hook para actualizar un catálogo
+export function useUpdateCatalog() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const updateItem = async (id, updatedData) => {
+        setLoading(true);
         try {
             const result = await updateCatalog(id, updatedData);
+            setLoading(false);
             return result;
         } catch (err) {
             setError(err);
+            setLoading(false);
             throw err;
         }
     };
 
-    const handleDeleteCatalogItem = async (slug, listName, key) => {
+    return { updateItem, loading, error };
+}
+
+// Hook para eliminar un elemento del catálogo
+export function useDeleteCatalogItem() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const deleteItem = async (slug, listName, key, setCatalogs) => {
+        setLoading(true);
         try {
             const result = await deleteCatalogItem(slug, listName, key);
-            setCatalogs((prev) => ({
-                ...prev,
-                [listName]: (prev[listName] || []).filter(
-                    (item) => (item.key ?? item.title) !== key
-                ),
-            }));
+            if (setCatalogs) {
+                setCatalogs((prev) => ({
+                    ...prev,
+                    [listName]: (prev[listName] || []).filter(
+                        (item) => (item.key ?? item.title) !== key
+                    ),
+                }));
+            }
+            setLoading(false);
             return result;
         } catch (err) {
             setError(err);
+            setLoading(false);
             throw err;
         }
     };
 
-    return {
-        catalogs,
-        loading,
-        error,
-        setCatalogs,
-        handlePostCatalogItem,
-        handleUpdateCatalog,
-        handleDeleteCatalogItem,
-    };
+    return { deleteItem, loading, error };
 }

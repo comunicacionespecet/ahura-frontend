@@ -4,12 +4,20 @@ import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
 import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../utils/alerts';
-import { useAuth } from '../../context/AuthContext';
+import { useCreateUser } from '../../hooks/useUsers';
 
-const Login = () => {
-    const { login, loading } = useAuth();
-    const [form, setForm] = useState({ email: '', password: '' });
+const UserRegister = () => {
     const navigate = useNavigate();
+    const { create, loading } = useCreateUser();
+
+    const [form, setForm] = useState({
+        id: crypto.randomUUID(),
+        email: '',
+        name: '',
+        phone: '',
+        password: '',
+        role: 'user',
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -19,18 +27,17 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(form.email)) {
-            showError('Por favor ingresa un correo electrónico válido.');
+        if (!form.email || !form.name || !form.phone || !form.password) {
+            showError('Por favor completa todos los campos obligatorios.');
             return;
         }
 
         try {
-            await login(form.email, form.password);
-            showSuccess('¡Bienvenido!');
-            navigate('/');
+            await create(form);
+            showSuccess('Usuario registrado con éxito');
+            navigate('/login');
         } catch (err) {
-            showError('Credenciales incorrectas');
+            showError(err.message || 'Error al registrar el usuario');
         }
     };
 
@@ -38,10 +45,11 @@ const Login = () => {
         <div className="flex items-center justify-center py-5 bg-[#F5F5F5]">
             <div className="bg-white rounded shadow-lg p-8 w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-6 text-[#70205B] text-center">
-                    Iniciar sesión
+                    Registro de Usuario
                 </h2>
+
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <FormField label="Usuario *" htmlFor="username">
+                    <FormField label="Correo electrónico *" htmlFor="email">
                         <Input
                             type="email"
                             name="email"
@@ -50,6 +58,28 @@ const Login = () => {
                             required
                         />
                     </FormField>
+
+                    <FormField label="Nombre completo *" htmlFor="name">
+                        <Input
+                            type="text"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </FormField>
+
+                    <FormField label="Teléfono *" htmlFor="phone">
+                        <Input
+                            type="text"
+                            name="phone"
+                            value={form.phone}
+                            onChange={handleChange}
+                            required
+                        />
+                    </FormField>
+
+                    <input type="hidden" name="role" value="user" />
 
                     <FormField label="Contraseña *" htmlFor="password">
                         <Input
@@ -63,19 +93,21 @@ const Login = () => {
 
                     <Button
                         onClick={handleSubmit}
-                        text="Iniciar Sesión"
+                        text={loading ? 'Registrando...' : 'Registrar'}
                         type="primary"
                         htmlType="button"
+                        className="w-full"
+                        disabled={loading}
                     />
                 </form>
 
                 <p className="mt-6 text-center text-sm text-gray-600">
-                    ¿No tienes usuario?{" "}
+                    ¿Ya tienes usuario?{" "}
                     <span
                         className="text-[#70205B] font-semibold cursor-pointer hover:underline"
-                        onClick={() => navigate('/registerUser')}
+                        onClick={() => navigate('/login')}
                     >
-                        Regístrate
+                        Inicia sesión
                     </span>
                 </p>
             </div>
@@ -83,5 +115,4 @@ const Login = () => {
     );
 };
 
-export default Login;
-
+export default UserRegister;

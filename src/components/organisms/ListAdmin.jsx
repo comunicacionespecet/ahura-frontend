@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Pencil, Trash2, X, Plus } from 'lucide-react';
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
-import { useCatalogs } from '../../hooks/useCatalogs';
+import { 
+    useCatalogs, 
+    usePostCatalogItem, 
+    useUpdateCatalog, 
+    useDeleteCatalogItem 
+} from '../../hooks/useCatalogs';
 
 const AdminTabs = () => {
-    const {
-        catalogs,
-        loading,
-        error,
-        setCatalogs,
-        handlePostCatalogItem,
-        handleUpdateCatalog,
-        handleDeleteCatalogItem,
-    } = useCatalogs();
+    const { catalogs, setCatalogs, loading, error } = useCatalogs();
+    const { postItem } = usePostCatalogItem();
+    const { updateItem } = useUpdateCatalog();
+    const { deleteItem } = useDeleteCatalogItem();
 
     const [activeTab, setActiveTab] = useState(0);
     const [isEditing, setIsEditing] = useState(false);
@@ -26,11 +26,10 @@ const AdminTabs = () => {
     if (!catalogs) return <p className="p-6">No hay catálogos disponibles</p>;
 
     const tabs = Object.keys(catalogs);
-
     const tabLabels = {
         activeKnowledgeTypeEnum: 'Tipos de conocimiento',
         formatEnum: 'Formatos',
-        knowledgeTypeEnum: 'Clasificación del conocimiento',
+        knowledgeTypeEnum: 'Tipo de activo de conocimiento',
         originEnum: 'Origen',
         classificationLevelLevelEnum: 'Nivel de clasificación',
         criticalityEnum: 'Criticidad',
@@ -39,6 +38,7 @@ const AdminTabs = () => {
         loggerActionEnum: 'Acciones del sistema',
     };
 
+    // Abrir modal edición
     const handleEdit = (item, tabName) => {
         setCurrentItem({ ...item, tabName });
         setEditedTitle(item.key ?? item.title);
@@ -46,6 +46,7 @@ const AdminTabs = () => {
         setIsEditing(true);
     };
 
+    // Guardar cambios
     const handleSave = async () => {
         if (!currentItem) return;
         try {
@@ -64,8 +65,8 @@ const AdminTabs = () => {
                 };
                 updatedBody[currentItem.tabName] = enumList;
             }
-            await handleUpdateCatalog(updatedBody.slug ?? 'default', updatedBody);
 
+            await updateItem(updatedBody.slug ?? 'default', updatedBody);
             setCatalogs(updatedBody);
             setCurrentItem(null);
             setIsEditing(false);
@@ -76,15 +77,17 @@ const AdminTabs = () => {
         }
     };
 
+    // Eliminar elemento
     const handleDelete = async (item, tabName) => {
         const confirmDelete = await showConfirm(
             '¿Estás seguro?',
             'Esta acción no se puede deshacer'
         );
         if (!confirmDelete) return;
+
         try {
             const slug = catalogs.slug ?? 'default';
-            await handleDeleteCatalogItem(slug, tabName, item.key ?? item.title);
+            await deleteItem(slug, tabName, item.key ?? item.title, setCatalogs);
             showSuccess('Elemento eliminado correctamente');
         } catch (err) {
             console.error(err);
@@ -92,25 +95,14 @@ const AdminTabs = () => {
         }
     };
 
+    // Agregar nuevo elemento
     const handleAdd = async () => {
         try {
             const slug = catalogs.slug ?? 'default';
-            await handlePostCatalogItem(slug, tabs[activeTab], {
-                key: editedTitle,
-                descripcion: editedDescription,
-            });
-
-            const updatedBody = { ...catalogs };
-            updatedBody[tabs[activeTab]] = [
-                ...updatedBody[tabs[activeTab]],
-                { key: editedTitle, descripcion: editedDescription },
-            ];
-
-            setCatalogs(updatedBody);
+            await postItem(slug, tabs[activeTab], { key: editedTitle, descripcion: editedDescription }, setCatalogs);
             setEditedTitle('');
             setEditedDescription('');
             setIsAdding(false);
-
             showSuccess('Elemento agregado correctamente');
         } catch (err) {
             console.error(err);
@@ -125,11 +117,11 @@ const AdminTabs = () => {
                     {tabs.map((tabName, i) => (
                         <button
                             key={tabName}
-                            className={`flex-shrink-0 whitespace-nowrap px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none ${
-                                activeTab === i
-                                    ? 'border-[#70205B] text-[#70205B]'
-                                    : 'border-transparent text-gray-700'
-                            }`}
+                            className={`flex-shrink-0 whitespace-nowrap px-4 py-2 -mb-px border-b-2 font-medium focus:outline-none transition-all duration-200
+                                ${activeTab === i
+                                    ? 'border-[#70205B] text-[#70205B] font-semibold bg-[#F3EAF1] rounded-t-lg shadow-sm'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                }`}
                             onClick={() => setActiveTab(i)}
                         >
                             {tabLabels[tabName] ?? tabName}
@@ -163,8 +155,8 @@ const AdminTabs = () => {
                         <tbody>
                             {catalogs[tabs[activeTab]].map((item, idx) => (
                                 <tr key={`${item.key ?? item.title}-${idx}`} className="border-t">
-                                    <td className="px-4 py-2">{item.key}</td>
-                                    <td className="px-4 py-2">{item.descripcion}</td>
+                                    <td className="px-4 py-2">{item.key ?? item.title}</td>
+                                    <td className="px-4 py-2">{item.descripcion ?? item.description}</td>
                                     <td className="px-4 py-2 flex justify-center gap-2">
                                         <button
                                             onClick={() => handleEdit(item, tabs[activeTab])}

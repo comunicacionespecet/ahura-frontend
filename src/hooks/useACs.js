@@ -10,7 +10,7 @@ export function useACs() {
     useEffect(() => {
         getAllACs()
             .then((data) => {
-                setAcs(data);
+                setAcs(data.items);
                 setLoading(false);
             })
             .catch((err) => {
