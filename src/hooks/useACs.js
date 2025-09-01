@@ -5,6 +5,7 @@ import {
     createAC,
     updateAC,
     deleteAC,
+    getAssets,
 } from '../services/acServices';
 import { getSignedImageUrl } from '../services/uploadServices';
 
@@ -24,6 +25,27 @@ export function useACs() {
                 setLoading(false);
             });
     }, []);
+    return { acs, loading, error };
+}
+
+export function useFilteredACs(filters = {}, page = 1, limit = 10) {
+    const [acs, setAcs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setLoading(true);
+        getAssets(filters, page, limit)
+            .then((data) => {
+                setAcs(data.items);
+                setLoading(false);
+            })
+            .catch((err) => {
+                setError(err);
+                setLoading(false);
+            });
+    }, [filters, page, limit]);
+
     return { acs, loading, error };
 }
 

@@ -32,7 +32,6 @@ export function useCatalogs() {
         };
         fetchCatalogs();
     }, []);
-
     return { catalogs, setCatalogs, loading, error };
 }
 

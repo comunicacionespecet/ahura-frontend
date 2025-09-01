@@ -44,7 +44,6 @@ export const createUser = async (userData) => {
         headers: {
             'Content-Type': 'application/json',
             Auth: '1234',
-            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
     });
