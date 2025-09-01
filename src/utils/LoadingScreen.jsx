@@ -20,7 +20,9 @@ export default function LoadingScreen() {
                 🦟
             </motion.div>
 
-            <div className="absolute bottom-10 text-gray-600 text-lg">Preparando resultados...</div>
+            <div className="absolute bottom-10 text-gray-600 text-lg">
+                Preparando resultados...
+            </div>
         </div>
     );
 }

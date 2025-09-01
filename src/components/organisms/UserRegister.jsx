@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../utils/alerts';
 import { useCreateUser } from '../../hooks/useUsers';
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+// Tel: 7–15 dígitos, permite espacios y +
+const phoneRegex = /^\+?\d[\d\s]{6,14}\d$/;
+
 const UserRegister = () => {
     const navigate = useNavigate();
     const { create, loading } = useCreateUser();
@@ -19,27 +23,110 @@ const UserRegister = () => {
         role: 'user',
     });
 
+    // confirmación solo en front
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    // control de errores y touched
+    const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({});
+
+    const validate = (values, confirmPwd) => {
+        const e = {};
+
+        if (!values.email) e.email = 'El correo es obligatorio.';
+        else if (!emailRegex.test(values.email)) e.email = 'Correo inválido.';
+
+        if (!values.name) e.name = 'El nombre es obligatorio.';
+
+        if (!values.phone) e.phone = 'El teléfono es obligatorio.';
+        else if (!phoneRegex.test(values.phone)) e.phone = 'Teléfono inválido.';
+
+        if (!values.password) e.password = 'La contraseña es obligatoria.';
+        else if (values.password.length < 8)
+            e.password = 'Mínimo 8 caracteres.';
+
+        if (!confirmPwd) e.confirmPassword = 'Confirma tu contraseña.';
+        else if (values.password !== confirmPwd)
+            e.confirmPassword = 'Las contraseñas no coinciden.';
+
+        return e;
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
+        // revalida en tiempo real el campo cambiado
+        setErrors((prev) => {
+            const next = { ...prev };
+            // validación puntual
+            if (name === 'email') {
+                if (!value) next.email = 'El correo es obligatorio.';
+                else if (!emailRegex.test(value))
+                    next.email = 'Correo inválido.';
+                else delete next.email;
+            }
+            if (name === 'name') {
+                if (!value) next.name = 'El nombre es obligatorio.';
+                else delete next.name;
+            }
+            if (name === 'phone') {
+                if (!value) next.phone = 'El teléfono es obligatorio.';
+                else if (!phoneRegex.test(value))
+                    next.phone = 'Teléfono inválido.';
+                else delete next.phone;
+            }
+            if (name === 'password') {
+                if (!value) next.password = 'La contraseña es obligatoria.';
+                else if (value.length < 8)
+                    next.password = 'Mínimo 8 caracteres.';
+                else delete next.password;
+
+                // sincroniza match con confirmPassword
+                if (confirmPassword && value !== confirmPassword)
+                    next.confirmPassword = 'Las contraseñas no coinciden.';
+                else if (confirmPassword) delete next.confirmPassword;
+            }
+            return next;
+        });
+    };
+
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        setTouched((prev) => ({ ...prev, [name]: true }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const foundErrors = validate(form, confirmPassword);
+        setErrors(foundErrors);
+        setTouched({
+            email: true,
+            name: true,
+            phone: true,
+            password: true,
+            confirmPassword: true,
+        });
 
-        if (!form.email || !form.name || !form.phone || !form.password) {
-            showError('Por favor completa todos los campos obligatorios.');
+        if (Object.keys(foundErrors).length > 0) {
+            showError('Revisa los campos marcados en rojo.');
             return;
         }
 
         try {
-            await create(form);
+            await create(form); // no enviamos confirmPassword
             showSuccess('Usuario registrado con éxito');
             navigate('/login');
         } catch (err) {
             showError(err.message || 'Error al registrar el usuario');
         }
     };
+
+    const fieldClass = (field) =>
+        touched[field] && errors[field]
+            ? 'border-red-500'
+            : touched[field] && !errors[field]
+              ? 'border-green-500'
+              : '';
 
     return (
         <div className="flex items-center justify-center py-5 bg-[#F5F5F5]">
@@ -48,35 +135,64 @@ const UserRegister = () => {
                     Registro de Usuario
                 </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                {/* noValidate para desactivar tooltips nativos del navegador */}
+                <form onSubmit={handleSubmit} noValidate className="space-y-4">
                     <FormField label="Correo electrónico *" htmlFor="email">
                         <Input
                             type="email"
                             name="email"
+                            autoComplete="email"
                             value={form.email}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             required
+                            placeholder="Ej: nombre@empresa.com"
+                            className={fieldClass('email')}
                         />
+                        {touched.email && errors.email && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.email}
+                            </p>
+                        )}
                     </FormField>
 
                     <FormField label="Nombre completo *" htmlFor="name">
                         <Input
                             type="text"
                             name="name"
+                            autoComplete="name"
                             value={form.name}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             required
+                            placeholder="Ej: Laura Restrepo"
+                            className={fieldClass('name')}
                         />
+                        {touched.name && errors.name && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.name}
+                            </p>
+                        )}
                     </FormField>
 
                     <FormField label="Teléfono *" htmlFor="phone">
                         <Input
-                            type="text"
+                            type="tel"
                             name="phone"
+                            autoComplete="tel"
                             value={form.phone}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             required
+                            placeholder="Ej: 300 123 4567"
+                            className={fieldClass('phone')}
+                            inputMode="tel"
                         />
+                        {touched.phone && errors.phone && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.phone}
+                            </p>
+                        )}
                     </FormField>
 
                     <input type="hidden" name="role" value="user" />
@@ -85,24 +201,75 @@ const UserRegister = () => {
                         <Input
                             type="password"
                             name="password"
+                            autoComplete="new-password"
                             value={form.password}
                             onChange={handleChange}
+                            onBlur={handleBlur}
                             required
+                            placeholder="Mín. 8 caracteres"
+                            className={fieldClass('password')}
                         />
+                        {touched.password && errors.password && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.password}
+                            </p>
+                        )}
+                    </FormField>
+
+                    <FormField
+                        label="Confirmar contraseña *"
+                        htmlFor="confirmPassword"
+                    >
+                        <Input
+                            type="password"
+                            name="confirmPassword"
+                            autoComplete="new-password"
+                            value={confirmPassword}
+                            onChange={(e) => {
+                                const v = e.target.value;
+                                setConfirmPassword(v);
+                                setErrors((prev) => {
+                                    const next = { ...prev };
+                                    if (!v)
+                                        next.confirmPassword =
+                                            'Confirma tu contraseña.';
+                                    else if (v !== form.password)
+                                        next.confirmPassword =
+                                            'Las contraseñas no coinciden.';
+                                    else delete next.confirmPassword;
+                                    return next;
+                                });
+                            }}
+                            onBlur={handleBlur}
+                            required
+                            placeholder="Repite tu contraseña"
+                            className={fieldClass('confirmPassword')}
+                        />
+                        {touched.confirmPassword && errors.confirmPassword && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.confirmPassword}
+                            </p>
+                        )}
+                        {touched.confirmPassword &&
+                            !errors.confirmPassword &&
+                            confirmPassword && (
+                                <p className="text-sm text-green-600 mt-1">
+                                    ✅ Contraseñas coinciden.
+                                </p>
+                            )}
                     </FormField>
 
                     <Button
-                        onClick={handleSubmit}
                         text={loading ? 'Registrando...' : 'Registrar'}
                         type="primary"
-                        htmlType="button"
+                        htmlType="submit"
                         className="w-full"
                         disabled={loading}
                     />
                 </form>
 
                 <p className="mt-6 text-center text-sm text-gray-600">
-                    ¿Ya tienes usuario?{" "}
+                    ¿Ya tienes usuario?{' '}
                     <span
                         className="text-[#70205B] font-semibold cursor-pointer hover:underline"
                         onClick={() => navigate('/login')}

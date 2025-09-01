@@ -13,11 +13,17 @@ describe('SearchAC Component', () => {
     });
 
     test('renderiza inputs y selects', () => {
-        expect(screen.getByPlaceholderText(/Buscar por título/i)).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText(/Buscar por título/i)
+        ).toBeInTheDocument();
         expect(screen.getByLabelText(/Tipo de activo/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Año/i)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/Palabras clave/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Buscar/i })).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText(/Palabras clave/i)
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: /Buscar/i })
+        ).toBeInTheDocument();
     });
 
     test('muestra resultados y permite navegar al detalle', () => {

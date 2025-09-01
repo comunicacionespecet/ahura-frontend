@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { getAllACs, getACById, createAC, updateAC, deleteAC } from '../services/acServices';
+import {
+    getAllACs,
+    getACById,
+    createAC,
+    updateAC,
+    deleteAC,
+} from '../services/acServices';
 import { getSignedImageUrl } from '../services/uploadServices';
 
 export function useACs() {
@@ -46,7 +52,9 @@ export function useACById(id) {
 
                 if (data.fileUri) {
                     try {
-                        const signedFileUrl = await getSignedImageUrl(data.fileUri);
+                        const signedFileUrl = await getSignedImageUrl(
+                            data.fileUri
+                        );
                         data.signedFileUrl = signedFileUrl;
                         console.log('URL firmada obtenida:', data);
                     } catch (err) {

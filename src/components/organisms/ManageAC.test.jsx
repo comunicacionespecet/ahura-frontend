@@ -14,9 +14,13 @@ describe('RegisterAC', () => {
         expect(screen.getByLabelText(/Descripción \*/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/ID \*/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/Autor \*/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Tipo de conocimiento \*/i)).toBeInTheDocument();
+        expect(
+            screen.getByLabelText(/Tipo de conocimiento \*/i)
+        ).toBeInTheDocument();
         expect(screen.getByLabelText(/Formato \*/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Estado del Activo de conocimiento \*/i)).toBeInTheDocument();
+        expect(
+            screen.getByLabelText(/Estado del Activo de conocimiento \*/i)
+        ).toBeInTheDocument();
     });
 
     test('permite llenar campos e imprimir los datos enviados', async () => {
@@ -40,9 +44,12 @@ describe('RegisterAC', () => {
         fireEvent.change(screen.getByLabelText(/Formato \*/i), {
             target: { value: 'PDF' },
         });
-        fireEvent.change(screen.getByLabelText(/Estado del Activo de conocimiento \*/i), {
-            target: { value: 'Finalizado' },
-        });
+        fireEvent.change(
+            screen.getByLabelText(/Estado del Activo de conocimiento \*/i),
+            {
+                target: { value: 'Finalizado' },
+            }
+        );
 
         const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
@@ -69,7 +76,9 @@ describe('RegisterAC', () => {
     test('cambia y limpia la imagen cargada', () => {
         render(<RegisterAC />);
 
-        const file = new File(['contenido'], 'imagen.jpg', { type: 'image/jpeg' });
+        const file = new File(['contenido'], 'imagen.jpg', {
+            type: 'image/jpeg',
+        });
         const input = screen.getByLabelText(/imagen del activo/i);
 
         fireEvent.change(input, { target: { files: [file] } });

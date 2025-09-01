@@ -23,7 +23,14 @@ export const uploadFile = async (file) => {
 
     if (contentType.includes('application/json')) {
         const result = await response.json();
-        return result.key || result.fileName || result.name || result.url || result.id || file.name;
+        return (
+            result.key ||
+            result.fileName ||
+            result.name ||
+            result.url ||
+            result.id ||
+            file.name
+        );
     }
 
     const text = await response.text();
@@ -35,12 +42,15 @@ export const getSignedImageUrl = async (fileName) => {
 
     const token = localStorage.getItem('token');
 
-    const response = await fetch(`${BASE_URL}/upload/preview?key=${encodeURIComponent(fileName)}`, {
-        headers: {
-            Auth: '1234',
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    const response = await fetch(
+        `${BASE_URL}/upload/preview?key=${encodeURIComponent(fileName)}`,
+        {
+            headers: {
+                Auth: '1234',
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
 
     if (!response.ok) {
         throw new Error('No se pudo obtener la URL firmada');

@@ -57,7 +57,6 @@ export const createAC = async (acData) => {
     return data;
 };
 
-
 export const updateAC = async (id, acData) => {
     const token = localStorage.getItem('token');
     const response = await fetch(`${BASE_URL}/assets/${id}`, {

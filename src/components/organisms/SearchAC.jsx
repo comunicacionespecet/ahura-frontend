@@ -72,7 +72,11 @@ const SearchAC = () => {
                 </FormField>
 
                 <div className="mt-4 flex justify-end">
-                    <Button text="Buscar" type="success" onClick={handleSearch} />
+                    <Button
+                        text="Buscar"
+                        type="success"
+                        onClick={handleSearch}
+                    />
                 </div>
 
                 <FormField label="Búsqueda avanzada" htmlFor="advanced">
@@ -86,27 +90,46 @@ const SearchAC = () => {
             </div>
 
             <div className="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                <h4 className="text-4xl font-bold mb-4 text-[#70205B]">Resultados</h4>
+                <h4 className="text-4xl font-bold mb-4 text-[#70205B]">
+                    Resultados
+                </h4>
                 {loading ? (
                     <LoadingScreen />
                 ) : (
                     acs.map((item) => (
                         <div key={item.id} className="border-b py-3">
-                            <p className="font-bold text-[#026937]">{item.title}</p>
+                            <p className="font-bold text-[#026937]">
+                                {item.title}
+                            </p>
                             <p className="text-sm">
-                                <span className="text-[#7E7373] font-bold">Tipo: </span>
-                                <span className="text-black font-bold">{item.knowledgeType}</span>
-                                <span className="text-[#7E7373] font-bold"> | Año: </span>
+                                <span className="text-[#7E7373] font-bold">
+                                    Tipo:{' '}
+                                </span>
+                                <span className="text-black font-bold">
+                                    {item.knowledgeType}
+                                </span>
+                                <span className="text-[#7E7373] font-bold">
+                                    {' '}
+                                    | Año:{' '}
+                                </span>
                                 <span className="text-black font-bold">
                                     {new Date(item.publishDate).getFullYear()}
                                 </span>
-                                <span className="text-[#7E7373] font-bold"> | Autor: </span>
+                                <span className="text-[#7E7373] font-bold">
+                                    {' '}
+                                    | Autor:{' '}
+                                </span>
                                 <span className="text-black font-bold">
                                     {item.responsibleOwner}
                                 </span>
-                                <span className="text-[#7E7373] font-bold"> | Privacidad: </span>
+                                <span className="text-[#7E7373] font-bold">
+                                    {' '}
+                                    | Privacidad:{' '}
+                                </span>
                                 <span>
-                                    {item.availability.accessibility ? 'Público' : 'Privado'}
+                                    {item.availability.accessibility
+                                        ? 'Público'
+                                        : 'Privado'}
                                 </span>
                             </p>
                             <button

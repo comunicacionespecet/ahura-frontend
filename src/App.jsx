@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    useLocation,
+} from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Header from './components/organisms/Header';
 import SubHeader from './components/organisms/SubHeader';
@@ -14,6 +19,7 @@ import Login from './components/organisms/Login';
 import AdminUsers from './components/organisms/AdminUsers';
 import PrivateRoute from './components/organisms/PrivateRoute';
 import UserRegister from './components/organisms/UserRegister';
+import UserRecovery from './components/organisms/UserRecovery';
 
 function AppContent() {
     const location = useLocation();
@@ -63,6 +69,7 @@ function AppContent() {
                 <Route path="/buscar" element={<SearchAC />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/registerUser" element={<UserRegister />} />
+                <Route path="recoveryUser" element={<UserRecovery />} />
             </Routes>
 
             {showAbout && <AboutSection />}

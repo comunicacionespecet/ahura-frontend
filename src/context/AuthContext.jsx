@@ -15,7 +15,9 @@ export const AuthProvider = ({ children }) => {
         return savedUser ? JSON.parse(savedUser) : null;
     });
 
-    const [token, setToken] = useState(() => localStorage.getItem('token') || null);
+    const [token, setToken] = useState(
+        () => localStorage.getItem('token') || null
+    );
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -24,7 +26,9 @@ export const AuthProvider = ({ children }) => {
                 const decoded = jwtDecode(token);
                 const now = Date.now() / 1000;
                 if (decoded.exp < now) {
-                    showError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+                    showError(
+                        'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'
+                    );
                     logout();
                 }
             } catch (e) {

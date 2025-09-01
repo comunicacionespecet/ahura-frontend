@@ -28,7 +28,10 @@ export default function CommentsSection() {
 
             <div className="space-y-3">
                 {mockComments.map((c) => (
-                    <div key={c.id} className="border p-2 rounded-md bg-gray-50 text-sm">
+                    <div
+                        key={c.id}
+                        className="border p-2 rounded-md bg-gray-50 text-sm"
+                    >
                         <p className="font-semibold">{c.author}</p>
                         <p>{c.text}</p>
                         <span className="text-xs text-gray-400">
