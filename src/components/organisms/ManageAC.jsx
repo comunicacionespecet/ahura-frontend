@@ -259,7 +259,6 @@ const ManageAC = () => {
             if (error.message.includes('E11000'))
                 showError('El facetado ya existe en otro activo');
             else showError('Hubo un error al guardar el activo');
-            console.error(error);
         }
     };
 
@@ -274,7 +273,6 @@ const ManageAC = () => {
             showSuccess('Activo eliminado correctamente');
             navigate('/buscar');
         } catch (error) {
-            console.error(error);
             alert('Ocurrió un error al intentar eliminar el activo');
         }
     };

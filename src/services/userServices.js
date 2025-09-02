@@ -81,3 +81,25 @@ export const deleteUser = async (id) => {
     if (!res.ok) throw new Error(`Error al eliminar el usuario con ID: ${id}`);
     return null;
 };
+
+export const requestPasswordReset = async (email) => {
+    const res = await fetch(`${BASE_URL}/auth/password-reset/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error al solicitar recuperación');
+    return data;
+};
+
+export const confirmPasswordReset = async (email, code, newPassword) => {
+    const res = await fetch(`${BASE_URL}/auth/password-reset/confirm`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code, newPassword }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error al restablecer contraseña');
+    return data;
+};

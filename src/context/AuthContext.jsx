@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
                     logout();
                 }
             } catch (e) {
-                console.error('Token inválido', e);
                 logout();
             }
         }
@@ -56,13 +55,11 @@ export const AuthProvider = ({ children }) => {
 
             setToken(data.access_token);
             setUser(data.user || { email });
-            console.log('Usuario autenticado:', data.user);
             console.log('Token recibido:', data.access_token);
 
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('user', JSON.stringify(data.user));
         } catch (err) {
-            console.error('Error en login:', err);
             throw err;
         } finally {
             setLoading(false);

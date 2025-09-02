@@ -5,7 +5,10 @@ import {
     createUser,
     updateUser,
     deleteUser,
+    requestPasswordReset,
+    confirmPasswordReset,
 } from '../services/userServices';
+
 
 export function useUsers() {
     const [users, setUsers] = useState([]);
@@ -112,4 +115,44 @@ export function useDeleteUser() {
     };
 
     return { remove, loading, error };
+}
+
+export function usePasswordRecovery() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const request = async (email) => {
+        setLoading(true);
+        try {
+            const data = await requestPasswordReset(email);
+            setLoading(false);
+            return data;
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { request, loading, error };
+}
+
+export function usePasswordResetConfirm() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const confirm = async (email, code, newPassword) => {
+        setLoading(true);
+        try {
+            const data = await confirmPasswordReset(email, code, newPassword);
+            setLoading(false);
+            return data;
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { confirm, loading, error };
 }

@@ -65,9 +65,7 @@ export function useACById(id) {
                     try {
                         const signedUrl = await getSignedImageUrl(data.image);
                         data.signedImageUrl = signedUrl;
-                        console.log('URL firmada obtenida:', data);
                     } catch (err) {
-                        console.error('Error al obtener la URL firmada:', err);
                         data.signedImageUrl = null;
                     }
                 }
@@ -78,9 +76,7 @@ export function useACById(id) {
                             data.fileUri
                         );
                         data.signedFileUrl = signedFileUrl;
-                        console.log('URL firmada obtenida:', data);
                     } catch (err) {
-                        console.error('Error al obtener la URL firmada:', err);
                         data.signedFileUrl = null;
                     }
                 }

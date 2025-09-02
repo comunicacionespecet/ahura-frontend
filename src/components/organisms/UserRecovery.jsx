@@ -4,28 +4,44 @@ import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
 import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../utils/alerts';
+import { usePasswordRecovery, usePasswordResetConfirm } from '../../hooks/useUsers';
 
 const UserRecovery = () => {
+    const [step, setStep] = useState(1);
     const [email, setEmail] = useState('');
+    const [code, setCode] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const { request, loading: loadingRequest } = usePasswordRecovery();
+    const { confirm, loading: loadingConfirm } = usePasswordResetConfirm();
+
+    const handleRequest = async (e) => {
+        e.preventDefault();
+        try {
+            await request(email);
+            showSuccess('Se envió un código a tu correo.');
+            setStep(2);
+        } catch (err) {
+            showError(err.message);
+        }
+    };
+
+    const handleConfirm = async (e) => {
         e.preventDefault();
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            showError('Por favor ingresa un correo electrónico válido.');
+        if (password !== confirmPassword) {
+            showError('Las contraseñas no coinciden.');
             return;
         }
 
         try {
-            // Aquí deberías llamar a tu API de recuperación
-            // Ejemplo: await recoveryPassword(email);
-
-            showSuccess('Se han enviado las instrucciones de recuperación a tu correo.');
-            navigate('/login'); // Redirige después de éxito
+            await confirm(email, code, password);
+            showSuccess('Contraseña actualizada con éxito');
+            navigate('/login');
         } catch (err) {
-            showError('No se pudo enviar el correo de recuperación.');
+            showError(err.message);
         }
     };
 
@@ -36,29 +52,75 @@ const UserRecovery = () => {
                     Recuperar contraseña
                 </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <FormField label="Correo electrónico *" htmlFor="email">
-                        <Input
-                            type="email"
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            placeholder="ejemplo@correo.com"
+                {step === 1 && (
+                    <form onSubmit={handleRequest} className="space-y-4">
+                        <FormField label="Correo electrónico *" htmlFor="email">
+                            <Input
+                                type="email"
+                                name="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                placeholder="ejemplo@correo.com"
+                            />
+                        </FormField>
+                        <Button
+                            text={loadingRequest ? 'Enviando...' : 'Enviar código'}
+                            type="primary"
+                            htmlType="submit"
+                            className="w-full"
+                            disabled={loadingRequest}
                         />
-                    </FormField>
+                    </form>
+                )}
 
-                    <Button
-                        onClick={handleSubmit}
-                        text="Recuperar contraseña"
-                        type="primary"
-                        htmlType="button"
-                        className="w-full"
-                    />
-                </form>
+                {step === 2 && (
+                    <form onSubmit={handleConfirm} className="space-y-4">
+                        <FormField label="Código recibido *" htmlFor="code">
+                            <Input
+                                type="text"
+                                name="code"
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                                required
+                                placeholder="Ej: 123456"
+                            />
+                        </FormField>
+
+                        <FormField label="Nueva contraseña *" htmlFor="password">
+                            <Input
+                                type="password"
+                                name="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                placeholder="Mínimo 8 caracteres"
+                            />
+                        </FormField>
+
+                        <FormField label="Confirmar contraseña *" htmlFor="confirmPassword">
+                            <Input
+                                type="password"
+                                name="confirmPassword"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                                placeholder="Repite tu contraseña"
+                            />
+                        </FormField>
+
+                        <Button
+                            text={loadingConfirm ? 'Cambiando...' : 'Cambiar contraseña'}
+                            type="primary"
+                            htmlType="submit"
+                            className="w-full"
+                            disabled={loadingConfirm}
+                        />
+                    </form>
+                )}
 
                 <p className="mt-6 text-center text-sm text-gray-600">
-                    ¿Recordaste tu contraseña?{" "}
+                    ¿Recordaste tu contraseña?{' '}
                     <span
                         className="text-[#70205B] font-semibold cursor-pointer hover:underline"
                         onClick={() => navigate('/login')}

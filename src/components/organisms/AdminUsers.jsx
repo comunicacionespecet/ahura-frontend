@@ -35,7 +35,6 @@ const AdminUser = () => {
             setIsEditing(false);
             showSuccess('Rol actualizado correctamente');
         } catch (err) {
-            console.error(err);
             showError('Error actualizando rol');
         }
     };
@@ -52,7 +51,6 @@ const AdminUser = () => {
             setUsers((prev) => prev.filter((u) => u.id !== id));
             showSuccess('Usuario eliminado correctamente');
         } catch (err) {
-            console.error(err);
             showError('Error eliminando usuario');
         }
     };
