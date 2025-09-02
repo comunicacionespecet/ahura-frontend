@@ -71,7 +71,6 @@ const AdminTabs = () => {
             setIsEditing(false);
             showSuccess('Elemento actualizado correctamente');
         } catch (err) {
-            console.error(err);
             showError('Error actualizando elemento');
         }
     };
@@ -94,7 +93,6 @@ const AdminTabs = () => {
             );
             showSuccess('Elemento eliminado correctamente');
         } catch (err) {
-            console.error(err);
             showError('Error eliminando elemento');
         }
     };
@@ -114,7 +112,6 @@ const AdminTabs = () => {
             setIsAdding(false);
             showSuccess('Elemento agregado correctamente');
         } catch (err) {
-            console.error(err);
             showError('Error agregando elemento');
         }
     };

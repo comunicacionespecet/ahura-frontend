@@ -2,12 +2,13 @@ import { useState } from 'react';
 import TextArea from '../atoms/TextArea';
 import Button from '../atoms/Button';
 
-export default function CommentForm({ onSubmit }) {
+export default function CommentForm({ onSubmit, loading }) {
     const [text, setText] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (text.trim() === '') return;
+        if (text.trim() === '' || loading) return;
+
         onSubmit(text);
         setText('');
     };
@@ -20,7 +21,13 @@ export default function CommentForm({ onSubmit }) {
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Escribe un comentario..."
             />
-            <Button text="Enviar" htmlType="submit" type="primary" />
+            <Button
+                text={loading ? 'Enviando...' : 'Enviar'}
+                htmlType="submit"
+                type="primary"
+                disabled={loading}
+            />
         </form>
     );
 }
+
