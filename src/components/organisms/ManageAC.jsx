@@ -27,6 +27,7 @@ const ManageAC = () => {
     const { remove } = useDeleteAC();
     const { upload } = useUpload();
     const navigate = useNavigate();
+    const searchRef = React.useRef();
 
     const [imagen, setImagen] = useState(null);
     const [keywordError, setKeywordError] = useState('');
@@ -90,7 +91,7 @@ const ManageAC = () => {
                 propietarioAC: ac.responsibleOwner,
                 estadoAC: ac.status,
                 fileUri: ac.fileUri,
-                relatedIds: ac.relatedIds?.join(', '),
+                relatedIds: ac.relatedIds || [],
                 pecetKnowledge: ac.howIsItStored?.pecetKnowledge,
                 centralicedRepositories:
                     ac.howIsItStored?.centralicedRepositories,
@@ -113,36 +114,41 @@ const ManageAC = () => {
 
 
     //INTENTO
-    const [searchTerm, setSearchTerm] = useState("");
-
     const [search, setSearch] = useState("");
     const [open, setOpen] = useState(false);
 
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     const filtered = acs.filter((a) => {
-        const txt = `${a.id} ${a.title} ${a.id}`;
+        const txt = `${a.id} ${a.title}`;
         return txt.toLowerCase().includes(search.toLowerCase());
     });
 
-    const filteredAssets = acs.filter(
-        (asset) =>
-            asset.facetado?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            asset.titulo?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
     const handleAddRelated = (asset) => {
-        if (!formData.relatedIds.includes(asset.id)) {
+        const displayString = `${asset.id} - ${asset.title}`;
+        if (!formData.relatedIds.includes(displayString)) {
             setFormData((prev) => ({
                 ...prev,
-                relatedIds: [...prev.relatedIds, asset.id], // solo IDs 👈
+                relatedIds: [...prev.relatedIds, displayString],
             }));
         }
     };
 
-    const handleRemoveRelated = (id) => {
+    const handleRemoveRelated = (str) => {
         setFormData((prev) => ({
             ...prev,
-            relatedIds: prev.relatedIds.filter((a) => a !== id),
+            relatedIds: prev.relatedIds.filter((a) => a !== str),
         }));
     };
+
     //FIN INTENTO
 
 
@@ -240,9 +246,7 @@ const ManageAC = () => {
             activeKnowledgeType: formData.tipoActivo,
             format: formData.formato,
             fileUri: uploadFileName || formData.fileUri,
-            relatedIds: formData.relatedIds
-                ? formData.relatedIds.split(',').map((i) => i.trim())
-                : [],
+            relatedIds: formData.relatedIds || [],
             keywords: formData.palabrasClave
                 ? formData.palabrasClave
                     .split(',')
@@ -838,7 +842,7 @@ const ManageAC = () => {
                         <div className="grid grid-cols-12 gap-6 items-start">
                             <div className="col-span-12 md:col-span-6">
                                 <FormField label="Relacionar otros activos" htmlFor="relatedIds">
-                                    <div className="relative">
+                                    <div className="relative" ref={searchRef}>
                                         <Input
                                             name="relatedIds"
                                             value={search}
@@ -857,8 +861,8 @@ const ManageAC = () => {
                                                         <li
                                                             key={a.id}
                                                             onClick={() => {
-                                                                onSelect(a);
-                                                                setSearch(`${a.facetado} - ${a.title ?? a.titulo ?? a.id}`);
+                                                                handleAddRelated(a); // 👈 agrega el ID al array
+                                                                setSearch(""); // limpia el input
                                                                 setOpen(false);
                                                             }}
                                                             className="px-3 py-2 cursor-pointer hover:bg-gray-100"
@@ -874,60 +878,69 @@ const ManageAC = () => {
                                     </div>
                                 </FormField>
 
+
                             </div>
 
                             {/* Lista de seleccionados */}
                             <div className="col-span-12 md:col-span-6">
                                 <FormField label="Activos seleccionados" htmlFor="selectedAssets">
-                                    {loading ? (
-                                        <LoadingScreen />
-                                    ) : (
-                                        acs.map((item) => (
-                                            <div key={item.id} className="border-b py-3">
-                                                <p className="font-bold text-[#026937]">
-                                                    {item.id} - {item.title}
-                                                </p>
+                                    {formData.relatedIds.length > 0 ? (
+                                        formData.relatedIds.map((rel) => (
+                                            <div
+                                                key={rel}
+                                                className="flex justify-between items-center border-b py-2"
+                                            >
+                                                <p className="font-bold text-[#026937]">{rel}</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveRelated(rel)}
+                                                    className="text-red-500 hover:text-red-700 font-bold"
+                                                >
+                                                    ✕
+                                                </button>
                                             </div>
                                         ))
+                                    ) : (
+                                        <p className="text-gray-500">No has seleccionado activos</p>
                                     )}
                                 </FormField>
                             </div>
                         </div>
                     )}
 
-                    <div className="md:col-span-2 flex justify-center py-10 gap-4">
-                        {id && isAdmin ? (
-                            <>
-                                <Button
-                                    text="Guardar cambios"
-                                    type="primary"
-                                    htmlType="submit"
-                                />
-                                <Button
-                                    text="Eliminar"
-                                    type="secondary"
-                                    htmlType="button"
-                                    onClick={handleDelete}
-                                />
-                                <Button
-                                    text="Vista previa"
-                                    type="admin"
-                                    htmlType="button"
-                                    onClick={() => navigate(`/ver/${id}`)}
-                                />
-                            </>
-                        ) : (
-                            <Button
-                                className="text-2xl"
-                                text="Registrar"
-                                type="primary"
-                                htmlType="submit"
-                            />
-                        )}
-                    </div>
-                </form>
+            <div className="md:col-span-2 flex justify-center py-10 gap-4">
+                {id && isAdmin ? (
+                    <>
+                        <Button
+                            text="Guardar cambios"
+                            type="primary"
+                            htmlType="submit"
+                        />
+                        <Button
+                            text="Eliminar"
+                            type="secondary"
+                            htmlType="button"
+                            onClick={handleDelete}
+                        />
+                        <Button
+                            text="Vista previa"
+                            type="admin"
+                            htmlType="button"
+                            onClick={() => navigate(`/ver/${id}`)}
+                        />
+                    </>
+                ) : (
+                    <Button
+                        className="text-2xl"
+                        text="Registrar"
+                        type="primary"
+                        htmlType="submit"
+                    />
+                )}
             </div>
-        </div>
+        </form>
+            </div >
+        </div >
     );
 };
 
