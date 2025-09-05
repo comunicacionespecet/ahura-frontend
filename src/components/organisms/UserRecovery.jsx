@@ -4,7 +4,10 @@ import Button from '../atoms/Button';
 import FormField from '../molecules/FormField';
 import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../utils/alerts';
-import { usePasswordRecovery, usePasswordResetConfirm } from '../../hooks/useUsers';
+import {
+    usePasswordRecovery,
+    usePasswordResetConfirm,
+} from '../../hooks/useUsers';
 
 const UserRecovery = () => {
     const [step, setStep] = useState(1);
@@ -65,7 +68,9 @@ const UserRecovery = () => {
                             />
                         </FormField>
                         <Button
-                            text={loadingRequest ? 'Enviando...' : 'Enviar código'}
+                            text={
+                                loadingRequest ? 'Enviando...' : 'Enviar código'
+                            }
                             type="primary"
                             htmlType="submit"
                             className="w-full"
@@ -87,7 +92,10 @@ const UserRecovery = () => {
                             />
                         </FormField>
 
-                        <FormField label="Nueva contraseña *" htmlFor="password">
+                        <FormField
+                            label="Nueva contraseña *"
+                            htmlFor="password"
+                        >
                             <Input
                                 type="password"
                                 name="password"
@@ -98,19 +106,28 @@ const UserRecovery = () => {
                             />
                         </FormField>
 
-                        <FormField label="Confirmar contraseña *" htmlFor="confirmPassword">
+                        <FormField
+                            label="Confirmar contraseña *"
+                            htmlFor="confirmPassword"
+                        >
                             <Input
                                 type="password"
                                 name="confirmPassword"
                                 value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
                                 required
                                 placeholder="Repite tu contraseña"
                             />
                         </FormField>
 
                         <Button
-                            text={loadingConfirm ? 'Cambiando...' : 'Cambiar contraseña'}
+                            text={
+                                loadingConfirm
+                                    ? 'Cambiando...'
+                                    : 'Cambiar contraseña'
+                            }
                             type="primary"
                             htmlType="submit"
                             className="w-full"

@@ -42,7 +42,6 @@ export function useAddComment() {
             createdAt: new Date().toISOString(),
         };
         try {
-            console.log('Creating comment with data:', commentData);
             const newComment = await createComment(commentData);
             setLoading(false);
             return newComment;
@@ -53,7 +52,5 @@ export function useAddComment() {
         }
     };
 
-
     return { addComment, loading, error };
 }
-

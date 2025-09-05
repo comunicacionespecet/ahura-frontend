@@ -75,8 +75,8 @@ const ViewAC = ({ ac, user }) => {
                         <strong>Fecha de Publicación:</strong>{' '}
                         {ac.publishDate
                             ? new Date(ac.publishDate).toLocaleDateString(
-                                  'es-CO'
-                              )
+                                'es-CO'
+                            )
                             : 'No Aplica'}
                     </p>
                     <p>
@@ -94,6 +94,22 @@ const ViewAC = ({ ac, user }) => {
                         <strong>Palabras Clave:</strong>{' '}
                         {ac.keywords || 'No Aplica'}
                     </p>
+
+                    <div>
+                        <strong>Relacionados:</strong>{" "}
+                        {ac.relatedIds && ac.relatedIds.length > 0 ? (
+                            <ul className="list-disc list-inside space-y-1 mt-1">
+                                {ac.relatedIds.map((rel, index) => (
+                                    <li key={index} className="text-gray-700">{rel}</li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <span>No Aplica</span>
+                        )}
+                    </div>
+
+
+
                     <p>
                         <strong>Origen:</strong> {ac.origin || 'No Aplica'}
                     </p>
