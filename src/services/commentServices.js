@@ -15,7 +15,14 @@ export const getCommentsByAsset = async (assetId) => {
     return res.json();
 };
 
-export const createComment = async ({ id, assetId, authorId, text, status, createdAt }) => {
+export const createComment = async ({
+    id,
+    assetId,
+    authorId,
+    text,
+    status,
+    createdAt,
+}) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${BASE_URL}/comments`, {
         method: 'POST',
@@ -24,18 +31,21 @@ export const createComment = async ({ id, assetId, authorId, text, status, creat
             Auth: '1234',
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ id, assetId, authorId, text, status, createdAt }),
+        body: JSON.stringify({
+            id,
+            assetId,
+            authorId,
+            text,
+            status,
+            createdAt,
+        }),
     });
 
     const data = await res.json();
 
-    if (!res.ok) { 
-        console.error('Error en createComment:', res.status, data);
+    if (!res.ok) {
         throw new Error(data.message || 'Error al crear comentario');
     }
 
     return data;
 };
-
-
-

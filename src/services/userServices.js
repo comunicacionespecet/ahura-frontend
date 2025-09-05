@@ -89,7 +89,8 @@ export const requestPasswordReset = async (email) => {
         body: JSON.stringify({ email }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Error al solicitar recuperación');
+    if (!res.ok)
+        throw new Error(data.message || 'Error al solicitar recuperación');
     return data;
 };
 
@@ -100,6 +101,7 @@ export const confirmPasswordReset = async (email, code, newPassword) => {
         body: JSON.stringify({ email, code, newPassword }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Error al restablecer contraseña');
+    if (!res.ok)
+        throw new Error(data.message || 'Error al restablecer contraseña');
     return data;
 };

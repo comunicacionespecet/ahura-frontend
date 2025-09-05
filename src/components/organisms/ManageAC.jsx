@@ -7,16 +7,11 @@ import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
 import FileUpload from '../molecules/FileUpload';
 import { useAuth } from '../../context/AuthContext';
-import {
-    useCreateAC,
-    useUpdateAC,
-    useACById,
-    useDeleteAC,
-} from '../../hooks/useACs';
+import { useCreateAC, useUpdateAC, useACById, useDeleteAC, useACs, useFilteredACs } from '../../hooks/useACs';
 import { useUpload } from '../../hooks/useUpload';
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
 import { useCatalogs } from '../../hooks/useCatalogs';
-import { form } from 'framer-motion/client';
+
 
 const accesibilidad = ['Se puede acceder', 'No se puede acceder'];
 const visibilidad = ['Público', 'Privado'];
@@ -28,12 +23,13 @@ const ManageAC = () => {
     const { update } = useUpdateAC();
     const { catalogs } = useCatalogs();
     const { ac } = useACById(id);
+    const { acs, loading, error } = useACs();
     const { remove } = useDeleteAC();
     const { upload } = useUpload();
     const navigate = useNavigate();
 
     const [imagen, setImagen] = useState(null);
-    const [keywordError, setKeywordError] = useState("");
+    const [keywordError, setKeywordError] = useState('');
     const [archivo, setArchivo] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
@@ -56,7 +52,7 @@ const ManageAC = () => {
         propietarioAC: '',
         estadoAC: '',
         fileUri: '',
-        relatedIds: '',
+        relatedIds: [],
         pecetKnowledge: '',
         centralicedRepositories: '',
         copyright: '',
@@ -115,6 +111,41 @@ const ManageAC = () => {
         }
     }, [ac, isAdmin]);
 
+
+    //INTENTO
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const [search, setSearch] = useState("");
+    const [open, setOpen] = useState(false);
+
+    const filtered = acs.filter((a) => {
+        const txt = `${a.id} ${a.title} ${a.id}`;
+        return txt.toLowerCase().includes(search.toLowerCase());
+    });
+
+    const filteredAssets = acs.filter(
+        (asset) =>
+            asset.facetado?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            asset.titulo?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    const handleAddRelated = (asset) => {
+        if (!formData.relatedIds.includes(asset.id)) {
+            setFormData((prev) => ({
+                ...prev,
+                relatedIds: [...prev.relatedIds, asset.id], // solo IDs 👈
+            }));
+        }
+    };
+
+    const handleRemoveRelated = (id) => {
+        setFormData((prev) => ({
+            ...prev,
+            relatedIds: prev.relatedIds.filter((a) => a !== id),
+        }));
+    };
+    //FIN INTENTO
+
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -122,14 +153,16 @@ const ManageAC = () => {
 
     const handleKeywordsChange = (e) => {
         const value = e.target.value;
-        if (/\s{2,}/.test(value) || /\s+[A-Za-z]/.test(value.replace(/.*,\s*/, ""))) {
-            setKeywordError("Debes separar las palabras con comas (,)");
+        if (
+            /\s{2,}/.test(value) ||
+            /\s+[A-Za-z]/.test(value.replace(/.*,\s*/, ''))
+        ) {
+            setKeywordError('Debes separar las palabras con comas (,)');
         } else {
-            setKeywordError("");
+            setKeywordError('');
         }
         setFormData({ ...formData, palabrasClave: value });
     };
-
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -150,7 +183,7 @@ const ManageAC = () => {
             .trim();
 
     const validateTabs = () => {
-        const errors = [false, false, false, false];
+        const errors = [false, false, false, false, false];
 
         if (
             !formData.id ||
@@ -175,7 +208,7 @@ const ManageAC = () => {
 
         //if (!formData.criticality) errors[2] = true;
 
-        if (!formData.descripcion) errors[3] = true;
+        if (!formData.descripcion) errors[4] = true;
 
         setTabErrors(errors);
         return errors;
@@ -281,6 +314,7 @@ const ManageAC = () => {
         'Información básica',
         'Tipificación',
         'Regulaciones legales',
+        'Activos relacionados',
         'Contenido del activo',
     ];
 
@@ -363,18 +397,7 @@ const ManageAC = () => {
                                 />
                             </FormField>
 
-                            <FormField
-                                label="Activos de conocimiento relacionados*"
-                                htmlFor="relatedIds"
-                            >
-                                <Input
-                                    name="relatedIds"
-                                    value={formData.relatedIds}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Ej: FAC-2024-03, FAC-2023-11"
-                                />
-                            </FormField>
+
 
                             <FormField
                                 label="Nivel de clasificación*"
@@ -604,7 +627,10 @@ const ManageAC = () => {
                                 </select>
                             </FormField>
 
-                            <FormField label="Palabras clave" htmlFor="palabrasClave">
+                            <FormField
+                                label="Palabras clave"
+                                htmlFor="palabrasClave"
+                            >
                                 <Input
                                     name="palabrasClave"
                                     value={formData.palabrasClave}
@@ -612,10 +638,11 @@ const ManageAC = () => {
                                     placeholder="Ej: calidad, procedimientos, control, enfermedad"
                                 />
                                 {keywordError && (
-                                    <p className="text-red-500 text-sm mt-1">{keywordError}</p>
+                                    <p className="text-red-500 text-sm mt-1">
+                                        {keywordError}
+                                    </p>
                                 )}
                             </FormField>
-
 
                             {normalize(formData.tipoConocimiento).includes(
                                 'fisico'
@@ -723,7 +750,7 @@ const ManageAC = () => {
                         </div>
                     )}
 
-                    {activeTab === 3 && (
+                    {activeTab === 4 && (
                         <div className="grid grid-cols-12 gap-6 items-start">
                             <div className="col-span-12 md:col-span-3">
                                 <FormField
@@ -802,6 +829,67 @@ const ManageAC = () => {
                                         rows={8}
                                         placeholder="Ej: Procedimientos internos del departamento de ventas"
                                     />
+                                </FormField>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 3 && (
+                        <div className="grid grid-cols-12 gap-6 items-start">
+                            <div className="col-span-12 md:col-span-6">
+                                <FormField label="Relacionar otros activos" htmlFor="relatedIds">
+                                    <div className="relative">
+                                        <Input
+                                            name="relatedIds"
+                                            value={search}
+                                            onChange={(e) => {
+                                                setSearch(e.target.value);
+                                                setOpen(true);
+                                            }}
+                                            onFocus={() => setOpen(true)}
+                                            placeholder="Escribe para buscar..."
+                                        />
+
+                                        {open && (
+                                            <ul className="absolute z-10 mt-1 w-full bg-white border rounded shadow max-h-56 overflow-auto">
+                                                {filtered.length > 0 ? (
+                                                    filtered.map((a) => (
+                                                        <li
+                                                            key={a.id}
+                                                            onClick={() => {
+                                                                onSelect(a);
+                                                                setSearch(`${a.facetado} - ${a.title ?? a.titulo ?? a.id}`);
+                                                                setOpen(false);
+                                                            }}
+                                                            className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                                                        >
+                                                            {a.id} - {a.title}
+                                                        </li>
+                                                    ))
+                                                ) : (
+                                                    <li className="px-3 py-2 text-gray-500">No hay resultados</li>
+                                                )}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </FormField>
+
+                            </div>
+
+                            {/* Lista de seleccionados */}
+                            <div className="col-span-12 md:col-span-6">
+                                <FormField label="Activos seleccionados" htmlFor="selectedAssets">
+                                    {loading ? (
+                                        <LoadingScreen />
+                                    ) : (
+                                        acs.map((item) => (
+                                            <div key={item.id} className="border-b py-3">
+                                                <p className="font-bold text-[#026937]">
+                                                    {item.id} - {item.title}
+                                                </p>
+                                            </div>
+                                        ))
+                                    )}
                                 </FormField>
                             </div>
                         </div>

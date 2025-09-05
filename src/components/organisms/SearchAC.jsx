@@ -6,6 +6,7 @@ import FormField from '../molecules/FormField';
 import { useFilteredACs } from '../../hooks/useACs';
 import { useAuth } from '../../context/AuthContext';
 import LoadingScreen from '../../utils/LoadingScreen';
+import { useCatalogs } from '../../hooks/useCatalogs';
 
 const SearchAC = () => {
     const navigate = useNavigate();
@@ -14,6 +15,10 @@ const SearchAC = () => {
     const [titulo, setTitulo] = useState('');
     const [tipoActivo, setTipoActivo] = useState('');
     const [palabrasClave, setPalabrasClave] = useState('');
+    const [clasificacion, setClasificacion] = useState('');
+    const [estatus, setEstatus] = useState('');
+
+    const { catalogs } = useCatalogs();
 
     const [filters, setFilters] = useState({});
 
@@ -22,8 +27,10 @@ const SearchAC = () => {
     const handleSearch = () => {
         const newFilters = {};
         if (titulo) newFilters.title = titulo;
-        if (tipoActivo) newFilters.activeKnowledgeType = tipoActivo;
+        if (tipoActivo) newFilters.knowledgeType = tipoActivo;
         if (palabrasClave) newFilters.keywords = palabrasClave;
+        if (clasificacion) newFilters.classificationLevel = clasificacion;
+        if (estatus) newFilters.status = estatus;
         setFilters(newFilters);
     };
 
@@ -50,6 +57,21 @@ const SearchAC = () => {
                     />
                 </FormField>
 
+                <FormField label="Clasificacion" htmlFor="clasificacion">
+                    <select
+                        id="clasificacion"
+                        value={clasificacion}
+                        onChange={(e) => setClasificacion(e.target.value)}
+                        className="w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
+                    >
+                        <option value="">Seleccione...</option>
+                        {catalogs?.classificationLevelLevelEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
+                            </option>
+                        ))}
+                    </select>
+                </FormField>
                 <FormField label="Tipo de activo" htmlFor="tipoActivo">
                     <select
                         id="tipoActivo"
@@ -58,9 +80,27 @@ const SearchAC = () => {
                         className="w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
                     >
                         <option value="">Seleccione...</option>
-                        <option value="Manual">Manual</option>
-                        <option value="Software">Software</option>
-                        <option value="Artículo">Artículo</option>
+                        {catalogs?.knowledgeTypeEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
+                            </option>
+                        ))}
+                    </select>
+                </FormField>
+
+                <FormField label="Estatus" htmlFor="estatus">
+                    <select
+                        id="estatus"
+                        value={estatus}
+                        onChange={(e) => setEstatus(e.target.value)}
+                        className="w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
+                    >
+                        <option value="">Seleccione...</option>
+                        {catalogs?.assetStatusEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
+                            </option>
+                        ))}
                     </select>
                 </FormField>
 
@@ -74,7 +114,11 @@ const SearchAC = () => {
                 </FormField>
 
                 <div className="mt-4 flex justify-end">
-                    <Button text="Buscar" type="success" onClick={handleSearch} />
+                    <Button
+                        text="Buscar"
+                        type="success"
+                        onClick={handleSearch}
+                    />
                 </div>
             </div>
 
@@ -99,13 +143,15 @@ const SearchAC = () => {
                                     {item.activeKnowledgeType}
                                 </span>
                                 <span className="text-[#7E7373] font-bold">
-                                    {' '}| Año:{' '}
+                                    {' '}
+                                    | Año:{' '}
                                 </span>
                                 <span className="text-black font-bold">
                                     {new Date(item.publishDate).getFullYear()}
                                 </span>
                                 <span className="text-[#7E7373] font-bold">
-                                    {' '}| Autor:{' '}
+                                    {' '}
+                                    | Autor:{' '}
                                 </span>
                                 <span className="text-black font-bold">
                                     {item.responsibleOwner}

@@ -30,17 +30,18 @@ const AdminTabs = () => {
     const tabLabels = {
         activeKnowledgeTypeEnum: 'Tipos de conocimiento',
         formatEnum: 'Formatos',
-        knowledgeTypeEnum: 'Tipo de activo de conocimiento',
+        knowledgeTypeEnum: 'Tipos de activo',
         originEnum: 'Origen',
         classificationLevelLevelEnum: 'Nivel de clasificación',
         criticalityEnum: 'Criticidad',
         assetStatusEnum: 'Estado del activo',
+        repositoryEnum: 'Repositorios del PECET',
     };
 
     const handleEdit = (item, tabName) => {
         setCurrentItem({ ...item, tabName });
-        setEditedTitle(item.key ?? item.title);
-        setEditedDescription(item.descripcion ?? item.description ?? '');
+        setEditedTitle(item.key);
+        setEditedDescription(item.descripcion ?? '');
         setIsEditing(true);
     };
 
@@ -50,9 +51,7 @@ const AdminTabs = () => {
             const updatedBody = { ...catalogs };
             const enumList = updatedBody[currentItem.tabName] || [];
             const idx = enumList.findIndex(
-                (i) =>
-                    (i.key ?? i.title) ===
-                    (currentItem.key ?? currentItem.title)
+                (i) => (i.key ?? i.title) === currentItem.key
             );
             if (idx !== -1) {
                 enumList[idx] = {
@@ -60,7 +59,6 @@ const AdminTabs = () => {
                     key: editedTitle,
                     title: editedTitle,
                     descripcion: editedDescription,
-                    description: editedDescription,
                 };
                 updatedBody[currentItem.tabName] = enumList;
             }
@@ -75,7 +73,6 @@ const AdminTabs = () => {
         }
     };
 
-    // Eliminar elemento
     const handleDelete = async (item, tabName) => {
         const confirmDelete = await showConfirm(
             '¿Estás seguro?',
@@ -97,19 +94,25 @@ const AdminTabs = () => {
         }
     };
 
-    // Agregar nuevo elemento
     const handleAdd = async () => {
         try {
             const slug = catalogs.slug ?? 'default';
-            await postItem(
-                slug,
-                tabs[activeTab],
+            await postItem(slug, tabs[activeTab], {
+                key: editedTitle,
+                descripcion: editedDescription,
+            });
+
+            const updatedBody = { ...catalogs };
+            updatedBody[tabs[activeTab]] = [
+                ...updatedBody[tabs[activeTab]],
                 { key: editedTitle, descripcion: editedDescription },
-                setCatalogs
-            );
+            ];
+
+            setCatalogs(updatedBody);
             setEditedTitle('');
             setEditedDescription('');
             setIsAdding(false);
+
             showSuccess('Elemento agregado correctamente');
         } catch (err) {
             showError('Error agregando elemento');
@@ -164,14 +167,14 @@ const AdminTabs = () => {
                         <tbody>
                             {catalogs[tabs[activeTab]].map((item, idx) => (
                                 <tr
-                                    key={`${item.key ?? item.title}-${idx}`}
+                                    key={`${item.key}-${idx}`}
                                     className="border-t"
                                 >
                                     <td className="px-4 py-2">
                                         {item.key ?? item.title}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {item.descripcion ?? item.description}
+                                        {item.descripcion}
                                     </td>
                                     <td className="px-4 py-2 flex justify-center gap-2">
                                         <button
