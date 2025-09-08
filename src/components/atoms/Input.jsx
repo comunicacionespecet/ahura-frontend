@@ -11,6 +11,7 @@ const Input = ({
     required = false,
     className = '',
     onBlur,
+    autoComplete = 'on',
 }) => {
     return (
         <input
@@ -22,6 +23,7 @@ const Input = ({
             onBlur={onBlur}
             placeholder={placeholder}
             required={required}
+            autoComplete={autoComplete}
             className={`block w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B] ${className}`}
         />
     );
@@ -37,6 +39,7 @@ Input.propTypes = {
     placeholder: PropTypes.string,
     className: PropTypes.string,
     onBlur: PropTypes.func,
+    autoComplete: PropTypes.string,
 };
 
 export default Input;

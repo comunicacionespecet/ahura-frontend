@@ -24,6 +24,7 @@ const MainFeatures = () => {
                             className="w-full md:w-[300px]"
                         />
                         <Button
+                            onClick={() => navigate('/dashboard')}
                             text="Generar estadísticas"
                             type="light"
                             htmlType="button"
