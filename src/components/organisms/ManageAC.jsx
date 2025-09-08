@@ -852,6 +852,7 @@ const ManageAC = () => {
                                             }}
                                             onFocus={() => setOpen(true)}
                                             placeholder="Escribe para buscar..."
+                                            autoComplete='off'
                                         />
 
                                         {open && (
@@ -861,8 +862,8 @@ const ManageAC = () => {
                                                         <li
                                                             key={a.id}
                                                             onClick={() => {
-                                                                handleAddRelated(a); // 👈 agrega el ID al array
-                                                                setSearch(""); // limpia el input
+                                                                handleAddRelated(a);
+                                                                setSearch("");
                                                                 setOpen(false);
                                                             }}
                                                             className="px-3 py-2 cursor-pointer hover:bg-gray-100"

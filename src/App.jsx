@@ -20,6 +20,7 @@ import AdminUsers from './components/organisms/AdminUsers';
 import PrivateRoute from './components/organisms/PrivateRoute';
 import UserRegister from './components/organisms/UserRegister';
 import UserRecovery from './components/organisms/UserRecovery';
+import Dashboard from './components/organisms/Dashboard';
 
 function AppContent() {
     const location = useLocation();
@@ -41,6 +42,16 @@ function AppContent() {
                         </PrivateRoute>
                     }
                 />
+
+                <Route
+                    path="/dashboard"
+                    element={
+                        <PrivateRoute>
+                            <Dashboard />
+                        </PrivateRoute>
+                    }
+                />
+
                 <Route
                     path="/registrar/:id"
                     element={
