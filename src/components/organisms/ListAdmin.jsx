@@ -18,8 +18,12 @@ const AdminTabs = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
+
     const [editedTitle, setEditedTitle] = useState('');
     const [editedDescription, setEditedDescription] = useState('');
+    const [editedIsActive, setEditedIsActive] = useState(true);
+
+    const [newItemIsActive, setNewItemIsActive] = useState(true);
 
     if (loading) return <p className="p-6">Cargando...</p>;
     if (error)
@@ -42,6 +46,7 @@ const AdminTabs = () => {
         setCurrentItem({ ...item, tabName });
         setEditedTitle(item.key);
         setEditedDescription(item.descripcion ?? '');
+        setEditedIsActive(item.isActive !== false);
         setIsEditing(true);
     };
 
@@ -59,6 +64,7 @@ const AdminTabs = () => {
                     key: editedTitle,
                     title: editedTitle,
                     descripcion: editedDescription,
+                    isActive: editedIsActive,
                 };
                 updatedBody[currentItem.tabName] = enumList;
             }
@@ -100,17 +106,23 @@ const AdminTabs = () => {
             await postItem(slug, tabs[activeTab], {
                 key: editedTitle,
                 descripcion: editedDescription,
+                isActive: newItemIsActive,
             });
 
             const updatedBody = { ...catalogs };
             updatedBody[tabs[activeTab]] = [
                 ...updatedBody[tabs[activeTab]],
-                { key: editedTitle, descripcion: editedDescription },
+                {
+                    key: editedTitle,
+                    descripcion: editedDescription,
+                    isActive: newItemIsActive,
+                },
             ];
 
             setCatalogs(updatedBody);
             setEditedTitle('');
             setEditedDescription('');
+            setNewItemIsActive(true);
             setIsAdding(false);
 
             showSuccess('Elemento agregado correctamente');
@@ -148,6 +160,7 @@ const AdminTabs = () => {
                                 setIsAdding(true);
                                 setEditedTitle('');
                                 setEditedDescription('');
+                                setNewItemIsActive(true);
                             }}
                             className="flex items-center gap-1 px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700"
                         >
@@ -159,6 +172,7 @@ const AdminTabs = () => {
                             <tr>
                                 <th className="px-4 py-2">Título</th>
                                 <th className="px-4 py-2">Descripción</th>
+                                <th className="px-4 py-2">Estado</th>
                                 <th className="px-4 py-2 text-center">
                                     Acciones
                                 </th>
@@ -171,10 +185,15 @@ const AdminTabs = () => {
                                     className="border-t"
                                 >
                                     <td className="px-4 py-2">
-                                        {item.key ?? item.title}
+                                        {item.key}
                                     </td>
                                     <td className="px-4 py-2">
                                         {item.descripcion}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {item.isActive === false
+                                            ? 'Desactivado'
+                                            : 'Activado'}
                                     </td>
                                     <td className="px-4 py-2 flex justify-center gap-2">
                                         <button
@@ -243,6 +262,20 @@ const AdminTabs = () => {
                             className="w-full p-2 border rounded mb-4"
                         />
 
+                        <label className="block text-sm font-medium mb-1">
+                            Estado
+                        </label>
+                        <select
+                            value={editedIsActive ? 'true' : 'false'}
+                            onChange={(e) =>
+                                setEditedIsActive(e.target.value === 'true')
+                            }
+                            className="w-full p-2 border rounded mb-4"
+                        >
+                            <option value="true">Activado</option>
+                            <option value="false">Desactivado</option>
+                        </select>
+
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setIsEditing(false)}
@@ -294,6 +327,20 @@ const AdminTabs = () => {
                             }
                             className="w-full p-2 border rounded mb-4"
                         />
+
+                        <label className="block text-sm font-medium mb-1">
+                            Estado
+                        </label>
+                        <select
+                            value={newItemIsActive ? 'true' : 'false'}
+                            onChange={(e) =>
+                                setNewItemIsActive(e.target.value === 'true')
+                            }
+                            className="w-full p-2 border rounded mb-4"
+                        >
+                            <option value="true">Activado</option>
+                            <option value="false">Desactivado</option>
+                        </select>
 
                         <div className="flex justify-end gap-2">
                             <button

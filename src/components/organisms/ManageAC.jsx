@@ -7,11 +7,17 @@ import Button from '../atoms/Button';
 import ImageUpload from '../molecules/ImagenUpload';
 import FileUpload from '../molecules/FileUpload';
 import { useAuth } from '../../context/AuthContext';
-import { useCreateAC, useUpdateAC, useACById, useDeleteAC, useACs, useFilteredACs } from '../../hooks/useACs';
+import {
+    useCreateAC,
+    useUpdateAC,
+    useACById,
+    useDeleteAC,
+    useACs,
+    useFilteredACs,
+} from '../../hooks/useACs';
 import { useUpload } from '../../hooks/useUpload';
 import { showSuccess, showError, showConfirm } from '../../utils/alerts';
 import { useCatalogs } from '../../hooks/useCatalogs';
-
 
 const accesibilidad = ['Se puede acceder', 'No se puede acceder'];
 const visibilidad = ['Público', 'Privado'];
@@ -23,7 +29,7 @@ const ManageAC = () => {
     const { update } = useUpdateAC();
     const { catalogs } = useCatalogs();
     const { ac } = useACById(id);
-    const { acs, loading, error } = useACs();
+    const { acs } = useACs();
     const { remove } = useDeleteAC();
     const { upload } = useUpload();
     const navigate = useNavigate();
@@ -75,7 +81,7 @@ const ManageAC = () => {
                 id: ac.id,
                 titulo: ac.title,
                 descripcion: ac.description,
-                fecha: ac.publishDate ? ac.publishDate.split('T')[0] : '',
+                fecha: ac.publishDate ? new Date(ac.publishDate).toISOString() : '',
                 tipoConocimiento: ac.knowledgeType,
                 tipoActivo: ac.activeKnowledgeType,
                 formato: ac.format,
@@ -112,9 +118,8 @@ const ManageAC = () => {
         }
     }, [ac, isAdmin]);
 
-
     //INTENTO
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState('');
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -123,8 +128,9 @@ const ManageAC = () => {
                 setOpen(false);
             }
         }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside);
+        return () =>
+            document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     const filtered = acs.filter((a) => {
@@ -150,7 +156,6 @@ const ManageAC = () => {
     };
 
     //FIN INTENTO
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -249,9 +254,9 @@ const ManageAC = () => {
             relatedIds: formData.relatedIds || [],
             keywords: formData.palabrasClave
                 ? formData.palabrasClave
-                    .split(',')
-                    .map((k) => k.trim())
-                    .filter((k) => k.length > 0)
+                      .split(',')
+                      .map((k) => k.trim())
+                      .filter((k) => k.length > 0)
                 : [],
             availability: {
                 accessibility: formData.accesible === 'Se puede acceder',
@@ -331,13 +336,13 @@ const ManageAC = () => {
                         : 'Registro de activo'}
                 </h2>
 
-                <div className="flex justify-center mb-8 gap-2">
+                <div className="flex mb-8 gap-2 overflow-x-auto flex-nowrap w-full border-b">
                     {tabs.map((tab, idx) => (
                         <button
                             key={tab}
                             type="button"
                             onClick={() => setActiveTab(idx)}
-                            className={`px-4 py-2 rounded-t relative ${activeTab === idx ? 'bg-[#8DC63F] text-white' : 'bg-gray-200 text-[#026937]'}`}
+                            className={`px-4 py-2 rounded-t relative whitespace-nowrap min-w-max ${activeTab === idx ? 'bg-[#8DC63F] text-white' : 'bg-gray-200 text-[#026937]'}`}
                         >
                             {tab}
                             {tabErrors[idx] && (
@@ -401,8 +406,6 @@ const ManageAC = () => {
                                 />
                             </FormField>
 
-
-
                             <FormField
                                 label="Nivel de clasificación*"
                                 htmlFor="clasificacion"
@@ -418,16 +421,18 @@ const ManageAC = () => {
                                     <option value="" disabled>
                                         Ej: Importancia del activo para el PECET
                                     </option>
-                                    {catalogs?.classificationLevelLevelEnum?.map(
-                                        (item) => (
+                                    {catalogs?.classificationLevelLevelEnum
+                                        ?.filter(
+                                            (item) => item.isActive !== false
+                                        )
+                                        .map((item) => (
                                             <option
                                                 key={item.key}
                                                 value={item.key}
                                             >
                                                 {item.key}
                                             </option>
-                                        )
-                                    )}
+                                        ))}
                                 </select>
                             </FormField>
 
@@ -447,11 +452,18 @@ const ManageAC = () => {
                                         Ej: Confidencialidad del activo para la
                                         organización
                                     </option>
-                                    {catalogs?.criticalityEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.key}
-                                        </option>
-                                    ))}
+                                    {catalogs?.criticalityEnum
+                                        ?.filter(
+                                            (item) => item.isActive !== false
+                                        )
+                                        .map((item) => (
+                                            <option
+                                                key={item.key}
+                                                value={item.key}
+                                            >
+                                                {item.key}
+                                            </option>
+                                        ))}
                                 </select>
                             </FormField>
                         </div>
@@ -474,8 +486,11 @@ const ManageAC = () => {
                                     <option value="" disabled>
                                         Ej: Protocolos, Tablas, Manuales
                                     </option>
-                                    {catalogs?.activeKnowledgeTypeEnum?.map(
-                                        (item) => (
+                                    {catalogs?.activeKnowledgeTypeEnum
+                                        ?.filter(
+                                            (item) => item.isActive !== false
+                                        )
+                                        .map((item) => (
                                             <option
                                                 key={item.key}
                                                 value={item.key}
@@ -483,8 +498,7 @@ const ManageAC = () => {
                                             >
                                                 {item.key}
                                             </option>
-                                        )
-                                    )}
+                                        ))}
                                 </select>
                             </FormField>
 
@@ -503,9 +517,11 @@ const ManageAC = () => {
                                     <option value="" disabled>
                                         Ej: Documento, Video, Imagen
                                     </option>
-                                    <option value="Ninguno">Ninguno</option>
-                                    {catalogs?.knowledgeTypeEnum?.map(
-                                        (item) => (
+                                    {catalogs?.knowledgeTypeEnum
+                                        ?.filter(
+                                            (item) => item.isActive !== false
+                                        )
+                                        .map((item) => (
                                             <option
                                                 key={item.key}
                                                 value={item.key}
@@ -513,37 +529,36 @@ const ManageAC = () => {
                                             >
                                                 {item.key}
                                             </option>
-                                        )
-                                    )}
+                                        ))}
                                 </select>
                             </FormField>
 
                             {normalize(formData.tipoConocimiento).includes(
                                 'fisico'
                             ) && (
-                                    <FormField
-                                        label="Asequibilidad*"
-                                        htmlFor="accesible"
+                                <FormField
+                                    label="Asequibilidad*"
+                                    htmlFor="accesible"
+                                >
+                                    <select
+                                        id="accesible"
+                                        name="accesible"
+                                        value={formData.accesible}
+                                        onChange={handleChange}
+                                        className="border border-[#8DC63F] p-2 rounded w-full"
                                     >
-                                        <select
-                                            id="accesible"
-                                            name="accesible"
-                                            value={formData.accesible}
-                                            onChange={handleChange}
-                                            className="border border-[#8DC63F] p-2 rounded w-full"
-                                        >
-                                            <option value="" disabled>
-                                                Ej: Se puede acceder o no se puede
-                                                acceder físicamente al activo
+                                        <option value="" disabled>
+                                            Ej: Se puede acceder o no se puede
+                                            acceder físicamente al activo
+                                        </option>
+                                        {accesibilidad.map((item) => (
+                                            <option key={item} value={item}>
+                                                {item}
                                             </option>
-                                            {accesibilidad.map((item) => (
-                                                <option key={item} value={item}>
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </FormField>
-                                )}
+                                        ))}
+                                    </select>
+                                </FormField>
+                            )}
 
                             <FormField
                                 label="Visibilidad*"
@@ -583,11 +598,18 @@ const ManageAC = () => {
                                     <option value="" disabled>
                                         Ej: En curso, Suspendido, otros
                                     </option>
-                                    {catalogs?.assetStatusEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.key}
-                                        </option>
-                                    ))}
+                                    {catalogs?.assetStatusEnum
+                                        ?.filter(
+                                            (item) => item.isActive !== false
+                                        )
+                                        .map((item) => (
+                                            <option
+                                                key={item.key}
+                                                value={item.key}
+                                            >
+                                                {item.key}
+                                            </option>
+                                        ))}
                                 </select>
                             </FormField>
 
@@ -603,11 +625,18 @@ const ManageAC = () => {
                                     <option value="" disabled>
                                         Ej: Interno, Externo
                                     </option>
-                                    {catalogs?.originEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.key}
-                                        </option>
-                                    ))}
+                                    {catalogs?.originEnum
+                                        ?.filter(
+                                            (item) => item.isActive !== false
+                                        )
+                                        .map((item) => (
+                                            <option
+                                                key={item.key}
+                                                value={item.key}
+                                            >
+                                                {item.key}
+                                            </option>
+                                        ))}
                                 </select>
                             </FormField>
 
@@ -623,11 +652,18 @@ const ManageAC = () => {
                                     <option value="" disabled>
                                         Ej: PDF, Word, Excel
                                     </option>
-                                    {catalogs?.formatEnum?.map((item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.key}
-                                        </option>
-                                    ))}
+                                    {catalogs?.formatEnum
+                                        ?.filter(
+                                            (item) => item.isActive !== false
+                                        )
+                                        .map((item) => (
+                                            <option
+                                                key={item.key}
+                                                value={item.key}
+                                            >
+                                                {item.key}
+                                            </option>
+                                        ))}
                                 </select>
                             </FormField>
 
@@ -651,19 +687,19 @@ const ManageAC = () => {
                             {normalize(formData.tipoConocimiento).includes(
                                 'fisico'
                             ) && (
-                                    <FormField
-                                        label="Ubicación Física del activo*"
-                                        htmlFor="ubicacion"
-                                    >
-                                        <Input
-                                            name="ubicacion"
-                                            value={formData.ubicacion}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Ej: Archivo central, Piso 3, Estante B"
-                                        />
-                                    </FormField>
-                                )}
+                                <FormField
+                                    label="Ubicación Física del activo*"
+                                    htmlFor="ubicacion"
+                                >
+                                    <Input
+                                        name="ubicacion"
+                                        value={formData.ubicacion}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Ej: Archivo central, Piso 3, Estante B"
+                                    />
+                                </FormField>
+                            )}
                         </div>
                     )}
 
@@ -841,7 +877,10 @@ const ManageAC = () => {
                     {activeTab === 3 && (
                         <div className="grid grid-cols-12 gap-6 items-start">
                             <div className="col-span-12 md:col-span-6">
-                                <FormField label="Relacionar otros activos" htmlFor="relatedIds">
+                                <FormField
+                                    label="Relacionar otros activos"
+                                    htmlFor="relatedIds"
+                                >
                                     <div className="relative" ref={searchRef}>
                                         <Input
                                             name="relatedIds"
@@ -852,7 +891,7 @@ const ManageAC = () => {
                                             }}
                                             onFocus={() => setOpen(true)}
                                             placeholder="Escribe para buscar..."
-                                            autoComplete='off'
+                                            autoComplete="off"
                                         />
 
                                         {open && (
@@ -862,8 +901,10 @@ const ManageAC = () => {
                                                         <li
                                                             key={a.id}
                                                             onClick={() => {
-                                                                handleAddRelated(a);
-                                                                setSearch("");
+                                                                handleAddRelated(
+                                                                    a
+                                                                );
+                                                                setSearch('');
                                                                 setOpen(false);
                                                             }}
                                                             className="px-3 py-2 cursor-pointer hover:bg-gray-100"
@@ -872,29 +913,36 @@ const ManageAC = () => {
                                                         </li>
                                                     ))
                                                 ) : (
-                                                    <li className="px-3 py-2 text-gray-500">No hay resultados</li>
+                                                    <li className="px-3 py-2 text-gray-500">
+                                                        No hay resultados
+                                                    </li>
                                                 )}
                                             </ul>
                                         )}
                                     </div>
                                 </FormField>
-
-
                             </div>
 
                             {/* Lista de seleccionados */}
                             <div className="col-span-12 md:col-span-6">
-                                <FormField label="Activos seleccionados" htmlFor="selectedAssets">
+                                <FormField
+                                    label="Activos seleccionados"
+                                    htmlFor="selectedAssets"
+                                >
                                     {formData.relatedIds.length > 0 ? (
                                         formData.relatedIds.map((rel) => (
                                             <div
                                                 key={rel}
                                                 className="flex justify-between items-center border-b py-2"
                                             >
-                                                <p className="font-bold text-[#026937]">{rel}</p>
+                                                <p className="font-bold text-[#026937]">
+                                                    {rel}
+                                                </p>
                                                 <button
                                                     type="button"
-                                                    onClick={() => handleRemoveRelated(rel)}
+                                                    onClick={() =>
+                                                        handleRemoveRelated(rel)
+                                                    }
                                                     className="text-red-500 hover:text-red-700 font-bold"
                                                 >
                                                     ✕
@@ -902,46 +950,48 @@ const ManageAC = () => {
                                             </div>
                                         ))
                                     ) : (
-                                        <p className="text-gray-500">No has seleccionado activos</p>
+                                        <p className="text-gray-500">
+                                            No has seleccionado activos
+                                        </p>
                                     )}
                                 </FormField>
                             </div>
                         </div>
                     )}
 
-            <div className="md:col-span-2 flex justify-center py-10 gap-4">
-                {id && isAdmin ? (
-                    <>
-                        <Button
-                            text="Guardar cambios"
-                            type="primary"
-                            htmlType="submit"
-                        />
-                        <Button
-                            text="Eliminar"
-                            type="secondary"
-                            htmlType="button"
-                            onClick={handleDelete}
-                        />
-                        <Button
-                            text="Vista previa"
-                            type="admin"
-                            htmlType="button"
-                            onClick={() => navigate(`/ver/${id}`)}
-                        />
-                    </>
-                ) : (
-                    <Button
-                        className="text-2xl"
-                        text="Registrar"
-                        type="primary"
-                        htmlType="submit"
-                    />
-                )}
+                    <div className="md:col-span-2 flex justify-center py-10 gap-4">
+                        {id && isAdmin ? (
+                            <>
+                                <Button
+                                    text="Guardar cambios"
+                                    type="primary"
+                                    htmlType="submit"
+                                />
+                                <Button
+                                    text="Eliminar"
+                                    type="secondary"
+                                    htmlType="button"
+                                    onClick={handleDelete}
+                                />
+                                <Button
+                                    text="Vista previa"
+                                    type="admin"
+                                    htmlType="button"
+                                    onClick={() => navigate(`/ver/${id}`)}
+                                />
+                            </>
+                        ) : (
+                            <Button
+                                className="text-2xl"
+                                text="Registrar"
+                                type="primary"
+                                htmlType="submit"
+                            />
+                        )}
+                    </div>
+                </form>
             </div>
-        </form>
-            </div >
-        </div >
+        </div>
     );
 };
 

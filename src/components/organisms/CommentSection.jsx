@@ -22,6 +22,7 @@ export default function CommentsSection({ assetId, authorId }) {
                 assetId,
                 authorId: user?.id,
                 text,
+                userName: user?.name || 'Usuario Anónimo',
             });
             setComments((prev) => [newComment, ...prev]);
         } catch (err) {
@@ -51,7 +52,7 @@ export default function CommentsSection({ assetId, authorId }) {
                         key={c.id}
                         className="border p-2 rounded-md bg-gray-50 text-sm"
                     >
-                        <p className="font-semibold">{c.authorId}</p>
+                        <p className="font-semibold">{c.userName}</p>
                         <p>{c.text}</p>
                         <span className="text-xs text-gray-400">
                             {new Date(c.createdAt).toLocaleString()}

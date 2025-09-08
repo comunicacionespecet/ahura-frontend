@@ -22,6 +22,7 @@ export const createComment = async ({
     text,
     status,
     createdAt,
+    userName,
 }) => {
     const token = localStorage.getItem('token');
     const res = await fetch(`${BASE_URL}/comments`, {
@@ -38,6 +39,7 @@ export const createComment = async ({
             text,
             status,
             createdAt,
+            userName,
         }),
     });
 
