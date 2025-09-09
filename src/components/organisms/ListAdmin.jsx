@@ -62,7 +62,6 @@ const AdminTabs = () => {
                 enumList[idx] = {
                     ...enumList[idx],
                     key: editedTitle,
-                    title: editedTitle,
                     descripcion: editedDescription,
                     isActive: editedIsActive,
                 };

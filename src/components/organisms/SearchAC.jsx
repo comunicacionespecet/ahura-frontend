@@ -17,6 +17,7 @@ const SearchAC = () => {
     const [palabrasClave, setPalabrasClave] = useState('');
     const [clasificacion, setClasificacion] = useState('');
     const [estatus, setEstatus] = useState('');
+    const [formato, setFormato] = useState('');
 
     const { catalogs } = useCatalogs();
 
@@ -29,8 +30,9 @@ const SearchAC = () => {
         if (titulo) newFilters.title = titulo;
         if (tipoActivo) newFilters.knowledgeType = tipoActivo;
         if (palabrasClave) newFilters.keywords = palabrasClave;
-        if (clasificacion) newFilters.classificationLevel = clasificacion;
+        if (clasificacion) newFilters.classificationLevelLevel = clasificacion;
         if (estatus) newFilters.status = estatus;
+        if (formato) newFilters.format = formato;
         setFilters(newFilters);
     };
 
@@ -66,6 +68,21 @@ const SearchAC = () => {
                     >
                         <option value="">Seleccione...</option>
                         {catalogs?.classificationLevelLevelEnum?.map((item) => (
+                            <option key={item.key} value={item.key}>
+                                {item.key}
+                            </option>
+                        ))}
+                    </select>
+                </FormField>
+                <FormField label="Formato" htmlFor="formato">
+                    <select
+                        id="formato"
+                        value={formato}
+                        onChange={(e) => setFormato(e.target.value)}
+                        className="w-full p-2 border border-[#8DC63F] rounded focus:outline-none focus:ring focus:[#35944B]"
+                    >
+                        <option value="">Seleccione...</option>
+                        {catalogs?.formatEnum?.map((item) => (
                             <option key={item.key} value={item.key}>
                                 {item.key}
                             </option>
