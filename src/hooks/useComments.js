@@ -12,8 +12,8 @@ export function useComments(assetId) {
         const fetchComments = async () => {
             setLoading(true);
             try {
-                const data = await getCommentsByAsset(assetId);
-                setComments(data);
+                const res = await getCommentsByAsset(assetId);
+                setComments(res.data || []);
             } catch (err) {
                 setError(err);
             } finally {
@@ -24,6 +24,7 @@ export function useComments(assetId) {
         fetchComments();
     }, [assetId]);
 
+
     return { comments, setComments, loading, error };
 }
 
@@ -31,7 +32,7 @@ export function useAddComment() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const addComment = async ({ assetId, authorId, text }) => {
+    const addComment = async ({ assetId, authorId, text, userName }) => {
         setLoading(true);
         const commentData = {
             id: crypto.randomUUID(),
@@ -39,7 +40,7 @@ export function useAddComment() {
             authorId,
             text,
             status: 'active',
-            createdAt: new Date().toISOString(),
+            userName,
         };
         try {
             const newComment = await createComment(commentData);
