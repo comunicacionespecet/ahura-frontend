@@ -18,7 +18,7 @@ const SearchAC = () => {
     const [clasificacion, setClasificacion] = useState('');
     const [estatus, setEstatus] = useState('');
     const [formato, setFormato] = useState('');
-
+    //FALTA COLOCAR EL HOWSTORED
     const { catalogs } = useCatalogs();
 
     const [filters, setFilters] = useState({});
