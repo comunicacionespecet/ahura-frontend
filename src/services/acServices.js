@@ -93,7 +93,7 @@ export const deleteAC = async (id) => {
     return null;
 };
 
-export const getAssets = async (filters = {}, page = 1, limit = 10) => {
+export const getAssets = async (filters = {}, page = 1, limit = 20) => {
     const token = localStorage.getItem('token');
     const params = new URLSearchParams();
 
@@ -121,3 +121,31 @@ export const getAssets = async (filters = {}, page = 1, limit = 10) => {
 
     return await response.json();
 };
+
+export const exportAllAssets = async (filters = {}) => {
+  const token = localStorage.getItem('token');
+  const params = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value) {
+      params.append(key, value);
+    }
+  });
+
+  // Aquí la diferencia clave: no mandamos `page` ni `limit`
+  const response = await fetch(`${BASE_URL}/assets?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Auth: '1234',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al exportar todos los activos');
+  }
+
+  return await response.json();
+};
+

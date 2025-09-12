@@ -8,6 +8,8 @@ import {
     getAssets,
 } from '../services/acServices';
 import { getSignedImageUrl } from '../services/uploadServices';
+import { exportAllAssets } from "../services/acServices";
+
 
 export function useACs() {
     const [acs, setAcs] = useState([]);
@@ -28,26 +30,35 @@ export function useACs() {
     return { acs, loading, error };
 }
 
-export function useFilteredACs(filters = {}, page = 1, limit = 10) {
+export const useFilteredACs = (filters, page, limit) => {
     const [acs, setAcs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        setLoading(true);
-        getAssets(filters, page, limit)
-            .then((data) => {
-                setAcs(data.items);
-                setLoading(false);
-            })
-            .catch((err) => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const res = await getAssets(filters, page, limit);
+                setAcs(res.items || []);
+                setTotal(res.total || 0);
+                setTotalPages(Math.ceil((res.total || 0) / limit));
+            } catch (err) {
                 setError(err);
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        fetchData();
     }, [filters, page, limit]);
 
-    return { acs, loading, error };
-}
+    return { acs, loading, error, total, totalPages };
+};
+
+
 
 export function useACById(id) {
     const [ac, setAc] = useState(null);
@@ -152,3 +163,24 @@ export function useDeleteAC() {
 
     return { remove, loading, error };
 }
+
+export function useExportACs() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const exportAll = async (filters = {}) => {
+        setLoading(true);
+        try {
+            const res = await exportAllAssets(filters);
+            setLoading(false);
+            return res.items || [];
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { exportAll, loading, error };
+}
+
