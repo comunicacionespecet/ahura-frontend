@@ -81,7 +81,9 @@ const ManageAC = () => {
                 id: ac.id,
                 titulo: ac.title,
                 descripcion: ac.description,
-                fecha: ac.publishDate ? new Date(ac.publishDate).toISOString() : '',
+                fecha: ac.publishDate
+                    ? new Date(ac.publishDate).toISOString().split("T")[0]
+                    : '',
                 tipoConocimiento: ac.knowledgeType,
                 tipoActivo: ac.activeKnowledgeType,
                 formato: ac.format,
@@ -91,7 +93,7 @@ const ManageAC = () => {
                 accesible: ac.availability?.accessibility ? 'Se puede acceder' : 'No se puede acceder',
                 clasificacion: ac.classificationLevel?.level,
                 autor: ac.responsibleOwner || '',
-                visibilidad: ac.confidentiality ? 'Privado' : 'Público',
+                visibilidad: ac.confidentiality ? 'Público' : 'Privado',
                 propietarioAC: ac.responsibleOwner,
                 estadoAC: ac.status,
                 fileUri: ac.fileUri,
@@ -203,7 +205,9 @@ const ManageAC = () => {
         const acData = {
             id: formData.id,
             title: formData.titulo,
-            publishDate: formData.fecha ? new Date(formData.fecha).toISOString() : null,
+            publishDate: formData.fecha
+                ? new Date(formData.fecha).toISOString()
+                : null,
             knowledgeType: formData.tipoConocimiento,
             description: formData.descripcion,
             image: uploadImageName || '',
@@ -275,7 +279,7 @@ const ManageAC = () => {
         <div className="bg-[#FBFBFB] min-h-screen p-10">
             <div className="bg-white px-6 rounded shadow w-[95%] max-w-screen mx-auto">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#70205B] mb-4 text-center py-8">
-                    {id && isAdmin ? 'Editar activo de conocimiento' : 'Registro de activo'}
+                    {id && isAdmin ? 'Editar activo de conocimiento' : 'Registro de activo de conocimiento'}
                 </h2>
 
                 <div className="flex mb-8 gap-2 overflow-x-auto flex-nowrap w-full border-b">
