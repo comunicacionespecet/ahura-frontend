@@ -18,9 +18,11 @@ import ListAdmin from './components/organisms/ListAdmin';
 import Login from './components/organisms/Login';
 import AdminUsers from './components/organisms/AdminUsers';
 import PrivateRoute from './components/organisms/PrivateRoute';
+import AuthRoute from './components/organisms/AuthRoute';
 import UserRegister from './components/organisms/UserRegister';
 import UserRecovery from './components/organisms/UserRecovery';
 import Dashboard from './components/organisms/Dashboard';
+import NotFound from './components/organisms/NotFound';
 
 function AppContent() {
     const location = useLocation();
@@ -33,7 +35,43 @@ function AppContent() {
             <SubHeader />
 
             <Routes>
-                <Route path="/" element={<MainFeatures />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/registerUser" element={<UserRegister />} />
+                <Route path="/recoveryUser" element={<UserRecovery />} />
+
+                <Route
+                    path="/"
+                    element={
+                        <AuthRoute>
+                            <MainFeatures />
+                        </AuthRoute>
+                    }
+                />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <AuthRoute>
+                            <Dashboard />
+                        </AuthRoute>
+                    }
+                />
+                <Route
+                    path="/ver/:id"
+                    element={
+                        <AuthRoute>
+                            <ViewACWrapper />
+                        </AuthRoute>
+                    }
+                />
+                <Route
+                    path="/buscar"
+                    element={
+                        <AuthRoute>
+                            <SearchAC />
+                        </AuthRoute>
+                    }
+                />
+
                 <Route
                     path="/registrar"
                     element={
@@ -42,16 +80,6 @@ function AppContent() {
                         </PrivateRoute>
                     }
                 />
-
-                <Route
-                    path="/dashboard"
-                    element={
-                        <PrivateRoute>
-                            <Dashboard />
-                        </PrivateRoute>
-                    }
-                />
-
                 <Route
                     path="/registrar/:id"
                     element={
@@ -76,11 +104,8 @@ function AppContent() {
                         </PrivateRoute>
                     }
                 />
-                <Route path="/ver/:id" element={<ViewACWrapper />} />
-                <Route path="/buscar" element={<SearchAC />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/registerUser" element={<UserRegister />} />
-                <Route path="recoveryUser" element={<UserRecovery />} />
+
+                <Route path="*" element={<NotFound />} />
             </Routes>
 
             {showAbout && <AboutSection />}

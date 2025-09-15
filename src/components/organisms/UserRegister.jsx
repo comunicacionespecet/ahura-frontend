@@ -7,7 +7,6 @@ import { showError, showSuccess } from '../../utils/alerts';
 import { useCreateUser } from '../../hooks/useUsers';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-// Tel: 7–15 dígitos, permite espacios y +
 const phoneRegex = /^\+?\d[\d\s]{6,14}\d$/;
 
 const UserRegister = () => {
@@ -20,13 +19,10 @@ const UserRegister = () => {
         name: '',
         phone: '',
         password: '',
-        role: 'user',
     });
 
-    // confirmación solo en front
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // control de errores y touched
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
 
@@ -55,10 +51,8 @@ const UserRegister = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
-        // revalida en tiempo real el campo cambiado
         setErrors((prev) => {
             const next = { ...prev };
-            // validación puntual
             if (name === 'email') {
                 if (!value) next.email = 'El correo es obligatorio.';
                 else if (!emailRegex.test(value))
@@ -81,7 +75,6 @@ const UserRegister = () => {
                     next.password = 'Mínimo 8 caracteres.';
                 else delete next.password;
 
-                // sincroniza match con confirmPassword
                 if (confirmPassword && value !== confirmPassword)
                     next.confirmPassword = 'Las contraseñas no coinciden.';
                 else if (confirmPassword) delete next.confirmPassword;
@@ -135,7 +128,6 @@ const UserRegister = () => {
                     Registro de Usuario
                 </h2>
 
-                {/* noValidate para desactivar tooltips nativos del navegador */}
                 <form onSubmit={handleSubmit} noValidate className="space-y-4">
                     <FormField label="Correo electrónico *" htmlFor="email">
                         <Input

@@ -32,16 +32,15 @@ const formatFieldValue = (field, item) => {
 };
 
 const buildTableConfig = (filters, data) => {
-    const headers = ["Título"];
+    const headers = ["Facetado", "Título"];
     if (filters.format) headers.push("Formato");
     if (filters.knowledgeType) headers.push("Tipo de activo");
     if (filters.status) headers.push("Estatus");
     if (filters.classificationLevelLevel) headers.push("Clasificación");
-    headers.push("Autor", "Fecha");
+    headers.push("Autor", "Fecha de publicación");
 
     const rows = data.map((item) => {
-        const row = [item.title || ""];
-        if (filters.format) row.push(item.format || "");
+        const row = [item.id, item.title]; if (filters.format) row.push(item.format || "");
         if (filters.knowledgeType) row.push(item.knowledgeType || "");
         if (filters.status) row.push(item.status || "");
         if (filters.classificationLevelLevel) row.push(item.classificationLevel?.level || "");
@@ -103,10 +102,31 @@ const SearchAC = () => {
             styles: { fontSize: 10 },
             headStyles: { fillColor: "#026937", textColor: "#FFFFFF" },
             alternateRowStyles: { fillColor: "#F2F2F2" },
+            didDrawPage: (data) => {
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const pageWidth = doc.internal.pageSize.getWidth();
+
+                doc.setFontSize(8);
+                doc.setTextColor("#666666");
+                doc.text(
+                    "© 2025 PECET - Universidad de Antioquia. Todos los derechos reservados.",
+                    pageWidth / 2,
+                    pageHeight - 10,
+                    { align: "center" }
+                );
+
+                const pageNumber = doc.internal.getNumberOfPages();
+                doc.text(
+                    `Página ${pageNumber}`,
+                    pageWidth - 20,
+                    pageHeight - 10
+                );
+            }
         });
 
         doc.save(`${title}.pdf`);
     };
+
 
     const handleExport = async () => {
         try {
