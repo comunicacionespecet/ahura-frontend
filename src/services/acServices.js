@@ -19,6 +19,7 @@ export const getAllACs = async () => {
 
 export const getACById = async (id) => {
     const token = localStorage.getItem('token');
+    console.log(token)
 
     const response = await fetch(`${BASE_URL}/assets/${id}`, {
         method: 'GET',
@@ -132,7 +133,6 @@ export const exportAllAssets = async (filters = {}) => {
     }
   });
 
-  // Aquí la diferencia clave: no mandamos `page` ni `limit`
   const response = await fetch(`${BASE_URL}/assets?${params.toString()}`, {
     method: 'GET',
     headers: {

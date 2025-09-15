@@ -36,7 +36,7 @@ export const createUser = async (userData) => {
     const token = getToken();
     const payload = {
         ...userData,
-        role: 'user',
+        role: 'usuario',
         id: userData.id || crypto.randomUUID(),
     };
     const res = await fetch(`${BASE_URL}/users`, {

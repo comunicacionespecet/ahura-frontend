@@ -65,6 +65,13 @@ const MainFeatures = () => {
                         htmlType="button"
                         className="w-full md:w-[300px]"
                     />
+                    <Button
+                            onClick={() => navigate('/dashboard')}
+                            text="Ver estadísticas"
+                            type="light"
+                            htmlType="button"
+                            className="w-full md:w-[300px]"
+                        />
                 </div>
             )}
         </main>

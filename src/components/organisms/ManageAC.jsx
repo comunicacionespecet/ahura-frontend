@@ -783,7 +783,7 @@ const ManageAC = () => {
                             <>
                                 <Button text="Guardar cambios" type="primary" htmlType="submit" />
                                 <Button text="Eliminar" type="secondary" htmlType="button" onClick={handleDelete} />
-                                <Button text="Vista previa" type="admin" htmlType="button" onClick={() => navigate(`/ver/${id}`)} />
+                                <Button text="Vista para el usuario" type="admin" htmlType="button" onClick={() => navigate(`/ver/${id}`)} />
                             </>
                         ) : (
                             <Button className="text-2xl" text="Registrar" type="primary" htmlType="submit" />

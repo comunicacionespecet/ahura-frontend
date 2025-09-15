@@ -25,6 +25,13 @@ const AdminUser = () => {
         setIsEditing(true);
     };
 
+    const roleMap = {
+        user: "Usuario",
+        super_administrador: "Administrador",
+        administrador: "Funcionario PECET",
+    };
+
+
     const handleSave = async () => {
         if (!currentUser) return;
         try {
@@ -72,7 +79,7 @@ const AdminUser = () => {
                             <tr key={user.id} className="border-t">
                                 <td className="px-4 py-2">{user.name}</td>
                                 <td className="px-4 py-2">{user.email}</td>
-                                <td className="px-4 py-2">{user.role}</td>
+                                <td className="px-4 py-2">{roleMap[user.role]}</td>
                                 <td className="px-4 py-2 flex justify-center gap-2">
                                     <button
                                         onClick={() => handleEdit(user)}
@@ -114,9 +121,9 @@ const AdminUser = () => {
                             onChange={(e) => setEditedRole(e.target.value)}
                             className="w-full p-2 border rounded mb-4"
                         >
-                            <option value="usuario">Usuario</option>
-                            <option value="administrador">Administrador</option>
-                            <option value="superadmin">Super Admin</option>
+                            <option value="user">Usuario</option>
+                            <option value="administrador">Funcionario PECET</option>
+                            <option value="super_administrador">Administrador</option>
                         </select>
 
                         <div className="flex justify-end gap-2">
