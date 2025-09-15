@@ -9,10 +9,9 @@ const PrivateRoute = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Caso 1: No logueado
     if (!token || !user) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6">
+            <div className="flex flex-col items-center justify-center text-center py-6">
                 <p className="text-lg mb-6 max-w-xl">
                     Para poder acceder a los activos de conocimiento del PECET y
                     poder interactuar con ellos, haz click en{' '}
@@ -39,16 +38,14 @@ const PrivateRoute = ({ children }) => {
         );
     }
 
-    // Caso 2: Logueado pero sin permisos
     if (user.role !== 'administrador' && !isAdmin) {
         useEffect(() => {
             showError('No tienes permisos para acceder a esta sección.');
             navigate('/');
         }, [navigate]);
-        return null; // no renderiza nada mientras redirige
+        return null; 
     }
 
-    // Caso 3: Autorizado
     return children;
 };
 

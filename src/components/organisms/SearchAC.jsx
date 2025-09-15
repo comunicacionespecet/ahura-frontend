@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../atoms/Input";
 import Button from "../atoms/Button";
@@ -10,6 +10,8 @@ import { useCatalogs } from "../../hooks/useCatalogs";
 import Pagination from "../molecules/Pagination";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+
+const STORAGE_KEY = "searchACState";
 
 const getFieldLabel = (field) => {
     const labels = {
@@ -25,12 +27,6 @@ const getFieldLabel = (field) => {
     return labels[field] || field;
 };
 
-const formatFieldValue = (field, item) => {
-    if (field === "publishDate") return new Date(item.publishDate).toLocaleDateString("es-CO");
-    if (field === "classificationLevelLevel") return item.classificationLevel?.level || "";
-    return item[field] || "";
-};
-
 const buildTableConfig = (filters, data) => {
     const headers = ["Facetado", "Título"];
     if (filters.format) headers.push("Formato");
@@ -40,10 +36,12 @@ const buildTableConfig = (filters, data) => {
     headers.push("Autor", "Fecha de publicación");
 
     const rows = data.map((item) => {
-        const row = [item.id, item.title]; if (filters.format) row.push(item.format || "");
+        const row = [item.id, item.title];
+        if (filters.format) row.push(item.format || "");
         if (filters.knowledgeType) row.push(item.knowledgeType || "");
         if (filters.status) row.push(item.status || "");
-        if (filters.classificationLevelLevel) row.push(item.classificationLevel?.level || "");
+        if (filters.classificationLevelLevel)
+            row.push(item.classificationLevel?.level || "");
         row.push(item.responsibleOwner || "");
         row.push(new Date(item.publishDate).toLocaleDateString("es-CO"));
         return row;
@@ -55,21 +53,37 @@ const buildTableConfig = (filters, data) => {
 const SearchAC = () => {
     const navigate = useNavigate();
     const { isAdmin } = useAuth();
-
-    const [titulo, setTitulo] = useState("");
-    const [tipoActivo, setTipoActivo] = useState("");
-    const [palabrasClave, setPalabrasClave] = useState("");
-    const [clasificacion, setClasificacion] = useState("");
-    const [estatus, setEstatus] = useState("");
-    const [formato, setFormato] = useState("");
-
     const { catalogs } = useCatalogs();
-    const [filters, setFilters] = useState({});
-    const [page, setPage] = useState(1);
-    const limit = 10;
+
+    const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+
+    const [titulo, setTitulo] = useState(savedState.titulo || "");
+    const [tipoActivo, setTipoActivo] = useState(savedState.tipoActivo || "");
+    const [palabrasClave, setPalabrasClave] = useState(savedState.palabrasClave || "");
+    const [clasificacion, setClasificacion] = useState(savedState.clasificacion || "");
+    const [estatus, setEstatus] = useState(savedState.estatus || "");
+    const [formato, setFormato] = useState(savedState.formato || "");
+    const [filters, setFilters] = useState(savedState.filters || {});
+    const [page, setPage] = useState(savedState.page || 1);
+
+    const limit = Object.keys(filters).length === 0 ? 1 : 10;
 
     const { acs, loading, error, total, totalPages } = useFilteredACs(filters, page, limit);
     const { exportAll, loading: loadingExport } = useExportACs();
+
+    useEffect(() => {
+        const state = {
+            titulo,
+            tipoActivo,
+            palabrasClave,
+            clasificacion,
+            estatus,
+            formato,
+            filters,
+            page,
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }, [titulo, tipoActivo, palabrasClave, clasificacion, estatus, formato, filters, page]);
 
     const generatePDF = (data, title, filters) => {
         const doc = new jsPDF();
@@ -116,17 +130,12 @@ const SearchAC = () => {
                 );
 
                 const pageNumber = doc.internal.getNumberOfPages();
-                doc.text(
-                    `Página ${pageNumber}`,
-                    pageWidth - 20,
-                    pageHeight - 10
-                );
-            }
+                doc.text(`Página ${pageNumber}`, pageWidth - 20, pageHeight - 10);
+            },
         });
 
         doc.save(`${title}.pdf`);
     };
-
 
     const handleExport = async () => {
         try {
@@ -165,11 +174,11 @@ const SearchAC = () => {
                         name="titulo"
                         value={titulo}
                         onChange={(e) => setTitulo(e.target.value)}
-                        placeholder="Buscar por título"
+                        placeholder="Buscar por título del activo de conocimiento"
                     />
                 </FormField>
 
-                <FormField label="Clasificación" htmlFor="clasificacion">
+                <FormField label="Clasificación del activo de conocimiento" htmlFor="clasificacion">
                     <select
                         id="clasificacion"
                         value={clasificacion}
@@ -185,7 +194,7 @@ const SearchAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Formato" htmlFor="formato">
+                <FormField label="Formato del activo de conocimiento" htmlFor="formato">
                     <select
                         id="formato"
                         value={formato}
@@ -201,7 +210,7 @@ const SearchAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Tipo de activo" htmlFor="tipoActivo">
+                <FormField label="Tipo de activo de conocimiento" htmlFor="tipoActivo">
                     <select
                         id="tipoActivo"
                         value={tipoActivo}
@@ -217,7 +226,7 @@ const SearchAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Estatus" htmlFor="estatus">
+                <FormField label="Estado del activo de conocimiento" htmlFor="estatus">
                     <select
                         id="estatus"
                         value={estatus}
@@ -233,7 +242,7 @@ const SearchAC = () => {
                     </select>
                 </FormField>
 
-                <FormField label="Palabras clave" htmlFor="palabrasClave">
+                <FormField label="Palabras clave del activo de conocimiento" htmlFor="palabrasClave">
                     <Input
                         name="palabrasClave"
                         value={palabrasClave}
@@ -250,6 +259,20 @@ const SearchAC = () => {
                         onClick={handleExport}
                         disabled={loadingExport}
                     />
+                    <Button
+                        text="Limpiar filtros"
+                        type="danger"
+                        onClick={() => {
+                            setTitulo("");
+                            setTipoActivo("");
+                            setPalabrasClave("");
+                            setClasificacion("");
+                            setEstatus("");
+                            setFormato("");
+                            setFilters({});
+                            setPage(1);
+                        }}
+                    />
                 </div>
             </div>
 
@@ -265,7 +288,12 @@ const SearchAC = () => {
                 ) : (
                     <>
                         <p className="text-gray-600 mb-2">
-                            Mostrando {(page - 1) * limit + 1}–{Math.min(page * limit, total)} de {total} resultados
+                            {filters && Object.keys(filters).length === 0
+                                ? `Mostrando 1 de ${total} resultados`
+                                : `Mostrando ${(page - 1) * limit + 1}–${Math.min(
+                                    page * limit,
+                                    total
+                                )} de ${total} resultados`}
                         </p>
 
                         {acs.map((item) => (
@@ -293,7 +321,9 @@ const SearchAC = () => {
                             </div>
                         ))}
 
-                        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                        {filters && Object.keys(filters).length > 0 && (
+                            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                        )}
                     </>
                 )}
             </div>

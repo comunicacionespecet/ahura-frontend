@@ -186,7 +186,8 @@ export default function Dashboard() {
   const barColors = ["#2196F3", "#4CAF50", "#FF9800", "#9C27B0", "#FF5722", "#00BCD4"];
 
   return (
-    <Container maxWidth={false} sx={{ width: "90%", py: 4, bgcolor: "#FBFBFB" }}>
+    <Box sx={{ width: "100%", py: 4, bgcolor: "#FBFBFB" }}>
+    <Container maxWidth={false} sx={{ width: "90%" }}>
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
@@ -364,5 +365,6 @@ export default function Dashboard() {
         </Grid>
       </Grid>
     </Container>
+     </Box>
   );
 }

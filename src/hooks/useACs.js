@@ -6,7 +6,10 @@ import {
     updateAC,
     deleteAC,
     getAssets,
+    incrementViewCount,
+    incrementDownloadCount,
 } from '../services/acServices';
+
 import { getSignedImageUrl } from '../services/uploadServices';
 import { exportAllAssets } from "../services/acServices";
 
@@ -64,6 +67,7 @@ export function useACById(id) {
     const [ac, setAc] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { increment } = useIncrementViewCount();
 
     useEffect(() => {
         if (!id) return;
@@ -91,6 +95,13 @@ export function useACById(id) {
                         data.signedFileUrl = null;
                     }
                 }
+
+                try {
+                    await increment(id, data.viewCount || 0);
+                } catch (err) {
+                    console.warn("No se pudo incrementar viewCount", err);
+                }
+
 
                 setAc(data);
                 setLoading(false);
@@ -184,3 +195,42 @@ export function useExportACs() {
     return { exportAll, loading, error };
 }
 
+export function useIncrementViewCount() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const increment = async (id, currentCount) => {
+        setLoading(true);
+        try {
+            const updated = await incrementViewCount(id, currentCount);
+            setLoading(false);
+            return updated;
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { increment, loading, error };
+}
+
+export function useIncrementDownloadCount() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const increment = async (id, currentCount) => {
+        setLoading(true);
+        try {
+            const updated = await incrementDownloadCount(id, currentCount);
+            setLoading(false);
+            return updated;
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { increment, loading, error };
+}
