@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import CommentsSection from '../organisms/CommentSection';
+import { useIncrementDownloadCount } from "../../hooks/useACs";
+
+import Button from '../atoms/Button';
 
 const getFileType = (fileUrl) => {
     if (!fileUrl) return '';
@@ -31,6 +34,7 @@ const ViewAC = ({ ac, user }) => {
     const signedFileUrl = ac.signedFileUrl;
     const cleanUrl = signedFileUrl?.split('?')[0];
     const fileType = getFileType(cleanUrl);
+    const { increment: incrementDownload } = useIncrementDownloadCount();
 
     const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(
         signedFileUrl
@@ -39,32 +43,50 @@ const ViewAC = ({ ac, user }) => {
         signedFileUrl
     )}`;
 
+    const handleDownload = async () => {
+        try {
+            await incrementDownload(ac.id, ac.downloadCount || 0);
+        } catch (err) {
+            console.error("No se pudo incrementar downloadCount", err);
+        } finally {
+            // abrir el archivo siempre, aunque falle el contador
+            if (ac.signedFileUrl) {
+                window.open(ac.signedFileUrl, "_blank");
+            }
+        }
+    };
+
     const tabs = ['Resumen', 'Detalles', 'Archivo'];
     const [activeTab, setActiveTab] = useState(0);
 
     return (
         <div className="bg-white p-6 rounded shadow w-[70%] mx-auto min-h-[600px] space-y-6">
-            <h2 className="text-2xl font-bold mb-4">{ac.title}</h2>
+            <h2 className="text-2xl font-bold mb-4">
+                <span className="text-lg font-semibold">
+                    <span className="font-medium mr-2 text-gray-700">
+                        Título del activo de conocimiento:
+                    </span>
+                    <span className="text-gray-900">{ac.title || 'No Aplica'}</span>
+                </span>
+            </h2>
 
-            {/* Tabs Header */}
+
             <div className="flex mb-8 gap-2 overflow-x-auto flex-nowrap w-full border-b">
                 {tabs.map((tab, idx) => (
                     <button
                         key={tab}
                         type="button"
                         onClick={() => setActiveTab(idx)}
-                        className={`px-4 py-2 rounded-t relative whitespace-nowrap min-w-max ${
-                            activeTab === idx
-                                ? 'bg-[#8DC63F] text-white'
-                                : 'bg-gray-200 text-[#026937]'
-                        }`}
+                        className={`px-4 py-2 rounded-t relative whitespace-nowrap min-w-max ${activeTab === idx
+                            ? 'bg-[#8DC63F] text-white'
+                            : 'bg-gray-200 text-[#026937]'
+                            }`}
                     >
                         {tab}
                     </button>
                 ))}
             </div>
 
-            {/* Tabs Content */}
             {activeTab === 0 && (
                 <div className="flex flex-col md:flex-row gap-6">
                     {ac.signedImageUrl && (
@@ -90,8 +112,8 @@ const ViewAC = ({ ac, user }) => {
                             <strong>Fecha de Publicación:</strong>{' '}
                             {ac.publishDate
                                 ? new Date(ac.publishDate).toLocaleDateString(
-                                      'es-CO'
-                                  )
+                                    'es-CO'
+                                )
                                 : 'No Aplica'}
                         </p>
                     </div>
@@ -101,15 +123,18 @@ const ViewAC = ({ ac, user }) => {
             {activeTab === 1 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <p>
-                        <strong>Tipo de Activo:</strong>{' '}
-                        {ac.assetType || 'No Aplica'}
-                    </p>
-                    <p>
-                        <strong>Tipo de Conocimiento:</strong>{' '}
+                        <strong>Tipo de Activo de conocimiento:</strong>{' '}
                         {ac.knowledgeType || 'No Aplica'}
                     </p>
                     <p>
+                        <strong>Categoría del activo de Conocimiento:</strong>{' '}
+                        {ac.activeKnowledgeType || 'No Aplica'}
+                    </p>
+                    <p>
                         <strong>Formato:</strong> {ac.format || 'No Aplica'}
+                    </p>
+                    <p>
+                        <strong>Criticidad del activo de conocimiento:</strong> {ac.criticality || 'No Aplica'}
                     </p>
                     <p>
                         <strong>Palabras Clave:</strong>{' '}
@@ -125,7 +150,7 @@ const ViewAC = ({ ac, user }) => {
                     </p>
                     <p>
                         <strong>Accesible:</strong>{' '}
-                        {ac.availability?.accessibility ? 'Sí' : 'No Aplica'}
+                        {ac.availability?.accessibility ? 'Se puede acceder' : 'No se puede acceder'}
                     </p>
                     <p>
                         <strong>Nivel de Clasificación:</strong>{' '}
@@ -176,9 +201,7 @@ const ViewAC = ({ ac, user }) => {
                     )}
 
                     {signedFileUrl &&
-                        ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(
-                            fileType
-                        ) && (
+                        ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(fileType) && (
                             <iframe
                                 src={officeViewerUrl}
                                 title="Vista previa Office"
@@ -214,10 +237,21 @@ const ViewAC = ({ ac, user }) => {
                                 className="max-w-full h-auto mb-4"
                             />
                         )}
+
+                    {/* Botón de descarga */}
+                    {signedFileUrl && (
+                        <div className="mt-4">
+                            <Button
+                                text="Descargar archivo"
+                                type="success"
+                                onClick={handleDownload}
+                            />
+                        </div>
+                    )}
                 </div>
             )}
 
-            {/* Comentarios siempre visibles */}
+
             <CommentsSection assetId={ac.id} authorId={user?.id} />
         </div>
     );

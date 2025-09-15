@@ -9,7 +9,7 @@ const AuthRoute = ({ children }) => {
 
     if (!token || !user) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6">
+            <div className="flex flex-col items-center justify-center text-center py-10">
                 <p className="text-lg mb-6 max-w-xl">
                     Para poder acceder a los activos de conocimiento del PECET y
                     poder interactuar con ellos, haz click en{' '}

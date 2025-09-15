@@ -5,7 +5,7 @@ const NotFound = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[70vh] text-center p-6">
+        <div className="flex flex-col items-center justify-center text-center py-6">
             <h1 className="text-6xl font-bold text-[#70205B] mb-4">404</h1>
             <p className="text-lg mb-6">
                 La página que buscas no existe o fue movida.
