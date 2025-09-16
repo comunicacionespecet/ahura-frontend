@@ -73,6 +73,11 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
     };
 
+    // Helpers de roles
+    const isAuthenticated = !!user;
+    const isSuperAdmin = user?.role === ROLE_SUPER;
+    const isAdmin = [ROLE_SUPER, ROLE_ADMIN].includes(user?.role);
+
     return (
         <AuthContext.Provider
             value={{
@@ -81,8 +86,9 @@ export const AuthProvider = ({ children }) => {
                 loading,
                 login,
                 logout,
-                isAuthenticated: !!user,
-                isAdmin: [ROLE_SUPER, ROLE_ADMIN].includes(user?.role),
+                isAuthenticated,
+                isAdmin,       // Admin incluye SUPER + ADMIN
+                isSuperAdmin,  // Solo SUPER
             }}
         >
             {children}

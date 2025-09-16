@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const MainFeatures = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, isSuperAdmin } = useAuth();
     const navigate = useNavigate();
 
     return (
@@ -47,13 +47,16 @@ const MainFeatures = () => {
                             htmlType="button"
                             className="w-full md:w-[300px]"
                         />
-                        <Button
-                            onClick={() => navigate('/usuarios')}
-                            text="Gestor de usuarios"
-                            type="light"
-                            htmlType="button"
-                            className="w-full md:w-[300px]"
-                        />
+                        {isSuperAdmin && (
+                            <Button
+                                onClick={() => navigate('/usuarios')}
+                                text="Gestor de usuarios"
+                                type="light"
+                                htmlType="button"
+                                className="w-full md:w-[300px]"
+                            />
+                        )}
+
                     </div>
                 </div>
             ) : (
@@ -66,12 +69,12 @@ const MainFeatures = () => {
                         className="w-full md:w-[300px]"
                     />
                     <Button
-                            onClick={() => navigate('/dashboard')}
-                            text="Ver estadísticas"
-                            type="light"
-                            htmlType="button"
-                            className="w-full md:w-[300px]"
-                        />
+                        onClick={() => navigate('/dashboard')}
+                        text="Ver estadísticas"
+                        type="light"
+                        htmlType="button"
+                        className="w-full md:w-[300px]"
+                    />
                 </div>
             )}
         </main>

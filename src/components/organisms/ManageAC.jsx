@@ -94,7 +94,7 @@ const ManageAC = () => {
                 clasificacion: ac.classificationLevel?.level,
                 autor: ac.responsibleOwner || '',
                 visibilidad: ac.confidentiality ? 'Público' : 'Privado',
-                propietarioAC: ac.responsibleOwner,
+                propietarioAC: ac.ownerId,
                 estadoAC: ac.status,
                 fileUri: ac.fileUri,
                 relatedIds: ac.relatedIds || [],
@@ -234,7 +234,7 @@ const ManageAC = () => {
                 industrialIntellectualProperty: formData.industrialIntellectualProperty || '',
             },
             ownerId: formData.ownerId || 'Prueba',
-            responsibleOwner: formData.autor || formData.propietarioAC || '',
+            responsibleOwner: formData.autor || '',
             confidentiality: formData.visibilidad === 'Privado',
             criticality: formData.criticality || '',
             status: formData.estadoAC || '',
@@ -574,14 +574,15 @@ const ManageAC = () => {
                     {/* TAB 2: Regulaciones legales */}
                     {activeTab === 2 && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField label="Propietario del Activo de conocimiento" htmlFor="propietarioAC">
+                            <FormField label="Propietario del Activo de conocimiento" htmlFor="ownerId">
                                 <Input
-                                    name="propietarioAC"
-                                    value={formData.propietarioAC}
+                                    name="ownerId"
+                                    value={formData.ownerId}
                                     onChange={handleChange}
                                     placeholder="Ej: Universidad de Antioquia"
                                 />
                             </FormField>
+
 
                             <FormField label="Repositorio" htmlFor="pecetKnowledge">
                                 <Input

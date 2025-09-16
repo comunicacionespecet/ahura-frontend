@@ -26,7 +26,7 @@ const AdminUser = () => {
     };
 
     const roleMap = {
-        user: "Usuario",
+        usuario: "Usuario",
         super_administrador: "Administrador",
         administrador: "Funcionario PECET",
     };
@@ -121,7 +121,7 @@ const AdminUser = () => {
                             onChange={(e) => setEditedRole(e.target.value)}
                             className="w-full p-2 border rounded mb-4"
                         >
-                            <option value="user">Usuario</option>
+                            <option value="usuario">Usuario</option>
                             <option value="administrador">Funcionario PECET</option>
                             <option value="super_administrador">Administrador</option>
                         </select>

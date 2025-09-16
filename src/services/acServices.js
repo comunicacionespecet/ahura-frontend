@@ -151,7 +151,7 @@ export const exportAllAssets = async (filters = {}) => {
 
 export const incrementViewCount = async (id, currentCount) => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${BASE_URL}/assets/${id}`, {
+    const response = await fetch(`${BASE_URL}/assets/${id}/user-stats`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ export const incrementViewCount = async (id, currentCount) => {
 
 export const incrementDownloadCount = async (id, currentCount) => {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${BASE_URL}/assets/${id}`, {
+    const response = await fetch(`${BASE_URL}/assets/${id}/user-stats`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
