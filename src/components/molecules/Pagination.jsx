@@ -37,7 +37,7 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
       pages.push(totalPages);
     }
 
-    return [...new Set(pages)]; // evita duplicados
+    return [...new Set(pages)];
   };
 
 

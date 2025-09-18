@@ -187,184 +187,198 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ width: "100%", py: 4, bgcolor: "#FBFBFB" }}>
-    <Container maxWidth={false} sx={{ width: "90%" }}>
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel>Categoría</InputLabel>
-            <Select
-              value={categoria}
-              onChange={(e) => {
-                setCategoria(e.target.value);
-                setOpcion("Todos");
-              }}
-            >
-              <MenuItem value="Todos">Todos</MenuItem>
-              {categoryEnums.map((baseKey) => (
-                <MenuItem key={baseKey} value={baseKey}>
-                  {categoriaLabels[baseKey] ?? baseKey}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel>Opción</InputLabel>
-            <Select value={opcion} onChange={(e) => setOpcion(e.target.value)}>
-              {opciones.map((opt, i) => (
-                <MenuItem key={i} value={opt}>
-                  {opt}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={2} justifyContent="center">
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, width: "100%", mx: "auto" }}>
-          {[
-            { label: "Total Activos", value: stats.totalActivos },
-            { label: "Públicos", value: stats.publicos },
-            { label: "Privados", value: stats.privados },
-            { label: "Descargas", value: stats.descargas },
-            { label: "Vistas", value: stats.vistas },
-          ].map((item, i) => (
-            <Card
-              key={i}
-              sx={{
-                flexGrow: 1,
-                textAlign: "center",
-                flexBasis: { xs: "100%", sm: "calc(50% - 16px)", md: "calc(20% - 16px)" },
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6">{item.label}</Typography>
-                <Typography variant="h5">{item.value}</Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      </Grid>
-
-      <Grid container spacing={3} py={2} justifyContent="center" alignItems="stretch">
-        <Paper
-          sx={{
-            p: 2,
-            flexGrow: 1,
-            flexBasis: { xs: "100%", sm: "calc(50% - 16px)" },
-            maxWidth: "100%",
-            height: 360,
-          }}
-        >
-          <Typography variant="h6" gutterBottom align="center">
-            Visibilidad
-          </Typography>
-          <Box sx={{ width: "100%", height: 300 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: "Públicos", value: stats.publicos },
-                    { name: "Privados", value: stats.privados },
-                  ]}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius="70%"
-                  dataKey="value"
+      <Container maxWidth={false} sx={{ width: "90%" }}>
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ flex: 1, minWidth: "200px" }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ mb: 1, fontWeight: 500, color: "text.secondary" }}
                 >
-                  <Cell fill="#4CAF50" />
-                  <Cell fill="#FF5722" />
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+                  Categoría
+                </Typography>
+                <FormControl fullWidth size="small" variant="outlined">
+                  <Select
+                    value={categoria}
+                    onChange={(e) => {
+                      setCategoria(e.target.value);
+                      setOpcion("Todos");
+                    }}
+                  >
+                    <MenuItem value="Todos">Todos</MenuItem>
+                    {categoryEnums.map((baseKey) => (
+                      <MenuItem key={baseKey} value={baseKey}>
+                        {categoriaLabels[baseKey] ?? baseKey}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box sx={{ flex: 1, minWidth: "200px" }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ mb: 1, fontWeight: 500, color: "text.secondary" }}
+                >
+                  Opción
+                </Typography>
+                <FormControl fullWidth size="small" variant="outlined">
+                  <Select value={opcion} onChange={(e) => setOpcion(e.target.value)}>
+                    {opciones.map((opt, i) => (
+                      <MenuItem key={i} value={opt}>
+                        {opt}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={2} justifyContent="center">
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, width: "100%", mx: "auto" }}>
+            {[
+              { label: "Total Activos de conocimiento", value: stats.totalActivos },
+              { label: "Activos de conocimiento Públicos", value: stats.publicos },
+              { label: "Activos de conocimiento Privados", value: stats.privados },
+              { label: "Total de descargas de activos de conocimiento", value: stats.descargas },
+              { label: "Total de visualizaciones de activos de conocimiento", value: stats.vistas },
+            ].map((item, i) => (
+              <Card
+                key={i}
+                sx={{
+                  flexGrow: 1,
+                  textAlign: "center",
+                  flexBasis: { xs: "100%", sm: "calc(50% - 16px)", md: "calc(20% - 16px)" },
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6">{item.label}</Typography>
+                  <Typography variant="h5">{item.value}</Typography>
+                </CardContent>
+              </Card>
+            ))}
           </Box>
-        </Paper>
+        </Grid>
 
-        <Paper
-          sx={{
-            p: 2,
-            flexGrow: 1,
-            flexBasis: { xs: "100%", sm: "calc(50% - 16px)" },
-            maxWidth: "100%",
-            height: 360,
-          }}
-        >
-          <Typography variant="h6" gutterBottom align="center">
-            {categoriaLabels[categoria] ?? (categoria === "format" ? "Formatos" : categoria)}
-          </Typography>
-          <Box sx={{ width: "100%", height: 300 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.porTipo}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="name"
-                  angle={-45}
-                  textAnchor="end"
-                  interval={0}
-                  height={80}
-                  tickFormatter={(value) =>
-                    value.length > 12 ? value.substring(0, 12) + "..." : value
-                  }
-                />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />   {/* 👈 aquí va */}
-                <Bar dataKey="value">
-                  {stats.porTipo.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={barColors[index % barColors.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-
-            </ResponsiveContainer>
-          </Box>
-        </Paper>
-      </Grid>
-
-      <Grid container spacing={3} py={2} justifyContent="center">
-        <Grid item xs={12} md={10}>
-          <Paper sx={{ p: 2, overflowX: "auto" }}>
-            <Typography variant="h6" gutterBottom>
-              Lista de Activos
+        <Grid container spacing={3} py={2} justifyContent="center" alignItems="stretch">
+          <Paper
+            sx={{
+              p: 2,
+              flexGrow: 1,
+              flexBasis: { xs: "100%", sm: "calc(50% - 16px)" },
+              maxWidth: "100%",
+              height: 360,
+            }}
+          >
+            <Typography variant="h6" gutterBottom align="center">
+              Visibilidad
             </Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Título</TableCell>
-                    <TableCell>Tipo (knowledgeType)</TableCell>
-                    <TableCell>ActiveKnowledgeType</TableCell>
-                    <TableCell>Formato</TableCell>
-                    <TableCell>Visibilidad</TableCell>
-                    <TableCell>Criticidad</TableCell>
-                    <TableCell>Descargas</TableCell>
-                    <TableCell>Vistas</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {activosFiltrados.map((row, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell>{row.titulo}</TableCell>
-                      <TableCell>{row.knowledgeType}</TableCell>
-                      <TableCell>{row.activeKnowledgeType}</TableCell>
-                      <TableCell>{row.format}</TableCell>
-                      <TableCell>{row.visibilidad}</TableCell>
-                      <TableCell>{row.criticality}</TableCell>
-                      <TableCell>{row.descargas}</TableCell>
-                      <TableCell>{row.vistas}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <Box sx={{ width: "100%", height: 300 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: "Públicos", value: stats.publicos },
+                      { name: "Privados", value: stats.privados },
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius="70%"
+                    dataKey="value"
+                  >
+                    <Cell fill="#4CAF50" />
+                    <Cell fill="#FF5722" />
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </Box>
+          </Paper>
+
+          <Paper
+            sx={{
+              p: 2,
+              flexGrow: 1,
+              flexBasis: { xs: "100%", sm: "calc(50% - 16px)" },
+              maxWidth: "100%",
+              height: 360,
+            }}
+          >
+            <Typography variant="h6" gutterBottom align="center">
+              {categoriaLabels[categoria] ?? (categoria === "format" ? "Formatos" : categoria)}
+            </Typography>
+            <Box sx={{ width: "100%", height: 300 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stats.porTipo}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="name"
+                    angle={-45}
+                    textAnchor="end"
+                    interval={0}
+                    height={80}
+                    tickFormatter={(value) =>
+                      value.length > 12 ? value.substring(0, 12) + "..." : value
+                    }
+                  />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />   {/* 👈 aquí va */}
+                  <Bar dataKey="value">
+                    {stats.porTipo.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={barColors[index % barColors.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
-      </Grid>
-    </Container>
-     </Box>
+
+        <Grid container spacing={3} py={2} justifyContent="center">
+          <Grid item xs={12} md={10}>
+            <Paper sx={{ p: 2, overflowX: "auto" }}>
+              <Typography variant="h6" gutterBottom>
+                Lista de Activos
+              </Typography>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Título</TableCell>
+                      <TableCell>Tipo (knowledgeType)</TableCell>
+                      <TableCell>ActiveKnowledgeType</TableCell>
+                      <TableCell>Formato</TableCell>
+                      <TableCell>Visibilidad</TableCell>
+                      <TableCell>Criticidad</TableCell>
+                      <TableCell>Descargas</TableCell>
+                      <TableCell>Vistas</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {activosFiltrados.map((row, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell>{row.titulo}</TableCell>
+                        <TableCell>{row.knowledgeType}</TableCell>
+                        <TableCell>{row.activeKnowledgeType}</TableCell>
+                        <TableCell>{row.format}</TableCell>
+                        <TableCell>{row.visibilidad}</TableCell>
+                        <TableCell>{row.criticality}</TableCell>
+                        <TableCell>{row.descargas}</TableCell>
+                        <TableCell>{row.vistas}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 }

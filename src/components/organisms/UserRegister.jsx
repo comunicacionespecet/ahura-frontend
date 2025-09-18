@@ -106,7 +106,7 @@ const UserRegister = () => {
         }
 
         try {
-            await create(form); // no enviamos confirmPassword
+            await create(form);
             showSuccess('Usuario registrado con éxito');
             navigate('/login');
         } catch (err) {

@@ -49,7 +49,6 @@ const ViewAC = ({ ac, user }) => {
         } catch (err) {
             console.error("No se pudo incrementar downloadCount", err);
         } finally {
-            // abrir el archivo siempre, aunque falle el contador
             if (ac.signedFileUrl) {
                 window.open(ac.signedFileUrl, "_blank");
             }
@@ -111,14 +110,36 @@ const ViewAC = ({ ac, user }) => {
                         <p>
                             <strong>Fecha de Publicación:</strong>{' '}
                             {ac.publishDate
-                                ? new Date(ac.publishDate).toLocaleDateString(
-                                    'es-CO'
-                                )
+                                ? new Date(ac.publishDate).toLocaleDateString('es-CO')
                                 : 'No Aplica'}
                         </p>
+
+                        <p>
+                            <strong>Visibilidad:</strong>{' '}
+                            {ac.confidentiality === true
+                                ? 'Público'
+                                : ac.confidentiality === false
+                                    ? 'Privado'
+                                    : 'No Aplica'}
+                        </p>
+
+                        <div>
+                            <strong>Activos Relacionados:</strong>{' '}
+                            {ac.relatedIds && ac.relatedIds.length > 0 ? (
+                                <ul className="list-disc list-inside">
+                                    {ac.relatedIds.map((id) => (
+                                        <li key={id}>{id}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                'No Aplica'
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
+
+
 
             {activeTab === 1 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -144,11 +165,6 @@ const ViewAC = ({ ac, user }) => {
                         <strong>Origen:</strong> {ac.origin || 'No Aplica'}
                     </p>
                     <p>
-                        <strong>Ubicación (Repositorio):</strong>{' '}
-                        {ac.howIsItStored?.centralicedRepositories ||
-                            'No Aplica'}
-                    </p>
-                    <p>
                         <strong>Accesible:</strong>{' '}
                         {ac.availability?.accessibility ? 'Se puede acceder' : 'No se puede acceder'}
                     </p>
@@ -157,33 +173,33 @@ const ViewAC = ({ ac, user }) => {
                         {ac.classificationLevel?.level || 'No Aplica'}
                     </p>
                     <p>
-                        <strong>Nivel de Confidencialidad:</strong>{' '}
-                        {ac.confidentialityLevel?.level || 'No Aplica'}
+                        <strong>Nivel de Criticidad:</strong>{' '}
+                        {ac.criticality || 'No Aplica'}
                     </p>
                     <p>
                         <strong>Estado:</strong> {ac.status || 'No Aplica'}
                     </p>
                     <p>
                         <strong>Copyright:</strong>{' '}
-                        {ac.copyright || 'No Aplica'}
+                        {ac.legalRegulations.copyright || 'No Aplica'}
                     </p>
                     <p>
-                        <strong>Patentes:</strong> {ac.patents || 'No Aplica'}
+                        <strong>Patentes:</strong> {ac.legalRegulations.patents || 'No Aplica'}
                     </p>
                     <p>
                         <strong>Secretos Comerciales:</strong>{' '}
-                        {ac.tradeSecrets || 'No Aplica'}
+                        {ac.legalRegulations.tradeSecrets || 'No Aplica'}
                     </p>
                     <p>
-                        <strong>Diseños Industriales:</strong>{' '}
-                        {ac.industrialDesigns || 'No Aplica'}
-                    </p>
-                    <p>
-                        <strong>Marcas:</strong> {ac.brands || 'No Aplica'}
+                        <strong>Marcas:</strong> {ac.legalRegulations.brands || 'No Aplica'}
                     </p>
                     <p>
                         <strong>Propiedad Intelectual Industrial:</strong>{' '}
-                        {ac.industrialIntellectualProperty || 'No Aplica'}
+                        {ac.legalRegulations.industrialIntellectualProperty || 'No Aplica'}
+                    </p>
+                    <p>
+                        <strong>Propietario del Activo de conocimiento:</strong>{' '}
+                        {ac.ownerId || 'No Aplica'}
                     </p>
                 </div>
             )}

@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const MainFeatures = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, isSuperAdmin } = useAuth();
     const navigate = useNavigate();
 
     return (
-        <main className="flex-1 py-24 px-8 bg-[#FBFBFB]">
+        <div className="flex-1 py-24 px-8 bg-[#FBFBFB]">
             <h3 className="text-4xl text-center font-bold mb-4">
                 ¿Qué puedes hacer aquí?
             </h3>
@@ -47,13 +47,16 @@ const MainFeatures = () => {
                             htmlType="button"
                             className="w-full md:w-[300px]"
                         />
-                        <Button
-                            onClick={() => navigate('/usuarios')}
-                            text="Gestor de usuarios"
-                            type="light"
-                            htmlType="button"
-                            className="w-full md:w-[300px]"
-                        />
+                        {isSuperAdmin && (
+                            <Button
+                                onClick={() => navigate('/usuarios')}
+                                text="Gestor de usuarios"
+                                type="light"
+                                htmlType="button"
+                                className="w-full md:w-[300px]"
+                            />
+                        )}
+
                     </div>
                 </div>
             ) : (
@@ -66,15 +69,15 @@ const MainFeatures = () => {
                         className="w-full md:w-[300px]"
                     />
                     <Button
-                            onClick={() => navigate('/dashboard')}
-                            text="Ver estadísticas"
-                            type="light"
-                            htmlType="button"
-                            className="w-full md:w-[300px]"
-                        />
+                        onClick={() => navigate('/dashboard')}
+                        text="Ver estadísticas"
+                        type="light"
+                        htmlType="button"
+                        className="w-full md:w-[300px]"
+                    />
                 </div>
             )}
-        </main>
+        </div>
     );
 };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCommentsByAsset, createComment } from '../services/commentServices';
+import { getCommentsByAsset, createComment, deleteComment } from '../services/commentServices';
 
 export function useComments(assetId) {
     const [comments, setComments] = useState([]);
@@ -54,4 +54,24 @@ export function useAddComment() {
     };
 
     return { addComment, loading, error };
+}
+
+export function useDeleteComment() {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const removeComment = async (id, authorId) => {
+        setLoading(true);
+        try {
+            await deleteComment(id, authorId);
+            setLoading(false);
+            return true;
+        } catch (err) {
+            setError(err);
+            setLoading(false);
+            throw err;
+        }
+    };
+
+    return { removeComment, loading, error };
 }
