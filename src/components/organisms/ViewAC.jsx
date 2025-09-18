@@ -49,7 +49,6 @@ const ViewAC = ({ ac, user }) => {
         } catch (err) {
             console.error("No se pudo incrementar downloadCount", err);
         } finally {
-            // abrir el archivo siempre, aunque falle el contador
             if (ac.signedFileUrl) {
                 window.open(ac.signedFileUrl, "_blank");
             }

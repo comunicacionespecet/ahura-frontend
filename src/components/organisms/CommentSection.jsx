@@ -11,8 +11,7 @@ export default function CommentsSection({ assetId, authorId }) {
     const { addComment, loading: addingComment, error: errorAdd } = useAddComment();
     const { removeComment } = useDeleteComment();
     const { user, isAdmin, isSuperAdmin } = useAuth();
-    const [openMenuId, setOpenMenuId] = useState(null); // controla el menú abierto
-
+    const [openMenuId, setOpenMenuId] = useState(null);
     const handleAddComment = async (text) => {
         try {
             const newComment = await addComment({

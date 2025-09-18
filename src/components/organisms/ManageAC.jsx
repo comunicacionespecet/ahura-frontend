@@ -302,8 +302,8 @@ const ManageAC = () => {
                         </button>
                     ))}
                 </div>
-                {isUploading ? (   // <- Si estoy subiendo archivos
-                    <LoadingScreen />   // Muestra el mosquito animado
+                {isUploading ? (
+                    <LoadingScreen />
                 ) : (
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
 
