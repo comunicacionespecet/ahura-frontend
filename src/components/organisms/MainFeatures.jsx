@@ -8,7 +8,7 @@ const MainFeatures = () => {
     const navigate = useNavigate();
 
     return (
-        <main className="flex-1 py-24 px-8 bg-[#FBFBFB]">
+        <div className="flex-1 py-24 px-8 bg-[#FBFBFB]">
             <h3 className="text-4xl text-center font-bold mb-4">
                 ¿Qué puedes hacer aquí?
             </h3>
@@ -77,7 +77,7 @@ const MainFeatures = () => {
                     />
                 </div>
             )}
-        </main>
+        </div>
     );
 };
 

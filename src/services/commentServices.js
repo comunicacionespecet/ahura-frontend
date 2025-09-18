@@ -51,3 +51,22 @@ export const createComment = async ({
 
     return data;
 };
+
+export const deleteComment = async (id, authorId) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${BASE_URL}/comments/${id}/${authorId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Auth: '1234',
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Error al eliminar comentario');
+    }
+
+    return true;
+};
