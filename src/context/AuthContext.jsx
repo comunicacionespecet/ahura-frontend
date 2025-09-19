@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }) => {
 
             setToken(data.access_token);
             setUser(data.user || { email });
-            console.log('Token recibido:', data.access_token);
 
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('user', JSON.stringify(data.user));

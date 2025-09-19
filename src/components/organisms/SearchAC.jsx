@@ -52,7 +52,7 @@ const buildTableConfig = (filters, data) => {
 
 const SearchAC = () => {
     const navigate = useNavigate();
-    const { isAdmin } = useAuth();
+    const { user, isAdmin, isSuperAdmin } = useAuth();
     const { catalogs } = useCatalogs();
 
     const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
