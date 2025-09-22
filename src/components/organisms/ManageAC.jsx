@@ -96,7 +96,7 @@ const ManageAC = () => {
                 accesible: ac.availability?.accessibility ? 'Se puede acceder' : 'No se puede acceder',
                 clasificacion: ac.classificationLevel?.level,
                 autor: ac.responsibleOwner || '',
-                visibilidad: ac.confidentiality ? 'Público' : 'Privado',
+                visibilidad: ac.confidentiality ? 'Privado' : 'Público',
                 propietarioAC: ac.ownerId,
                 estadoAC: ac.status,
                 fileUri: ac.fileUri,
@@ -187,6 +187,7 @@ const ManageAC = () => {
         const errors = [false, false, false, false, false];
         if (!formData.id || !formData.titulo || !formData.autor || !formData.relatedIds || !formData.clasificacion || !formData.criticality) errors[0] = true;
         if (!formData.tipoActivo || !formData.estadoAC || !formData.tipoConocimiento || !formData.formato || !formData.origen || !formData.visibilidad) errors[1] = true;
+        if (!formData.ownerId) errors[2] = true;
         if (!formData.descripcion) errors[4] = true;
         setTabErrors(errors);
         return errors;
@@ -203,10 +204,22 @@ const ManageAC = () => {
         }
 
         try {
-            setIsUploading(true); // 🚨 Activa animación
+            setIsUploading(true);
 
-            let uploadImageName = imagen ? await upload(imagen) : formData.image;
-            let uploadFileName = archivo ? await upload(archivo) : formData.fileUri;
+            let renamedImage = null;
+            if (imagen) {
+                const newImageName = `${formData.id}-${imagen.name}`;
+                renamedImage = new File([imagen], newImageName, { type: imagen.type });
+            }
+
+            let renamedFile = null;
+            if (archivo) {
+                const newFileName = `${formData.id}-${archivo.name}`;
+                renamedFile = new File([archivo], newFileName, { type: archivo.type });
+            }
+
+            let uploadImageName = renamedImage ? await upload(renamedImage) : formData.image;
+            let uploadFileName = renamedFile ? await upload(renamedFile) : formData.fileUri;
 
             const acData = {
                 id: formData.id,
@@ -239,7 +252,7 @@ const ManageAC = () => {
                     brands: formData.brands || '',
                     industrialIntellectualProperty: formData.industrialIntellectualProperty || '',
                 },
-                ownerId: formData.ownerId || 'Prueba',
+                ownerId: formData.ownerId || '',
                 responsibleOwner: formData.autor || '',
                 confidentiality: formData.visibilidad === 'Privado',
                 criticality: formData.criticality || '',
@@ -253,11 +266,55 @@ const ManageAC = () => {
             if (id && isAdmin) {
                 await update(id, acData);
                 showSuccess('Activo actualizado correctamente');
-                navigate('/buscar');
-            } else {
-                await create(acData);
-                showSuccess('Activo creado correctamente');
-                navigate('/');
+                const registrarOtro = await showConfirm(
+                    '¿Quieres registrar otro activo?',
+                    'Si eliges "Sí", se limpiará el formulario y podrás registrar un nuevo activo.'
+                );
+
+                if (registrarOtro) {
+                    setFormData({
+                        id: '',
+                        titulo: '',
+                        descripcion: '',
+                        fecha: '',
+                        tipoActivo: '',
+                        tipoConocimiento: '',
+                        formato: '',
+                        palabrasClave: '',
+                        origen: '',
+                        ubicacion: '',
+                        accesible: '',
+                        clasificacion: '',
+                        autor: '',
+                        visibilidad: '',
+                        propietarioAC: '',
+                        estadoAC: '',
+                        fileUri: '',
+                        relatedIds: [],
+                        pecetKnowledge: '',
+                        centralicedRepositories: '',
+                        copyright: '',
+                        patents: '',
+                        tradeSecrets: '',
+                        industrialDesigns: '',
+                        brands: '',
+                        industrialIntellectualProperty: '',
+                        ownerId: '',
+                        criticality: '',
+                        viewCount: 0,
+                        downloadCount: 0,
+                        commentCount: 0,
+                        image: '',
+                    });
+
+                    setImagen(null);
+                    setArchivo(null);
+                    setPreviewUrl(null);
+
+                    navigate('/registrar');
+                } else {
+                    navigate('/');
+                }
             }
         } catch (error) {
             if (error.message.includes('E11000'))
@@ -579,11 +636,12 @@ const ManageAC = () => {
 
                         {activeTab === 2 && (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <FormField label="Propietario del Activo de conocimiento" htmlFor="ownerId">
+                                <FormField label="Propietario del Activo de conocimiento*" htmlFor="ownerId">
                                     <Input
                                         name="ownerId"
                                         value={formData.ownerId}
                                         onChange={handleChange}
+                                        required
                                         placeholder="Ej: Universidad de Antioquia"
                                     />
                                 </FormField>

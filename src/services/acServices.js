@@ -19,7 +19,6 @@ export const getAllACs = async () => {
 
 export const getACById = async (id) => {
     const token = localStorage.getItem('token');
-    console.log(token)
 
     const response = await fetch(`${BASE_URL}/assets/${id}`, {
         method: 'GET',
