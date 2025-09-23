@@ -206,27 +206,28 @@ const ManageAC = () => {
         try {
             setIsUploading(true);
 
+            // 👇 Renombrar imagen (si existe)
             let renamedImage = null;
             if (imagen) {
                 const newImageName = `${formData.id}-${imagen.name}`;
                 renamedImage = new File([imagen], newImageName, { type: imagen.type });
             }
 
+            // 👇 Renombrar archivo (si existe)
             let renamedFile = null;
             if (archivo) {
                 const newFileName = `${formData.id}-${archivo.name}`;
                 renamedFile = new File([archivo], newFileName, { type: archivo.type });
             }
 
+            // 👇 Subir con el nombre modificado
             let uploadImageName = renamedImage ? await upload(renamedImage) : formData.image;
             let uploadFileName = renamedFile ? await upload(renamedFile) : formData.fileUri;
 
             const acData = {
                 id: formData.id,
                 title: formData.titulo,
-                publishDate: formData.fecha
-                    ? new Date(formData.fecha).toISOString()
-                    : null,
+                publishDate: formData.fecha ? new Date(formData.fecha).toISOString() : null,
                 knowledgeType: formData.tipoConocimiento,
                 description: formData.descripcion,
                 image: uploadImageName || '',
@@ -234,7 +235,9 @@ const ManageAC = () => {
                 format: formData.formato,
                 fileUri: uploadFileName || '',
                 relatedIds: formData.relatedIds || [],
-                keywords: formData.palabrasClave ? formData.palabrasClave.split(',').map((k) => k.trim()).filter((k) => k.length > 0) : [],
+                keywords: formData.palabrasClave
+                    ? formData.palabrasClave.split(',').map((k) => k.trim()).filter((k) => k.length > 0)
+                    : [],
                 availability: {
                     accessibility: formData.accesible === 'Se puede acceder',
                     location: formData.ubicacion || ' ',
@@ -266,55 +269,11 @@ const ManageAC = () => {
             if (id && isAdmin) {
                 await update(id, acData);
                 showSuccess('Activo actualizado correctamente');
-                const registrarOtro = await showConfirm(
-                    '¿Quieres registrar otro activo?',
-                    'Si eliges "Sí", se limpiará el formulario y podrás registrar un nuevo activo.'
-                );
-
-                if (registrarOtro) {
-                    setFormData({
-                        id: '',
-                        titulo: '',
-                        descripcion: '',
-                        fecha: '',
-                        tipoActivo: '',
-                        tipoConocimiento: '',
-                        formato: '',
-                        palabrasClave: '',
-                        origen: '',
-                        ubicacion: '',
-                        accesible: '',
-                        clasificacion: '',
-                        autor: '',
-                        visibilidad: '',
-                        propietarioAC: '',
-                        estadoAC: '',
-                        fileUri: '',
-                        relatedIds: [],
-                        pecetKnowledge: '',
-                        centralicedRepositories: '',
-                        copyright: '',
-                        patents: '',
-                        tradeSecrets: '',
-                        industrialDesigns: '',
-                        brands: '',
-                        industrialIntellectualProperty: '',
-                        ownerId: '',
-                        criticality: '',
-                        viewCount: 0,
-                        downloadCount: 0,
-                        commentCount: 0,
-                        image: '',
-                    });
-
-                    setImagen(null);
-                    setArchivo(null);
-                    setPreviewUrl(null);
-
-                    navigate('/registrar');
-                } else {
-                    navigate('/');
-                }
+                navigate('/buscar');
+            } else {
+                await create(acData);
+                showSuccess('Activo creado correctamente');
+                navigate('/');
             }
         } catch (error) {
             if (error.message.includes('E11000'))
@@ -324,6 +283,7 @@ const ManageAC = () => {
             setIsUploading(false);
         }
     };
+
 
     const handleDelete = async () => {
         const confirmDelete = await showConfirm('¿Estás seguro?', 'Esta acción no se puede deshacer');
