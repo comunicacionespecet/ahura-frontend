@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCommentsByAsset, createComment, deleteComment } from '../services/commentServices';
+import { v4 as uuidv4 } from 'uuid';
 
 export function useComments(assetId) {
     const [comments, setComments] = useState([]);
@@ -35,7 +36,7 @@ export function useAddComment() {
     const addComment = async ({ assetId, authorId, text, userName }) => {
         setLoading(true);
         const commentData = {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             assetId,
             authorId,
             text,

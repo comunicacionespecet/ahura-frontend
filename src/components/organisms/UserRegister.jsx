@@ -5,6 +5,7 @@ import FormField from '../molecules/FormField';
 import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess } from '../../utils/alerts';
 import { useCreateUser } from '../../hooks/useUsers';
+import { v4 as uuidv4 } from 'uuid';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 const phoneRegex = /^\+?\d[\d\s]{6,14}\d$/;
@@ -14,7 +15,7 @@ const UserRegister = () => {
     const { create, loading } = useCreateUser();
 
     const [form, setForm] = useState({
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         email: '',
         name: '',
         phone: '',

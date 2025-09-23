@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 const BASE_URL = import.meta.env.VITE_API_URL || '';
 
 const getToken = () => {
@@ -37,7 +39,7 @@ export const createUser = async (userData) => {
     const payload = {
         ...userData,
         role: 'usuario',
-        id: userData.id || crypto.randomUUID(),
+        id: userData.id || uuidv4(),
     };
     const res = await fetch(`${BASE_URL}/users`, {
         method: 'POST',
